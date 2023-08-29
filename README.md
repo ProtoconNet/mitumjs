@@ -494,8 +494,7 @@ console.log(address);
 
 | Feature | Compute and return the account's address from multiple public keys. Each public key should have a weight set based on its priority or importance in the multi sig account. The threshold must be less than or equal to 100, and the sum of the weights assigned to each publickey must be greater than or equal to the threshold. Note: The account address is only calculated, not created on the mitum network. |
 | --- | --- |
-| Parameters | Array object { publickey, weight },
-int threshold |
+| Parameters | Array object { publickey, weight }, int threshold |
 | Return Value | string address |
 
 __example__
@@ -523,8 +522,7 @@ HWSPS3UyBByUg8eWTm3xM6Z2JXFq4Lqsj1fiVcsj15YVmca
 
 | Feature | Compute and return the account's address from multiple Ethereum’s public keys. Each public key should have a weight set based on its priority or importance in the multi sig account. The threshold must be less than or equal to 100, and the sum of the weights assigned to each publickey must be greater than or equal to the threshold. Note: The account address is only calculated, not created on the mitum network. |
 | --- | --- |
-| Parameters | Array object { publickey, weight },
-int threshold |
+| Parameters | Array object { publickey, weight }, int threshold |
 | Return Value | string address |
 
 __example__
@@ -552,11 +550,7 @@ console.log(multisigAddress);
 
 | Feature | Create an operation to create a new account. Notes: While the Mithumb network requires a native token transaction to create an account, this function easily abstracts the account creation by sending 1 token internally. seed, weight are optional, and for the weight value, threshold will also have the same value internally. |
 | --- | --- |
-| Parameters | string sender,
-string currencyID,
-int amount,
-string seed (optional),
-number weight (default = 100) |
+| Parameters | string sender, string currencyID, int amount, string seed (optional), number weight (default = 100) |
 | Return Value | object { wallet, rawOperation } |
 
 __example__
@@ -628,10 +622,7 @@ console.log(res.data);
 
 | Feature | Create a new account. Note: In mitum network, a native-token transaction is required to create an account. Therefore, the sender's address, currency ID, and amount must be entered. |
 | --- | --- |
-| Parameters | string senderAddress,
-string receiverPublickey,
-string currency ID,
-int amount |
+| Parameters | string senderAddress, string receiverPublickey, string currency ID, int amount |
 | Return Value | object rawOperation |
 
 __example__
@@ -825,9 +816,7 @@ console.log(createOperation);
 
 | Feature | Replace the publickey involved in generating the address. (single or multi sig account ⇒ single account) Note: The address is preserved, only the publickey is changed, so the math to calculate the address is no longer true. |
 | --- | --- |
-| Parameters | string targetAddress,
-string newPublickey,
-string currencyID, |
+| Parameters | string targetAddress, string newPublickey, string currencyID |
 | Return Value | object rawOperation |
 
 __example__
