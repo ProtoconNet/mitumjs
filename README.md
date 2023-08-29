@@ -1,7 +1,7 @@
 ## Abstraction
 
-- <mitum.js> is the framework of the mitum blockchain written in the typescript language.
-- The Mitum blockchain operates on a "multi-sig account" basis. However, for user convenience, 'single-sig' is prioritized.
+- __mitum.js__ is the framework of the mitum blockchain written in the typescript language.
+- The Mitum blockchain operates on a __multi-sig account__ basis. However, for user convenience, __single-sig__ is prioritized.
 - Name the method so that it can be called intuitively from the user's perspective.
 - For consistency, method names use camel notation.
 - To eliminate confusion about the singular/plural representation of method names, we unify the singular notation.
@@ -79,7 +79,7 @@ Signed operation object must be **sent to the network via the operation.send() f
 | Parameters | null |
 | Return Value | string version |
 
-example
+__example__
 
 ```jsx
 const info = mitum.version();
@@ -96,7 +96,7 @@ v1.0.0 Prehistoric
 | Parameters | null |
 | Return Value | object infomation |
 
-example
+__example__
 
 ```jsx
 // Note: an asynchronous request.
@@ -130,7 +130,7 @@ nodeInfo();
 | Parameters | string rpcUrl |
 | Return Value | null |
 
-example
+__example__
 
 ```jsx
 mitum.setNode("http://127.0.0.1:54320");
@@ -147,7 +147,7 @@ http://127.0.0.1:54320
 | Parameters | null |
 | Return Value | string rpcUrl |
 
-example
+__example__
 
 ```jsx
 const info = mitum.getNode();
@@ -163,7 +163,7 @@ http://127.0.0.1:54320
 | Parameters | null |
 | Return Value | string chainID |
 
-example
+__example__
 
 ```jsx
 const info = mitum.chain();
@@ -179,7 +179,7 @@ mitum
 | Parameters | string chainID |
 | Return Value | null |
 
-example
+__example__
 
 ```jsx
 mitum.setChain("<new Mitum network id>");
@@ -187,13 +187,12 @@ mitum.setChain("<new Mitum network id>");
 
 ### setDefaultCurrency(currencyID)
 
-| Feature | Set the default currency ID.
-Note: The default currency can be navite coin, or it can be a background currency that simply exists for account creation. |
+| Feature | Set the default currency ID. Note: The default currency can be navite coin, or it can be a background currency that simply exists for account creation. |
 | --- | --- |
 | Parameters | string currency ID |
 | Return Value | null |
 
-example
+__example__
 
 ```jsx
 mitum.setDefaultCurrency("MCC");
@@ -205,13 +204,12 @@ MCC
 
 ### getDefaultCurrency()
 
-| Feature | Get the value of the default currency ID.
-Note: The default currency can be navite coin, or it can be a background currency that simply exists for account creation. |
+| Feature | Get the value of the default currency ID. Note: The default currency can be navite coin, or it can be a background currency that simply exists for account creation. |
 | --- | --- |
 | Parameters | null |
 | Return Value | string currency ID |
 
-example
+__example__
 
 ```jsx
 const defaultCurrency = mitum.getDefaultCurrency();
@@ -225,14 +223,12 @@ PEN
 
 ### key(?: seed)
 
-| Feature | If you put seed as a parameter, it will generate a key pair.
-If nothing is provided (null), a random key pair is generated.
-Note: if you include a seed, it must be at least 36 characters long. |
+| Feature | If you put seed as a parameter, it will generate a key pair. If nothing is provided (null), a random key pair is generated. Note: if you include a seed, it must be at least 36 characters long. |
 | --- | --- |
 | Parameters | null or string seed |
 | Return Value | object key pair |
 
-example
+__example__
 
 ```jsx
 const key = mitum.account.key();
@@ -288,7 +284,7 @@ console.log(seedKey);
 | Parameters | int n |
 | Return Value | object key pairs |
 
-example
+__example__
 
 ```jsx
 const keys = mitum.account.keys(2);
@@ -314,13 +310,12 @@ console.log(keys);
 
 ### fromPrivateKey(privatekey)
 
-| Feature | Obtain the public key that is derived from the private key.
-Note: It can be used for both BTC and ETH private key. |
+| Feature | Obtain the public key that is derived from the private key. Note: It can be used for both BTC and ETH private key. |
 | --- | --- |
 | Parameters | string privatekey |
 | Return Value | object keyPair |
 
-example
+__example__
 
 ```jsx
 const BTC_PRIVATE_KEY = "62LMhQdA2BabwWTyA5Y4gipeby8uUtz39MWJt8vSXxGvmpr";
@@ -376,14 +371,12 @@ console.log(ethKeypair);
 
 ### **etherKey(?: seed)**
 
-| Feature | f you put seed as a parameter, it will generate a Ethereum’s key pair.
-If nothing is provided (null), a random key pair is generated.
-Note: if you include a seed, it must be at least 36 characters long. |
+| Feature | f you put seed as a parameter, it will generate a Ethereum’s key pair. If nothing is provided (null), a random key pair is generated. Note: if you include a seed, it must be at least 36 characters long. |
 | --- | --- |
 | Parameters | null or string seed |
 | Return Value | key pair |
 
-example
+__example__
 
 ```jsx
 const key = mitum.account.etherKey();
@@ -445,7 +438,7 @@ console.log(seedKey);
 | Parameters | int n |
 | Return Value | key pair |
 
-example
+__example__
 
 ```jsx
 const keys = mitum.account.etherKeys(2);
@@ -463,13 +456,12 @@ console.log(keys);
 
 ### address(publickey)
 
-| Feature | Compute and return the account's address from the public key.
-Note: The account address is only calculated, not created on the mitum network. |
+| Feature | Compute and return the account's address from the public key. Note: The account address is only calculated, not created on the mitum network. |
 | --- | --- |
 | Parameters | string publickey |
 | Return Value | string address |
 
-example
+__example__
 
 ```jsx
 const PUBLIC_KEY = "diLUcZugeDFW6ftQdcjdz8Ks1KBGiACo9GAcKQUgwFdfmpu";
@@ -482,13 +474,12 @@ console.log(address);
 
 ### etherAddress(etherPublickey)
 
-| Feature | Compute and return the account's address from the Ethereum’s public key.
-Note: The account address is only calculated, not created on the mitum network. |
+| Feature | Compute and return the account's address from the Ethereum’s public key. Note: The account address is only calculated, not created on the mitum network. |
 | --- | --- |
 | Parameters | string publickey |
 | Return Value | string address |
 
-example
+__example__
 
 ```jsx
 const ETH_PUBLIC_KEY = "048bbbc4796a0a310762f08611df35c3799ce2dcb46f77985b05473e332cad1ce38a60403e1742334d0391a64936b1d0a64517730e73ab14493c0c8b725e4b1130epu";
@@ -501,16 +492,13 @@ console.log(address);
 
 ### addressForMultiSig(publickeys, threshold)
 
-| Feature | Compute and return the account's address from multiple public keys.
-Each public key should have a weight set based on its priority or importance in the multi sig account.
-The threshold must be less than or equal to 100, and the sum of the weights assigned to each publickey must be greater than or equal to the threshold.
-Note: The account address is only calculated, not created on the mitum network. |
+| Feature | Compute and return the account's address from multiple public keys. Each public key should have a weight set based on its priority or importance in the multi sig account. The threshold must be less than or equal to 100, and the sum of the weights assigned to each publickey must be greater than or equal to the threshold. Note: The account address is only calculated, not created on the mitum network. |
 | --- | --- |
 | Parameters | Array object { publickey, weight },
 int threshold |
 | Return Value | string address |
 
-example
+__example__
 
 ```jsx
 const pubkey01 = {
@@ -533,16 +521,13 @@ HWSPS3UyBByUg8eWTm3xM6Z2JXFq4Lqsj1fiVcsj15YVmca
 
 ### etherAddressForMultiSig(etherPublickeys, threshold)
 
-| Feature | Compute and return the account's address from multiple Ethereum’s public keys.
-Each public key should have a weight set based on its priority or importance in the multi sig account.
-The threshold must be less than or equal to 100, and the sum of the weights assigned to each publickey must be greater than or equal to the threshold.
-Note: The account address is only calculated, not created on the mitum network. |
+| Feature | Compute and return the account's address from multiple Ethereum’s public keys. Each public key should have a weight set based on its priority or importance in the multi sig account. The threshold must be less than or equal to 100, and the sum of the weights assigned to each publickey must be greater than or equal to the threshold. Note: The account address is only calculated, not created on the mitum network. |
 | --- | --- |
 | Parameters | Array object { publickey, weight },
 int threshold |
 | Return Value | string address |
 
-example
+__example__
 
 ```jsx
 const etherPubkey01 = {
@@ -565,8 +550,7 @@ console.log(multisigAddress);
 
 ### createWallet(sender, currencyID, amount, ?:seed, ?:weight)
 
-| Feature | Create an operation to create a new account.
-Notes: While the Mithumb network requires a native token transaction to create an account, this function easily abstracts the account creation by sending 1 token internally. seed, weight are optional, and for the weight value, threshold will also have the same value internally. |
+| Feature | Create an operation to create a new account. Notes: While the Mithumb network requires a native token transaction to create an account, this function easily abstracts the account creation by sending 1 token internally. seed, weight are optional, and for the weight value, threshold will also have the same value internally. |
 | --- | --- |
 | Parameters | string sender,
 string currencyID,
@@ -575,7 +559,7 @@ string seed (optional),
 number weight (default = 100) |
 | Return Value | object { wallet, rawOperation } |
 
-example
+__example__
 
 ```jsx
 const sender = "8DtafRFAvcvXgYHwvsUToY9UT4hkfRxi4AsCNPzWs5Y4mca";
@@ -615,14 +599,12 @@ console.log(operation);
 
 ### touch(privatekey, operation)
 
-| Feature | Create a new account from Ethereum’s publickey.
-Note: In mitum network, a native-token transaction is required to create an account. Therefore, the sender's address, currency ID, and amount must be entered. |
+| Feature | Create a new account from Ethereum’s publickey. Note: In mitum network, a native-token transaction is required to create an account. Therefore, the sender's address, currency ID, and amount must be entered. |
 | --- | --- |
-| Parameters | string privatekey,
-object wallet (return value of ‘function createWallet’) |
+| Parameters | string privatekey, object wallet (return value of ‘function createWallet’) |
 | Return Value | object httpResponse |
 
-example
+__example__
 
 ```jsx
 const sender = "8DtafRFAvcvXgYHwvsUToY9UT4hkfRxi4AsCNPzWs5Y4mca";
@@ -644,8 +626,7 @@ console.log(res.data);
 
 ### create(sender, receiverPubkey, currencyID, amount)
 
-| Feature | Create a new account.
-Note: In mitum network, a native-token transaction is required to create an account. Therefore, the sender's address, currency ID, and amount must be entered. |
+| Feature | Create a new account. Note: In mitum network, a native-token transaction is required to create an account. Therefore, the sender's address, currency ID, and amount must be entered. |
 | --- | --- |
 | Parameters | string senderAddress,
 string receiverPublickey,
@@ -653,7 +634,7 @@ string currency ID,
 int amount |
 | Return Value | object rawOperation |
 
-example
+__example__
 
 ```jsx
 const senderAddress = "8DtafRFAvcvXgYHwvsUToY9UT4hkfRxi4AsCNPzWs5Y4mca";
@@ -691,16 +672,12 @@ console.log(createOperation);
 
 ### createEtherAccount(sender, receiverEtherPubkey, currencyID, amount)
 
-| Feature | Create a new account from Ethereum’s publickey.
-Note: In mitum network, a native-token transaction is required to create an account. Therefore, the sender's address, currency ID, and amount must be entered. |
+| Feature | Create a new account from Ethereum’s publickey. Note: In mitum network, a native-token transaction is required to create an account. Therefore, the sender's address, currency ID, and amount must be entered. |
 | --- | --- |
-| Parameters | string senderAddress,
-string receiverPublickey,
-string currency ID,
-int amount |
+| Parameters | string senderAddress, string receiverPublickey, string currency ID, int amount |
 | Return Value | object rawOperation |
 
-example
+__example__
 
 ```jsx
 const senderAddress = "8DtafRFAvcvXgYHwvsUToY9UT4hkfRxi4AsCNPzWs5Y4mca";
@@ -738,18 +715,12 @@ console.log(createOperation);
 
 ### createMultiSig(sender, receiverPubkeys, currencyID, amount, threshold)
 
-| Feature | Create a new account from multi publickeys.
-Note: In mitum network, a native-token transaction is required to create an account. Therefore, the sender's address, currency ID, and amount must be entered. Each public key should have a weight set based on its priority or importance in the multi sig account.
-The threshold must be less than or equal to 100, and the sum of the weights assigned to each publickey must be greater than or equal to the threshold. |
+| Feature | Create a new account from multi publickeys. Note: In mitum network, a native-token transaction is required to create an account. Therefore, the sender's address, currency ID, and amount must be entered. Each public key should have a weight set based on its priority or importance in the multi sig account. The threshold must be less than or equal to 100, and the sum of the weights assigned to each publickey must be greater than or equal to the threshold. |
 | --- | --- |
-| Parameters | string senderAddress,
-Array object {publickey, weight},
-string currency ID,
-int amount,
-int threshold |
+| Parameters | string senderAddress, Array object {publickey, weight}, string currency ID, int amount, int threshold |
 | Return Value | object rawOperation |
 
-example
+__example__
 
 ```jsx
 const senderAddress = "8DtafRFAvcvXgYHwvsUToY9UT4hkfRxi4AsCNPzWs5Y4mca";
@@ -798,18 +769,12 @@ console.log(createOperation);
 
 ### createEtherMultiSig(sender,receiverPubkeys,currencyID,amount,threshold)
 
-| Feature | Create a new account from multi Ethereum’s publickeys.
-Note: In mitum network, a native-token transaction is required to create an account. Therefore, the sender's address, currency ID, and amount must be entered. Each public key should have a weight set based on its priority or importance in the multi sig account.
-The threshold must be less than or equal to 100, and the sum of the weights assigned to each publickey must be greater than or equal to the threshold. |
+| Feature | Create a new account from multi Ethereum’s publickeys. Note: In mitum network, a native-token transaction is required to create an account. Therefore, the sender's address, currency ID, and amount must be entered. Each public key should have a weight set based on its priority or importance in the multi sig account. The threshold must be less than or equal to 100, and the sum of the weights assigned to each publickey must be greater than or equal to the threshold. |
 | --- | --- |
-| Parameters | string senderAddress,
-Array object {publickey, weight},
-string currency ID,
-int amount,
-int threshold |
+| Parameters | string senderAddress, Array object {publickey, weight}, string currency ID, int amount, int threshold |
 | Return Value | object rawOperation |
 
-example
+__example__
 
 ```jsx
 const senderAddress = "8DtafRFAvcvXgYHwvsUToY9UT4hkfRxi4AsCNPzWs5Y4mca";
@@ -858,16 +823,14 @@ console.log(createOperation);
 
 ### update(targetAddress, newPublickey, currencyID)
 
-| Feature | Replace the publickey involved in generating the address.
-(single or multi sig account ⇒ single account)
-Note: The address is preserved, only the publickey is changed, so the math to calculate the address is no longer true. |
+| Feature | Replace the publickey involved in generating the address. (single or multi sig account ⇒ single account) Note: The address is preserved, only the publickey is changed, so the math to calculate the address is no longer true. |
 | --- | --- |
 | Parameters | string targetAddress,
 string newPublickey,
 string currencyID, |
 | Return Value | object rawOperation |
 
-example
+__example__
 
 ```jsx
 const targetAddress = "2gWeBMRnZ8kmwU7dvJgv3rHpui7ksHMRKLjJiPUsbBAAmca";
@@ -900,17 +863,12 @@ console.log(updateOperation);
 
 ### updateMultiSig(targetAddress, newPubkeys, currencyID, threshold)
 
-| Feature | Replace the publickey involved in generating the address.
-(single or multi sig account ⇒ multi sig account)
-Note: The address is preserved, only the publickey is changed, so the math to calculate the address is no longer true. |
+| Feature | Replace the publickey involved in generating the address. (single or multi sig account ⇒ multi sig account) Note: The address is preserved, only the publickey is changed, so the math to calculate the address is no longer true. |
 | --- | --- |
-| Parameters | string targetAddress,
-Array object {publickey, weight},
-string currencyID,
-int threshold |
+| Parameters | string targetAddress, Array object {publickey, weight}, string currencyID, int threshold |
 | Return Value | object rawOperation |
 
-example
+__example__
 
 ```jsx
 const targetAddress = "2gWeBMRnZ8kmwU7dvJgv3rHpui7ksHMRKLjJiPUsbBAAmca";
@@ -958,7 +916,7 @@ console.log(updateOperation);
 | Parameters | string address |
 | Return Value | object accountInformation |
 
-example
+__example__
 
 ```jsx
 // Note: an asynchronous request.
@@ -1013,7 +971,7 @@ addressInfo();
 | Parameters | string address |
 | Return Value | object operationInformation |
 
-example
+__example__
 
 ```jsx
 // Note: an asynchronous request.
@@ -1036,7 +994,7 @@ operationByAddress();
 | Parameters | string publickey |
 | Return Value | object accountInformation |
 
-example
+__example__
 
 ```jsx
 // Note: an asynchronous request.
@@ -1056,13 +1014,12 @@ addressInfoByPub();
 
 ### getAllBlocks()
 
-| Feature | Get the information for all blocks.
-Note: The return value only shows information for some blocks, and you can get a link to get the next block's information from the returned object. |
+| Feature | Get the information for all blocks. Note: The return value only shows information for some blocks, and you can get a link to get the next block's information from the returned object. |
 | --- | --- |
 | Parameters | null |
 | Return Value | object blockInformation |
 
-example
+__example__
 
 ```jsx
 // Note: an asynchronous request.
@@ -1078,11 +1035,10 @@ blocksInfo();
 
 | Feature | Get information about a block from a specific block number or block hash. |
 | --- | --- |
-| Parameters | int blockNumber or
-string blockHash |
+| Parameters | int blockNumber or string blockHash |
 | Return Value | object blockInformation |
 
-example
+__example__
 
 ```jsx
 // Note: an asynchronous request.
@@ -1136,7 +1092,7 @@ blockInfo();
 | Parameters | int blockNumber |
 | Return Value | object operationInformation |
 
-example
+__example__
 
 ```jsx
 // Note: an asynchronous request.
@@ -1181,13 +1137,12 @@ operationInfo();
 
 ### getAllCurrencies()
 
-| Feature | Get information about all currencies in the network.
-Note: currency is a concept similar to a common native token. It can be more than one currency in the mitum network. |
+| Feature | Get information about all currencies in the network. Note: currency is a concept similar to a common native token. It can be more than one currency in the mitum network. |
 | --- | --- |
 | Parameters | null |
 | Return Value | object currenciesInformation |
 
-example
+__example__
 
 ```jsx
 // Note: an asynchronous request.
@@ -1216,7 +1171,7 @@ currencyInfo();
 | Parameters | string currencyID |
 | Return Value | object currencyInformation |
 
-example
+__example__
 
 ```jsx
 // Note: an asynchronous request.
@@ -1259,8 +1214,7 @@ currencyInfo();
 
 ### create(dataObject)
 
-| Feature | Create a new currency.
-Note: Many conditions are required to create a new currency. See the example below for the structure of the parameters. |
+| Feature | Create a new currency. Note: Many conditions are required to create a new currency. See the example below for the structure of the parameters. |
 | --- | --- |
 | Parameters | object currencyStruct |
 | Return Value | object currencyOperation |
@@ -1284,7 +1238,7 @@ Note: Many conditions are required to create a new currency. See the example bel
     - "fixed" collects a fixed fee, so you must enter a fee receiver address "feeReceiver" and a fixed fee "fee".
     - "ratio" collects a percentage of the transaction volume, so you must provide the address "feeReceiver", the fee ratio "fee", the minimum fee "minFee", and the maximum fee "maxFee".
 
-example
+__example__
 
 ```jsx
 const inputData = {
@@ -1322,8 +1276,7 @@ console.log(rawOperation);
 
 ### setPolicy(dataObject)
 
-| Feature | Create a new currency policy.
-Note: Creating a new currency means that a new currency policy is required. This requires many conditions, see the example below for the parameter structure. |
+| Feature | Create a new currency policy. Note: Creating a new currency means that a new currency policy is required. This requires many conditions, see the example below for the parameter structure. |
 | --- | --- |
 | Parameters | object policyStruct |
 | Return Value | object policyForm |
@@ -1345,7 +1298,7 @@ Note: Creating a new currency means that a new currency policy is required. This
     - "fixed" collects a fixed fee, so you must enter a fee receiver address "feeReceiver" and a fixed fee "fee".
     - "ratio" collects a percentage of the transaction volume, so you must provide the address "feeReceiver", the fee ratio "fee", the minimum fee "minFee", and the maximum fee "maxFee".
 
-example
+__example__
 
 ```jsx
 const inputData = {
@@ -1381,13 +1334,10 @@ console.log(rawOperation);
 
 | Feature | Sends the currency. |
 | --- | --- |
-| Parameters | string senderAddress,
-string receiverAddress,
-string currencyID,
-int amount |
+| Parameters | string senderAddress, string receiverAddress, string currencyID, int amount |
 | Return Value | object transferOperation |
 
-example
+__example__
 
 ```jsx
 const sender = "2gWeBMRnZ8kmwU7dvJgv3rHpui7ksHMRKLjJiPUsbBAAmca";
@@ -1420,15 +1370,12 @@ console.log(rawOperation);
 
 ### mint(receiver, currencyID, amount)
 
-| Feature | Increases the total supply of a particular currency.
-This is a feature that must be agreed upon by the nodes running the mitum network. |
+| Feature | Increases the total supply of a particular currency. This is a feature that must be agreed upon by the nodes running the mitum network. |
 | --- | --- |
-| Parameters | string receiverAddress,
-string currencyID,
-int amount |
+| Parameters | string receiverAddress, string currencyID, int amount |
 | Return Value | object inflationOperation |
 
-example
+__example__
 
 ```jsx
 const receiver = "2VKEH78tLMJ71KXzYQUFej5LmwprqiRSC44E2ax2tn8Bmca";
@@ -1463,7 +1410,7 @@ console.log(rawOperation);
 | Parameters | null |
 | Return Value | object operationInformations |
 
-example
+__example__
 
 ```jsx
 // Note: an asynchronous request.
@@ -1510,7 +1457,7 @@ operationsInfo();
 | Parameters | string factHash |
 | Return Value | object operationInformation |
 
-example
+__example__
 
 ```jsx
 // Note: an asynchronous request.
@@ -1558,12 +1505,10 @@ operationInfo();
 
 | Feature | Sign the raw operation using the privatekey. |
 | --- | --- |
-| Parameters | string privatekey,
-object operation,
-option nodeType |
+| Parameters | string privatekey, object operation, option nodeType |
 | Return Value | object signedOperation |
 
-example
+__example__
 
 ```jsx
 const sender = "2gWeBMRnZ8kmwU7dvJgv3rHpui7ksHMRKLjJiPUsbBAAmca";
@@ -1606,14 +1551,12 @@ console.log(signedOperation);
 
 ### send(signedOperation[, header])
 
-| Feature | Send the signed operation to the rpc node for broadcasting to the network.
-Note: Even if the response data is received successfully, it does not guarantee that the operation will be processed. Always check the operation's facthash to see if the operation was processed. |
+| Feature | Send the signed operation to the rpc node for broadcasting to the network. Note: Even if the response data is received successfully, it does not guarantee that the operation will be processed. Always check the operation's facthash to see if the operation was processed. |
 | --- | --- |
-| Parameters | object signedOperation,
-option httpHeader |
+| Parameters | object signedOperation, option httpHeader |
 | Return Value | object httpResponse |
 
-example
+__example__
 
 ```jsx
 // Note: an asynchronous request.
