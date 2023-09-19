@@ -8,7 +8,7 @@ import { sha256, Big } from "../utils/math.js";
 export const isIPAddress = (item: unknown): boolean => {
   const ipPattern = /^(http|https):\/\/(\d{1,3}\.){3}\d{1,3}(?::\d+)?$/;
   const domainPattern =
-    /^(http|https):\/\/(?:[\w-]+\.)+[\w-]+(?:\/[\w-./?%&=]*)?$/;
+      /^(http|https):\/\/(?:[\w-]+\.)+[\w-]+(?::\d+)?(?:\/[\w-./?%&=]*)?$/;
   return ipPattern.test(item as string) || domainPattern.test(item as string);
 };
 

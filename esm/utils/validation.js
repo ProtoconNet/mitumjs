@@ -4,7 +4,7 @@ import base58 from "bs58";
 import { sha256, Big } from "../utils/math.js";
 export const isIPAddress = (item) => {
     const ipPattern = /^(http|https):\/\/(\d{1,3}\.){3}\d{1,3}(?::\d+)?$/;
-    const domainPattern = /^(http|https):\/\/(?:[\w-]+\.)+[\w-]+(?:\/[\w-./?%&=]*)?$/;
+    const domainPattern = /^(http|https):\/\/(?:[\w-]+\.)+[\w-]+(?::\d+)?(?:\/[\w-./?%&=]*)?$/;
     return ipPattern.test(item) || domainPattern.test(item);
 };
 // don't check hex of char

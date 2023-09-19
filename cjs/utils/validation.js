@@ -33,7 +33,7 @@ const bs58_1 = __importDefault(require("bs58"));
 const math_js_1 = require("../utils/math.js");
 const isIPAddress = (item) => {
     const ipPattern = /^(http|https):\/\/(\d{1,3}\.){3}\d{1,3}(?::\d+)?$/;
-    const domainPattern = /^(http|https):\/\/(?:[\w-]+\.)+[\w-]+(?:\/[\w-./?%&=]*)?$/;
+    const domainPattern = /^(http|https):\/\/(?:[\w-]+\.)+[\w-]+(?::\d+)?(?:\/[\w-./?%&=]*)?$/;
     return ipPattern.test(item) || domainPattern.test(item);
 };
 exports.isIPAddress = isIPAddress;
