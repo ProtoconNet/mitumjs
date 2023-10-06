@@ -95,7 +95,7 @@ export abstract class ContractFact extends Fact {
             this.sender.toString() !== this.contract.toString(),
             MitumError.detail(ECODE.INVALID_FACT, "sender is same with contract address")
         )
-        this._hash = this.hashing()
+        // this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {
