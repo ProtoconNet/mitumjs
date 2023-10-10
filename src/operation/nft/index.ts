@@ -79,8 +79,8 @@ export class NFT extends ContractGenerator {
         sender: string | Address,
         uri: string | LongString,
         hash: string | LongString,
-        creator: string | Address,
         currency: string | CurrencyID,
+        creator: string | Address,
     ) {
         return new Operation(this.networkID, new MintFact(TimeStamp.new().UTC(), sender, [new MintItem(
             this.contract,
