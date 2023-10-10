@@ -12,6 +12,7 @@ export class CreateServiceFact extends ContractFact {
         currency: string | CurrencyID,
     ) {
         super(HINT.KYC.CREATE_SERVICE.FACT, token, sender, contract, currency)
+        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {
