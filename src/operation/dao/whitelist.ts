@@ -22,7 +22,7 @@ export class Whitelist implements IBuffer, IHintedObject {
         )
 
         Assert.check(
-            !hasOverlappingAddress(accounts),
+            hasOverlappingAddress(accounts),
             MitumError.detail(ECODE.DAO.INVALID_WHITELIST, "duplicate account found in whitelist")
         )
     }
