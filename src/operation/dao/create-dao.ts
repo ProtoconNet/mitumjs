@@ -74,6 +74,8 @@ export class CreateDAOFact extends ContractFact {
                 MitumError.detail(ECODE.INVALID_FACT, "contract is same with whitelist address")
             )
         )
+        
+        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {
