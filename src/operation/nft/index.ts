@@ -15,7 +15,7 @@ import { CurrencyID } from "../../common"
 import { contract, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp } from "../../types"
 
-type data = {
+type collectionData = {
     name: string | LongString
     uri: string | LongString
     royalty: string | number | Big
@@ -38,7 +38,7 @@ export class NFT extends ContractGenerator {
 
     createCollection(
         sender: string | Address,
-        data: data,
+        data: collectionData,
         currency: string | CurrencyID,
     ) {
         return new Operation(
@@ -58,7 +58,7 @@ export class NFT extends ContractGenerator {
 
     setPolicy(
         sender: string | Address,
-        data: data,
+        data: collectionData,
         currency: string | CurrencyID,
     ) {
         return new Operation(
