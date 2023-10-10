@@ -37,13 +37,13 @@ export class Mitum extends Generator {
         this._operation = new Operation(this.networkID, this.api)
 
         this._contract = new Contract(this.networkID, this.api)
-        this._nft = new NFT(this.networkID, undefined, this.api)
-        this._credential = new Credential(this.networkID, undefined, this.api)
-        this._timestamp = new TimeStamp(this.networkID, undefined, this.api)
-        this._sto = new STO(this.networkID, undefined, this.api)
-        this._kyc = new KYC(this.networkID, undefined, this.api)
-        this._dao = new DAO(this.networkID, undefined, this.api)
-        this._token = new Token(this.networkID, undefined, this.api)
+        this._nft = new NFT(this.networkID, this.api)
+        this._credential = new Credential(this.networkID, this.api)
+        this._timestamp = new TimeStamp(this.networkID, this.api)
+        this._sto = new STO(this.networkID, this.api)
+        this._kyc = new KYC(this.networkID, this.api)
+        this._dao = new DAO(this.networkID, this.api)
+        this._token = new Token(this.networkID, this.api)
     }
 
     private refresh() {
@@ -55,13 +55,13 @@ export class Mitum extends Generator {
         this._operation = new Operation(this.networkID, this.api)
 
         this._contract = new Contract(this.networkID, this.api)
-        this._nft = new NFT(this.networkID, this._nft.contract, this.api)
-        this._credential = new Credential(this.networkID, this._credential.contract, this.api)
-        this._timestamp = new TimeStamp(this.networkID, this._timestamp.contract, this.api)
-        this._sto = new STO(this.networkID, this._sto.contract, this.api)
-        this._kyc = new KYC(this.networkID, this._kyc.contract, this.api)
-        this._dao = new DAO(this.networkID, this._dao.contract, this.api)
-        this._token = new Token(this.networkID, this._token.contract, this.api)
+        this._nft = new NFT(this.networkID, this.api)
+        this._credential = new Credential(this.networkID, this.api)
+        this._timestamp = new TimeStamp(this.networkID, this.api)
+        this._sto = new STO(this.networkID, this.api)
+        this._kyc = new KYC(this.networkID, this.api)
+        this._dao = new DAO(this.networkID, this.api)
+        this._token = new Token(this.networkID, this.api)
     }
 
     get node(): Node {

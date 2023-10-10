@@ -14,13 +14,13 @@ import { Big, IP, LongString, TimeStamp } from "../../types"
 export class Token extends ContractGenerator {
     constructor(
         networkID: string,
-        contract?: string | Address,
         api?: string | IP,
     ) {
-        super(networkID, contract, api)
+        super(networkID, api)
     }
 
     registerToken(
+        contractAdd: string | Address,
         sender: string | Address,
         tokenID: string | CurrencyID,
         currency: string | CurrencyID,
@@ -32,7 +32,7 @@ export class Token extends ContractGenerator {
             new RegisterTokenFact(
                 TimeStamp.new().UTC(),
                 sender,
-                this.contract,
+                contractAdd,
                 tokenID,
                 currency,
                 symbol,
@@ -42,6 +42,7 @@ export class Token extends ContractGenerator {
     }
 
     mint(
+        contractAdd: string | Address,
         sender: string | Address,
         tokenID: string | CurrencyID,
         currency: string | CurrencyID,
@@ -53,7 +54,7 @@ export class Token extends ContractGenerator {
             new MintFact(
                 TimeStamp.new().UTC(),
                 sender,
-                this.contract,
+                contractAdd,
                 tokenID,
                 currency,
                 receiver,
@@ -63,6 +64,7 @@ export class Token extends ContractGenerator {
     }
 
     burn(
+        contractAdd: string | Address,
         sender: string | Address,
         tokenID: string | CurrencyID,
         currency: string | CurrencyID,
@@ -74,7 +76,7 @@ export class Token extends ContractGenerator {
             new BurnFact(
                 TimeStamp.new().UTC(),
                 sender,
-                this.contract,
+                contractAdd,
                 tokenID,
                 currency,
                 target,
@@ -84,6 +86,7 @@ export class Token extends ContractGenerator {
     }
 
     transfer(
+        contractAdd: string | Address,
         sender: string | Address,
         tokenID: string | CurrencyID,
         currency: string | CurrencyID,
@@ -95,7 +98,7 @@ export class Token extends ContractGenerator {
             new TransferFact(
                 TimeStamp.new().UTC(),
                 sender,
-                this.contract,
+                contractAdd,
                 tokenID,
                 currency,
                 receiver,
@@ -105,6 +108,7 @@ export class Token extends ContractGenerator {
     }
 
     transferFrom(
+        contractAdd: string | Address,
         sender: string | Address,
         tokenID: string | CurrencyID,
         currency: string | CurrencyID,
@@ -117,7 +121,7 @@ export class Token extends ContractGenerator {
             new TransferFromFact(
                 TimeStamp.new().UTC(),
                 sender,
-                this.contract,
+                contractAdd,
                 tokenID,
                 currency,
                 receiver,
@@ -128,6 +132,7 @@ export class Token extends ContractGenerator {
     }
 
     approve(
+        contractAdd: string | Address,
         sender: string | Address,
         tokenID: string | CurrencyID,
         currency: string | CurrencyID,
@@ -139,7 +144,7 @@ export class Token extends ContractGenerator {
             new ApproveFact(
                 TimeStamp.new().UTC(),
                 sender,
-                this.contract,
+                contractAdd,
                 tokenID,
                 currency,
                 approved,

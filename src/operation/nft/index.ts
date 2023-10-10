@@ -30,13 +30,13 @@ type Creator = {
 export class NFT extends ContractGenerator {
     constructor(
         networkID: string,
-        contract?: string | Address,
         api?: string | IP,
     ) {
-        super(networkID, contract, api)
+        super(networkID, api)
     }
 
     createCollection(
+        contractAdd: string | Address,
         sender: string | Address,
         data: collectionData,
         currency: string | CurrencyID,
@@ -46,7 +46,7 @@ export class NFT extends ContractGenerator {
             new CreateCollectionFact(
                 TimeStamp.new().UTC(),
                 sender,
-                this.contract,
+                contractAdd,
                 data.name,
                 data.royalty,
                 data.uri,
@@ -57,6 +57,7 @@ export class NFT extends ContractGenerator {
     }
 
     setPolicy(
+        contractAdd: string | Address,
         sender: string | Address,
         data: collectionData,
         currency: string | CurrencyID,
@@ -66,7 +67,7 @@ export class NFT extends ContractGenerator {
             new UpdateCollectionPolicyFact(
                 TimeStamp.new().UTC(),
                 sender,
-                this.contract,
+                contractAdd,
                 data.name,
                 data.royalty,
                 data.uri,
@@ -76,6 +77,7 @@ export class NFT extends ContractGenerator {
     }
 
     mint(
+        contractAdd: string | Address,
         sender: string | Address,
         uri: string | LongString,
         hash: string | LongString,
@@ -83,7 +85,7 @@ export class NFT extends ContractGenerator {
         creator: string | Address,
     ) {
         return new Operation(this.networkID, new MintFact(TimeStamp.new().UTC(), sender, [new MintItem(
-            this.contract,
+            contractAdd,
             hash,
             uri,
             new Signers(100, [new Signer(creator, 100, false)]),
@@ -92,6 +94,7 @@ export class NFT extends ContractGenerator {
     }
 
     mintForMultiCreators(
+        contractAdd: string | Address,
         sender: string | Address,
         uri: string | LongString,
         hash: string | LongString,
@@ -105,7 +108,7 @@ export class NFT extends ContractGenerator {
                 sender,
                 [
                     new MintItem(
-                        this.contract,
+                        contractAdd,
                         hash,
                         uri,
                         new Signers(
@@ -120,6 +123,7 @@ export class NFT extends ContractGenerator {
     }
 
     transfer(
+        contractAdd: string | Address,
         sender: string | Address,
         receiver: string | Address,
         nftID: string | number | Big,
@@ -130,7 +134,7 @@ export class NFT extends ContractGenerator {
             sender,
             [
                 new TransferItem(
-                    this.contract,
+                    contractAdd,
                     receiver,
                     nftID,
                     currency,
@@ -142,6 +146,7 @@ export class NFT extends ContractGenerator {
     }
 
     approve(
+        contractAdd: string | Address,
         owner: string | Address,
         operator: string | Address,
         nftID: string | number | Big,
@@ -154,7 +159,7 @@ export class NFT extends ContractGenerator {
                 owner,
                 [
                     new ApproveItem(
-                        this.contract,
+                        contractAdd,
                         operator,
                         nftID,
                         currency,
@@ -165,6 +170,7 @@ export class NFT extends ContractGenerator {
     }
 
     setApprovalForAll(
+        contractAdd: string | Address,
         owner: string | Address,
         operator: string | Address,
         mode: "allow" | "cancel",
@@ -177,7 +183,7 @@ export class NFT extends ContractGenerator {
                 owner,
                 [
                     new DelegateItem(
-                        this.contract,
+                        contractAdd,
                         operator,
                         mode,
                         currency,
@@ -188,6 +194,7 @@ export class NFT extends ContractGenerator {
     }
 
     signNFT(
+        contractAdd: string | Address,
         creator: string | Address,
         nftID: string | number | Big,
         currency: string | CurrencyID,
@@ -199,7 +206,7 @@ export class NFT extends ContractGenerator {
                 creator,
                 [
                     new SignItem(
-                        this.contract,
+                        contractAdd,
                         nftID,
                         currency,
                     )
@@ -208,70 +215,70 @@ export class NFT extends ContractGenerator {
         )
     }
 
-    async getCollectionInfo() {
-        const data = await getAPIData(() => contract.nft.getCollection(this.api, this.contract))
+    async getCollectionInfo(contractAdd: string | Address) {
+        const data = await getAPIData(() => contract.nft.getCollection(this.api, contractAdd))
         return data ? data._embedded : null
     }
 
     /**
      * @deprecated use getCollectionInfo()
      */
-    async getCollectionPolicy() {
-        const design = await this.getCollectionInfo()
+    async getCollectionPolicy(contractAdd: string | Address) {
+        const design = await this.getCollectionInfo(contractAdd)
         return design ? design.policy : null
     }
 
-    async ownerOf(nftID: string | number | Big) {
+    async ownerOf(contractAdd: string | Address, nftID: string | number | Big) {
         const data = await getAPIData(() => contract.nft.getNFT(
             this.api,
-            this.contract,
+            contractAdd,
             nftID,
         ))
 
         return data ? data._embedded.owner : null
     }
 
-    async getApproved(nftID: number) {
+    async getApproved(contractAdd: string | Address, nftID: number) {
         const data = await getAPIData(() => contract.nft.getNFT(
             this.api,
-            this.contract,
+            contractAdd,
             nftID,
         ))
 
         return data ? data._embedded.approved : null
     }
 
-    async totalSupply() {
+    async totalSupply(contractAdd: string | Address) {
         const data = await getAPIData(() => contract.nft.getNFTs(
             this.api,
-            this.contract,
+            contractAdd,
         ))
 
         return data ? data._embedded.length : null
     }
 
-    async tokenURI(nftID: number) {
+    async tokenURI(contractAdd: string | Address, nftID: number) {
         const data = await getAPIData(() => contract.nft.getNFT(
             this.api,
-            this.contract,
+            contractAdd,
             nftID,
         ))
 
         return data ? data._embedded.uri : null
     }
 
-    async isApprovedForAll(owner: string) {
+    async isApprovedForAll(contractAdd: string | Address, owner: string) {
         return await getAPIData(() => contract.nft.getAccountOperators(
             this.api,
-            this.contract,
+            contractAdd,
             owner,
         ))
     }
 
-    async getNFTInfo(nftID: number) {
+    async getNFTInfo(contractAdd: string | Address, nftID: number) {
         return await getAPIData(() => contract.nft.getNFT(
             this.api,
-            this.contract,
+            contractAdd,
             nftID,
         ))
     }
