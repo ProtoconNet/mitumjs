@@ -17,7 +17,7 @@ export class TimeStamp extends ContractGenerator {
     }
 
     createService(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         currency: string | CurrencyID,
     ) {
@@ -26,14 +26,14 @@ export class TimeStamp extends ContractGenerator {
             new CreateServiceFact(
                 TS.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 currency,
             )
         )
     }
 
     append(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         projectID: string,
         requestTimeStamp: string | number | Big,
@@ -43,7 +43,7 @@ export class TimeStamp extends ContractGenerator {
         const fact = new AppendFact(
             TS.new().UTC(),
             sender,
-            contractAdd,
+            contractAddr,
             projectID,
             requestTimeStamp,
             data,
@@ -53,15 +53,15 @@ export class TimeStamp extends ContractGenerator {
         return new Operation(this.networkID, fact)
     }
 
-    async getServiceInfo(contractAdd: string | Address) {
-        return await getAPIData(() => contract.timestamp.getService(this.api, contractAdd))
+    async getServiceInfo(contractAddr: string | Address) {
+        return await getAPIData(() => contract.timestamp.getService(this.api, contractAddr))
     }
 
     async getTimestampInfo(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         projectID: string,
         tid: string | number | Big,
     ) {
-        return await getAPIData(() => contract.timestamp.getTimeStamp(this.api, contractAdd, projectID, tid))
+        return await getAPIData(() => contract.timestamp.getTimeStamp(this.api, contractAddr, projectID, tid))
     }
 }

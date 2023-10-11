@@ -29,7 +29,7 @@ export class STO extends ContractGenerator {
     }
 
     authorizeOperator(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         operator: string | Address,
         partition: string | Partition,
@@ -42,7 +42,7 @@ export class STO extends ContractGenerator {
                 sender,
                 [
                     new AuthorizeOperatorItem(
-                        contractAdd,
+                        contractAddr,
                         operator,
                         partition,
                         currency,
@@ -53,7 +53,7 @@ export class STO extends ContractGenerator {
     }
 
     createService(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         data: data,
         currency: string | CurrencyID,
@@ -65,7 +65,7 @@ export class STO extends ContractGenerator {
                 sender,
                 [
                     new CreateSecurityTokenItem(
-                        contractAdd,
+                        contractAddr,
                         data.granularity,
                         data.defaultPartition,
                         data.controllers,
@@ -77,7 +77,7 @@ export class STO extends ContractGenerator {
     }
 
     issue(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         receiver: string | Address,
         partition: string | Partition,
@@ -91,7 +91,7 @@ export class STO extends ContractGenerator {
                 sender,
                 [
                     new IssueSecurityTokenItem(
-                        contractAdd,
+                        contractAddr,
                         receiver,
                         amount,
                         partition,
@@ -103,7 +103,7 @@ export class STO extends ContractGenerator {
     }
 
     redeem(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         tokenHolder: string | Address,
         partition: string | Partition,
@@ -117,7 +117,7 @@ export class STO extends ContractGenerator {
                 sender,
                 [
                     new RedeemTokenItem(
-                        contractAdd,
+                        contractAddr,
                         tokenHolder,
                         amount,
                         partition,
@@ -129,7 +129,7 @@ export class STO extends ContractGenerator {
     }
 
     revokeOperator(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         operator: string | Address,
         partition: string | Partition,
@@ -142,7 +142,7 @@ export class STO extends ContractGenerator {
                 sender,
                 [
                     new RevokeOperatorItem(
-                        contractAdd,
+                        contractAddr,
                         operator,
                         partition,
                         currency,
@@ -153,7 +153,7 @@ export class STO extends ContractGenerator {
     }
 
     setDocument(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         title: string,
         uri: string,
@@ -165,7 +165,7 @@ export class STO extends ContractGenerator {
             new SetDocumentFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 title,
                 uri,
                 documentHash,
@@ -175,7 +175,7 @@ export class STO extends ContractGenerator {
     }
 
     transferByPartition(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         holder: string | Address,
         receiver: string | Address,
@@ -190,7 +190,7 @@ export class STO extends ContractGenerator {
                 sender,
                 [
                     new TransferSecurityTokenPartitionItem(
-                        contractAdd,
+                        contractAddr,
                         holder,
                         receiver,
                         partition,

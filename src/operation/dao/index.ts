@@ -48,7 +48,7 @@ export class DAO extends ContractGenerator {
     }
 
     createService(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         data: daoData,
         currency: string | CurrencyID,
@@ -58,7 +58,7 @@ export class DAO extends ContractGenerator {
             new CreateDAOFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 data.option,
                 data.token,
                 data.threshold,
@@ -78,7 +78,7 @@ export class DAO extends ContractGenerator {
     }
 
     update(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         data: daoData,
         currency: string | CurrencyID,
@@ -88,7 +88,7 @@ export class DAO extends ContractGenerator {
             new UpdatePolicyFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 data.option,
                 data.token,
                 data.threshold,
@@ -150,7 +150,7 @@ export class DAO extends ContractGenerator {
     }
 
     propose(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         proposalID: string,
         proposal: CryptoProposal | BizProposal,
@@ -161,7 +161,7 @@ export class DAO extends ContractGenerator {
             new ProposeFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 proposalID,
                 proposal,
                 currency
@@ -170,7 +170,7 @@ export class DAO extends ContractGenerator {
     }
 
     register(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         proposalID: string,
         delegator: string | Address,
@@ -181,7 +181,7 @@ export class DAO extends ContractGenerator {
             new RegisterFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 proposalID,
                 delegator,
                 currency,
@@ -190,7 +190,7 @@ export class DAO extends ContractGenerator {
     }
 
     cancel(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         proposalID: string,
         currency: string | CurrencyID,
@@ -200,7 +200,7 @@ export class DAO extends ContractGenerator {
             new CancelProposalFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 proposalID,
                 currency
             )
@@ -208,7 +208,7 @@ export class DAO extends ContractGenerator {
     }
 
     snapBeforeVoting(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         proposalID: string,
         currency: string | CurrencyID,
@@ -218,7 +218,7 @@ export class DAO extends ContractGenerator {
             new PreSnapFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 proposalID,
                 currency
             )
@@ -226,7 +226,7 @@ export class DAO extends ContractGenerator {
     }
 
     castVote(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         proposalID: string,
         voteOption: number,
@@ -237,7 +237,7 @@ export class DAO extends ContractGenerator {
             new VoteFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 proposalID,
                 voteOption,
                 currency
@@ -246,7 +246,7 @@ export class DAO extends ContractGenerator {
     }
 
     snapAfterVoting(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         proposalID: string,
         currency: string | CurrencyID,
@@ -256,7 +256,7 @@ export class DAO extends ContractGenerator {
             new PostSnapFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 proposalID,
                 currency
             )
@@ -264,7 +264,7 @@ export class DAO extends ContractGenerator {
     }
 
     execute(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         proposalID: string,
         currency: string | CurrencyID,
@@ -274,30 +274,30 @@ export class DAO extends ContractGenerator {
             new ExecuteFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 proposalID,
                 currency
             )
         )
     }
 
-    async getServiceInfo(contractAdd: string | Address) {
-        return await getAPIData(() => contract.dao.getService(this.api, contractAdd))
+    async getServiceInfo(contractAddr: string | Address) {
+        return await getAPIData(() => contract.dao.getService(this.api, contractAddr))
     }
 
-    async getProposalInfo(contractAdd: string | Address, proposalID: string) {
-        return await getAPIData(() => contract.dao.getProposal(this.api, contractAdd, proposalID))
+    async getProposalInfo(contractAddr: string | Address, proposalID: string) {
+        return await getAPIData(() => contract.dao.getProposal(this.api, contractAddr, proposalID))
     }
 
-    async getDelegatorInfo(contractAdd: string | Address, proposalID: string, delegator: string | Address) {
-        return await getAPIData(() => contract.dao.getDelegator(this.api, contractAdd, proposalID, delegator))
+    async getDelegatorInfo(contractAddr: string | Address, proposalID: string, delegator: string | Address) {
+        return await getAPIData(() => contract.dao.getDelegator(this.api, contractAddr, proposalID, delegator))
     }
 
-    async getVoterInfo(contractAdd: string | Address, proposalID: string, voter: string | Address) {
-        return await getAPIData(() => contract.dao.getVoter(this.api, contractAdd, proposalID, voter))
+    async getVoterInfo(contractAddr: string | Address, proposalID: string, voter: string | Address) {
+        return await getAPIData(() => contract.dao.getVoter(this.api, contractAddr, proposalID, voter))
     }
 
-    async getVotingResult(contractAdd: string | Address, proposalID: string) {
-        return await getAPIData(() => contract.dao.getVotingResult(this.api, contractAdd, proposalID))
+    async getVotingResult(contractAddr: string | Address, proposalID: string) {
+        return await getAPIData(() => contract.dao.getVotingResult(this.api, contractAddr, proposalID))
     }
 }

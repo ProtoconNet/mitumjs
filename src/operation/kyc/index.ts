@@ -19,7 +19,7 @@ export class KYC extends ContractGenerator {
     }
 
     createService(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         currency: string | CurrencyID,
     ) {
@@ -28,14 +28,14 @@ export class KYC extends ContractGenerator {
             new CreateServiceFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 currency,
             )
         )
     }
 
     addController(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         controller: string | Address,
         currency: string | CurrencyID,
@@ -46,7 +46,7 @@ export class KYC extends ContractGenerator {
                 TimeStamp.new().UTC(),
                 sender, [
                 new AddControllerItem(
-                    contractAdd,
+                    contractAddr,
                     controller,
                     currency,
                 )
@@ -56,7 +56,7 @@ export class KYC extends ContractGenerator {
     }
 
     addCustomer(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         customer: string | Address,
         status: boolean | Bool,
@@ -68,7 +68,7 @@ export class KYC extends ContractGenerator {
                 TimeStamp.new().UTC(),
                 sender, [
                 new AddCustomerItem(
-                    contractAdd,
+                    contractAddr,
                     customer,
                     status,
                     currency,
@@ -79,7 +79,7 @@ export class KYC extends ContractGenerator {
     }
 
     removeController(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         controller: string | Address,
         currency: string | CurrencyID,
@@ -90,7 +90,7 @@ export class KYC extends ContractGenerator {
                 TimeStamp.new().UTC(),
                 sender, [
                 new RemoveControllerItem(
-                    contractAdd,
+                    contractAddr,
                     controller,
                     currency,
                 )
@@ -100,7 +100,7 @@ export class KYC extends ContractGenerator {
     }
 
     updateCustomer(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         customer: string | Address,
         status: boolean | Bool,
@@ -110,7 +110,7 @@ export class KYC extends ContractGenerator {
             this.networkID,
             new UpdateCustomerFact(
                 TimeStamp.new().UTC(), sender, [new UpdateCustomerItem(
-                    contractAdd,
+                    contractAddr,
                     customer,
                     status,
                     currency,

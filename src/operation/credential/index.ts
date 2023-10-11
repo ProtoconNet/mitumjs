@@ -19,7 +19,7 @@ export class Credential extends ContractGenerator {
     }
 
     createService(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         currency: string | CurrencyID,
     ) {
@@ -28,14 +28,14 @@ export class Credential extends ContractGenerator {
             new CreateServiceFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 currency,
             ),
         )
     }
 
     addTemplate(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         data: {
             templateID: string
@@ -56,7 +56,7 @@ export class Credential extends ContractGenerator {
             new AddTemplateFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contractAdd,
+                contractAddr,
                 data.templateID,
                 data.templateName,
                 data.serviceDate,
@@ -73,7 +73,7 @@ export class Credential extends ContractGenerator {
     }
 
     issue(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         data: {
             holder: string | Address,
@@ -93,7 +93,7 @@ export class Credential extends ContractGenerator {
                 sender,
                 [
                     new AssignItem(
-                        contractAdd,
+                        contractAddr,
                         data.holder,
                         data.templateID,
                         data.id,
@@ -109,7 +109,7 @@ export class Credential extends ContractGenerator {
     }
 
     revoke(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         sender: string | Address,
         holder: string | Address,
         templateID: string,
@@ -123,7 +123,7 @@ export class Credential extends ContractGenerator {
                 sender,
                 [
                     new RevokeItem(
-                        contractAdd,
+                        contractAddr,
                         holder,
                         templateID,
                         id,
@@ -134,43 +134,43 @@ export class Credential extends ContractGenerator {
         )
     }
 
-    async getIssuer(contractAdd: string | Address) {
-        return await getAPIData(() => contract.credential.getIssuer(this.api, contractAdd))
+    async getIssuer(contractAddr: string | Address) {
+        return await getAPIData(() => contract.credential.getIssuer(this.api, contractAddr))
     }
 
     /**
      * @deprecated use getIssuer()
      */
-    async getServiceInfo(contractAdd: string | Address) {
-        return await this.getIssuer(contractAdd)
+    async getServiceInfo(contractAddr: string | Address) {
+        return await this.getIssuer(contractAddr)
     }
 
     async getCredentialInfo(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         templateID: string,
         credentialID: string,
     ) {
-        return await getAPIData(() => contract.credential.getCredential(this.api, contractAdd, templateID, credentialID))
+        return await getAPIData(() => contract.credential.getCredential(this.api, contractAddr, templateID, credentialID))
     }
 
     async getTemplate(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         templateID: string,
     ) {
-        return await getAPIData(() => contract.credential.getTemplate(this.api, contractAdd, templateID))
+        return await getAPIData(() => contract.credential.getTemplate(this.api, contractAddr, templateID))
     }
 
     async getAllCredentials(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         templateID: string,
     ) {
-        return await getAPIData(() => contract.credential.getCredentials(this.api, contractAdd, templateID))
+        return await getAPIData(() => contract.credential.getCredentials(this.api, contractAddr, templateID))
     }
 
     async claimCredential(
-        contractAdd: string | Address,
+        contractAddr: string | Address,
         holder: string | Address,
     ) {
-        return await getAPIData(() => contract.credential.getCredentialByHolder(this.api, contractAdd, holder))
+        return await getAPIData(() => contract.credential.getCredentialByHolder(this.api, contractAddr, holder))
     }
 }
