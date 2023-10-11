@@ -103,7 +103,6 @@ export abstract class ContractFact extends Fact {
             super.toBuffer(),
             this.sender.toBuffer(),
             this.contract.toBuffer(),
-            this.currency.toBuffer(),
         ])
     }
 
