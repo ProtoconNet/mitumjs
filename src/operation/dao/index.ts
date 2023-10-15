@@ -53,6 +53,8 @@ export class DAO extends ContractGenerator {
         data: daoData,
         currency: string | CurrencyID,
     ) {
+        console.log(new Amount(currency, data.fee));
+        console.log(new Whitelist(true, data.proposers.map(a => Address.from(a))));
         return new Operation(
             this.networkID,
             new CreateDAOFact(
@@ -62,7 +64,7 @@ export class DAO extends ContractGenerator {
                 data.option,
                 data.token,
                 data.threshold,
-                data.fee,
+                new Amount(currency, data.fee),
                 new Whitelist(true, data.proposers.map(a => Address.from(a))),
                 data.proposalReviewPeriod,
                 data.registrationPeriod,
