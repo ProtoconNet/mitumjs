@@ -545,8 +545,8 @@ export class Contract extends Generator {
     updateOperator(
         sender: string | Address,
         contract: string | Address,
-        operators: (string | Address)[],
         currency: string | CurrencyID,
+        operators: (string | Address)[],
     ) {
         return new Operation(
             this.networkID,
@@ -554,8 +554,8 @@ export class Contract extends Generator {
                 TimeStamp.new().UTC(),
                 sender,
                 contract,
-                operators,
                 currency,
+                operators,
             )
         );
     }

@@ -15,14 +15,14 @@ export class UpdateOperatorFact extends Fact {
         token: string,
         sender: string | Address,
         contract: string | Address,
+        currency: string | CurrencyID,
         operators: (string | Address)[],
-        currency: string | CurrencyID
     ) {
         super(HINT.CURRENCY.UPDATE_OPERATOR.FACT, token)
         this.sender = Address.from(sender)
         this.contract = Address.from(contract)
-        this.operators = operators.map(a => Address.from(a))
         this.currency = CurrencyID.from(currency)
+        this.operators = operators.map(a => Address.from(a))
         this._hash = this.hashing()
     }
 
@@ -31,8 +31,8 @@ export class UpdateOperatorFact extends Fact {
             super.toBuffer(),
             this.sender.toBuffer(),
             this.contract.toBuffer(),
-            Buffer.concat(this.operators.sort(SortFunc).map(a => a.toBuffer())),
             this.currency.toBuffer(),
+            Buffer.concat(this.operators.sort(SortFunc).map(a => a.toBuffer())),
         ])
     }
 
@@ -41,8 +41,8 @@ export class UpdateOperatorFact extends Fact {
             ...super.toHintedObject(),
             sender: this.sender.toString(),
             contract: this.contract.toString(),
-            whitelist: this.operators.sort(SortFunc).map((w) => w.toString()),
             currency: this.currency.toString(),
+            operators: this.operators.sort(SortFunc).map((w) => w.toString()),
         }
     }
 
