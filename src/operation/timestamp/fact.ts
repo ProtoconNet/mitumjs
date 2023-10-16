@@ -12,7 +12,7 @@ export abstract class TimeStampFact extends ContractFact {
         currency: string | CurrencyID,
     ) {
         super(hint, token, sender, target, currency)
-        this._hash = this.hashing()
+        // this._hash = this.hashing()
     }
 
     toHintedObject(): FactJson {

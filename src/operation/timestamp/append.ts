@@ -36,7 +36,7 @@ export class AppendFact extends TimeStampFact {
             Config.TIMESTAMP.DATA.satisfy(this.data.length),
             MitumError.detail(ECODE.INVALID_FACT, "data length out of range"),
         )
-
+        
         this._hash = this.hashing()
     }
 
