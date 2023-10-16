@@ -6,13 +6,13 @@ import { Config } from "../../node"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
-import { Big, HintedObject, LongString } from "../../types"
+import { Big, HintedObject } from "../../types"
 
 export class AssignItem extends CredentialItem {
     readonly value: string
     readonly validFrom: Big
     readonly validUntil: Big
-    readonly did: LongString
+    readonly did: string
 
     constructor(
         contract: string | Address, 
@@ -22,7 +22,7 @@ export class AssignItem extends CredentialItem {
         value: string,
         validFrom: string | number | Big,
         validUntil: string | number | Big,
-        did: string | LongString,
+        did: string,
         currency: string | CurrencyID,
     ) {
         super(HINT.CREDENTIAL.ASSIGN.ITEM, contract, holder, templateID, id, currency)
@@ -30,7 +30,7 @@ export class AssignItem extends CredentialItem {
         this.value = value
         this.validFrom = Big.from(validFrom)
         this.validUntil = Big.from(validUntil)
-        this.did = LongString.from(did)
+        this.did = did
 
         Assert.check(
             Config.CREDENTIAL.VALUE.satisfy(value.length),
@@ -49,7 +49,7 @@ export class AssignItem extends CredentialItem {
             Buffer.from(this.value),
             this.validFrom.toBuffer("fill"),
             this.validUntil.toBuffer("fill"),
-            this.did.toBuffer(),
+            Buffer.from(this.did),
             this.currency.toBuffer(),
         ])
     }
