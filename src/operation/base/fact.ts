@@ -89,6 +89,7 @@ export abstract class ContractFact extends Fact {
         super(hint, token)
         this.sender = Address.from(sender)
         this.contract = Address.from(contract)
+        this.currency = CurrencyID.from(currency)
 
         Assert.check(
             this.sender.toString() !== this.contract.toString(),
@@ -102,7 +103,6 @@ export abstract class ContractFact extends Fact {
             super.toBuffer(),
             this.sender.toBuffer(),
             this.contract.toBuffer(),
-            this.currency.toBuffer(),
         ])
     }
 
