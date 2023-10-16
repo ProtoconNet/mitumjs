@@ -4,6 +4,7 @@ import { HINT } from "../../alias"
 import { Big } from "../../types"
 import { Config } from "../../node"
 import { Address } from "../../key"
+import { Amount } from "../../common"
 import { Whitelist } from "./whitelist"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
@@ -12,7 +13,7 @@ export class CreateDAOFact extends ContractFact {
     readonly option: "crypto" | "biz"
     readonly votingPowerToken: CurrencyID
     readonly threshold: Big
-    readonly fee: Big
+    readonly fee: Amount
     readonly whitelist: Whitelist
     readonly proposalReviewPeriod: Big
     readonly registrationPeriod: Big
@@ -30,7 +31,7 @@ export class CreateDAOFact extends ContractFact {
         option: "crypto" | "biz",
         votingPowerToken: string | CurrencyID,
         threshold: string | number | Big,
-        fee: string | number | Big,
+        fee: Amount,
         whitelist: Whitelist,
         proposalReviewPeriod: string | number | Big,
         registrationPeriod: string | number | Big,
@@ -47,7 +48,7 @@ export class CreateDAOFact extends ContractFact {
         this.option = option
         this.votingPowerToken = CurrencyID.from(votingPowerToken)
         this.threshold = Big.from(threshold)
-        this.fee = Big.from(fee)
+        this.fee = fee,
         this.whitelist = whitelist
         this.proposalReviewPeriod = Big.from(proposalReviewPeriod)
         this.registrationPeriod = Big.from(registrationPeriod)
@@ -104,7 +105,7 @@ export class CreateDAOFact extends ContractFact {
             option: this.option,
             voting_power_token: this.votingPowerToken.toString(),
             threshold: this.threshold.toString(),
-            fee: this.fee.toString(),
+            fee: this.fee.toHintedObject(),
             whitelist: this.whitelist.toHintedObject(),
             proposal_review_period: this.proposalReviewPeriod.v,
             registration_period: this.registrationPeriod.v,
