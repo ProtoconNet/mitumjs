@@ -6,11 +6,12 @@ import { Assert, ECODE, MitumError } from "../error"
 import { Big, HintedObject, IBuffer, IHintedObject } from "../types"
 
 export class Amount implements IBuffer, IHintedObject {
-    private static hint: Hint = new Hint(HINT.CURRENCY.AMOUNT)
+    private hint: Hint
     readonly currency: CurrencyID
     readonly big: Big
 
     constructor(currency: string | CurrencyID, big: string | number | Big) {
+        this.hint = new Hint(HINT.CURRENCY.AMOUNT)
         this.currency = CurrencyID.from(currency)
         this.big = Big.from(big)
         Assert.check(0 < this.big.big, MitumError.detail(ECODE.INVALID_AMOUNT, "zero big"))
@@ -25,7 +26,7 @@ export class Amount implements IBuffer, IHintedObject {
 
     toHintedObject(): HintedObject {
         return {
-            _hint: Amount.hint.toString(),
+            _hint: this.hint.toString(),
             currency: this.currency.toString(),
             amount: this.big.toString(),
         }
