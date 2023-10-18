@@ -19,6 +19,8 @@ export class ProposeFact extends DAOFact {
     ) {
         super(HINT.DAO.PROPOSE.FACT, token, sender, contract, proposalID, currency)
         this.proposal = proposal
+        
+        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {
