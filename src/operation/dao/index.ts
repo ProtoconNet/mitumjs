@@ -17,7 +17,7 @@ import { ContractGenerator, Operation } from "../base"
 import { Address } from "../../key"
 import { Amount, CurrencyID } from "../../common"
 import { contract, getAPIData } from "../../api"
-import { Big, HintedObject, IP, LongString, TimeStamp } from "../../types"
+import { Big, IP, LongString, TimeStamp } from "../../types"
 import { UpdatePolicyFact } from "./update-policy"
 
 type policyData = {
@@ -53,8 +53,6 @@ export class DAO extends ContractGenerator {
         data: daoData,
         currency: string | CurrencyID,
     ) {
-        console.log(new Amount(currency, data.fee));
-        console.log(new Whitelist(true, data.proposers.map(a => Address.from(a))));
         return new Operation(
             this.networkID,
             new CreateDAOFact(
@@ -79,7 +77,7 @@ export class DAO extends ContractGenerator {
         )
     }
 
-    update(
+    updateService(
         contractAddr: string | Address,
         sender: string | Address,
         data: daoData,
@@ -94,7 +92,7 @@ export class DAO extends ContractGenerator {
                 data.option,
                 data.token,
                 data.threshold,
-                data.fee,
+                new Amount(currency, data.fee),
                 new Whitelist(true, data.proposers.map(a => Address.from(a))),
                 data.proposalReviewPeriod,
                 data.registrationPeriod,
@@ -114,16 +112,19 @@ export class DAO extends ContractGenerator {
         receiver: string | Address,
         currency: string | CurrencyID,
         amount: string | number | Big,
-    ): HintedObject {
+    ): TransferCalldata {
         return new TransferCalldata(sender, receiver, new Amount(currency, amount))
     }
 
-    formSetPolicyCalldata(data: policyData): HintedObject {
+    formSetPolicyCalldata(
+        data: policyData,
+        currency: string | CurrencyID,
+    ): GovernanceCalldata {
         return new GovernanceCalldata(
             new DAOPolicy(
                 data.token,
                 data.threshold,
-                data.fee,
+                new Amount(currency, data.fee),
                 new Whitelist(true, data.proposers.map(a => Address.from(a))),
                 data.proposalReviewPeriod,
                 data.registrationPeriod,
