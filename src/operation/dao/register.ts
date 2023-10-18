@@ -25,6 +25,7 @@ export class RegisterFact extends DAOFact {
             this.contract.toString() !== this.delegated.toString(),
             MitumError.detail(ECODE.INVALID_FACT, "contract is same with delegated address")
         )
+        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {

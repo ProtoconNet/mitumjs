@@ -13,6 +13,7 @@ export class CancelProposalFact extends DAOFact {
         currency: string | CurrencyID,
     ) {
         super(HINT.DAO.CANCEL_PROPOSAL.FACT, token, sender, contract, proposalID, currency)
+        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {
