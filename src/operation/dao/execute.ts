@@ -13,6 +13,7 @@ export class ExecuteFact extends DAOFact {
         currency: string | CurrencyID,
     ) {
         super(HINT.DAO.EXECUTE.FACT, token, sender, contract, proposalID, currency)
+        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {

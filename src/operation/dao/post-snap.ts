@@ -13,6 +13,7 @@ export class PostSnapFact extends DAOFact {
         currency: string | CurrencyID,
     ) {
         super(HINT.DAO.POST_SNAP.FACT, token, sender, contract, proposalID, currency)
+        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {

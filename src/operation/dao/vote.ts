@@ -19,6 +19,7 @@ export class VoteFact extends DAOFact {
     ) {
         super(HINT.DAO.VOTE.FACT, token, sender, contract, proposalID, currency)
         this.vote = Big.from(vote)
+        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {
