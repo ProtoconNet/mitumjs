@@ -24,7 +24,7 @@ export abstract class DAOFact extends ContractFact {
             MitumError.detail(ECODE.INVALID_FACT, "empty proposal id"),
         )
 
-        this._hash = this.hashing()
+        // this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {

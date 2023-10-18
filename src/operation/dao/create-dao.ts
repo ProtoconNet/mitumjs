@@ -1,11 +1,11 @@
+import { Whitelist } from "./whitelist"
 import { ContractFact, FactJson } from "../base"
 
-import { HINT } from "../../alias"
 import { Big } from "../../types"
+import { HINT } from "../../alias"
 import { Config } from "../../node"
 import { Address } from "../../key"
 import { Amount } from "../../common"
-import { Whitelist } from "./whitelist"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
 
@@ -48,7 +48,7 @@ export class CreateDAOFact extends ContractFact {
         this.option = option
         this.votingPowerToken = CurrencyID.from(votingPowerToken)
         this.threshold = Big.from(threshold)
-        this.fee = fee,
+        this.fee = fee
         this.whitelist = whitelist
         this.proposalReviewPeriod = Big.from(proposalReviewPeriod)
         this.registrationPeriod = Big.from(registrationPeriod)
