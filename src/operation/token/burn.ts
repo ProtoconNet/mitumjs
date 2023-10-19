@@ -15,18 +15,17 @@ export class BurnFact extends TokenFact {
         token: string,
         sender: string | Address,
         contract: string | Address,
-        tokenID: string | CurrencyID,
         currency: string | CurrencyID,
         target: string | Address,
         amount: string | number | Big,
     ) {
-        super(HINT.TOKEN.BURN.FACT, token, sender, contract, tokenID, currency)
+        super(HINT.TOKEN.BURN.FACT, token, sender, contract, currency)
 
         this.target = Address.from(target)
         this.amount = Big.from(amount)
 
         Assert.check(
-            this.contract.toString() !== this.target.toString(),
+            Address.from(contract).toString() !== this.target.toString(),
             MitumError.detail(ECODE.INVALID_FACT, "contract is same with target address")
         )
 
@@ -34,6 +33,8 @@ export class BurnFact extends TokenFact {
             this.amount.compare(0) > 0,
             MitumError.detail(ECODE.INVALID_FACT, "zero amount"),
         )
+        
+        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {

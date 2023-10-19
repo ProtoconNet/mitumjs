@@ -1,6 +1,5 @@
 import { TokenFact } from "./fact"
 import { FactJson } from "../base"
-
 import { HINT } from "../../alias"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
@@ -8,34 +7,37 @@ import { Big, LongString } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export class RegisterTokenFact extends TokenFact {
-    readonly symbol: LongString
-    readonly amount: Big
+    readonly symbol: CurrencyID
+    readonly name: LongString
+    readonly totalSupply: Big
 
     constructor(
         token: string,
         sender: string | Address,
         contract: string | Address,
-        tokenID: string | CurrencyID,
         currency: string | CurrencyID,
-        symbol: string | LongString,
-        amount: string | number | Big,
+        symbol: string | CurrencyID,
+        name: string | LongString,
+        totalSupply: string | number | Big,
     ) {
-        super(HINT.TOKEN.REGISTER_TOKEN.FACT, token, sender, contract, tokenID, currency)
-
-        this.symbol = LongString.from(symbol)
-        this.amount = Big.from(amount)
+        super(HINT.TOKEN.REGISTER_TOKEN.FACT, token, sender, contract, currency)
+        this.symbol = CurrencyID.from(symbol)
+        this.name = LongString.from(name)
+        this.totalSupply = Big.from(totalSupply)
 
         Assert.check(
-            this.amount.compare(0) > 0,
-            MitumError.detail(ECODE.INVALID_FACT, "amount under zero"),
+            this.totalSupply.compare(0) > 0,
+            MitumError.detail(ECODE.INVALID_FACT, "totalSupply under zero"),
         )
+        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
             this.symbol.toBuffer(),
-            this.amount.toBuffer(),
+            this.name.toBuffer(),
+            this.totalSupply.toBuffer(),
         ])
     }
 
@@ -43,7 +45,8 @@ export class RegisterTokenFact extends TokenFact {
         return {
             ...super.toHintedObject(),
             symbol:  this.symbol.toString(),
-            amount: this.amount.toString(),
+            name: this.name.toString(),
+            total_supply: this.totalSupply.toString(),
         }
     }
 

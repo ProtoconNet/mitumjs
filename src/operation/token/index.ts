@@ -22,10 +22,10 @@ export class Token extends ContractGenerator {
     registerToken(
         contractAddr: string | Address,
         sender: string | Address,
-        tokenID: string | CurrencyID,
         currency: string | CurrencyID,
-        symbol: string | LongString,
-        amount?: string | number | Big,
+        name: string | LongString,
+        symbol: string | CurrencyID,
+        totalSupply?: string | number | Big,
     ) {
         return new Operation(
             this.networkID,
@@ -33,10 +33,10 @@ export class Token extends ContractGenerator {
                 TimeStamp.new().UTC(),
                 sender,
                 contractAddr,
-                tokenID,
                 currency,
                 symbol,
-                amount ?? 0,
+                name,
+                totalSupply ?? 0,
             )
         )
     }
@@ -44,7 +44,6 @@ export class Token extends ContractGenerator {
     mint(
         contractAddr: string | Address,
         sender: string | Address,
-        tokenID: string | CurrencyID,
         currency: string | CurrencyID,
         receiver: string | Address,
         amount: string | number | Big,
@@ -55,7 +54,6 @@ export class Token extends ContractGenerator {
                 TimeStamp.new().UTC(),
                 sender,
                 contractAddr,
-                tokenID,
                 currency,
                 receiver,
                 amount,
@@ -66,7 +64,6 @@ export class Token extends ContractGenerator {
     burn(
         contractAddr: string | Address,
         sender: string | Address,
-        tokenID: string | CurrencyID,
         currency: string | CurrencyID,
         target: string | Address,
         amount: string | number | Big,
@@ -77,7 +74,6 @@ export class Token extends ContractGenerator {
                 TimeStamp.new().UTC(),
                 sender,
                 contractAddr,
-                tokenID,
                 currency,
                 target,
                 amount,
@@ -88,7 +84,6 @@ export class Token extends ContractGenerator {
     transfer(
         contractAddr: string | Address,
         sender: string | Address,
-        tokenID: string | CurrencyID,
         currency: string | CurrencyID,
         receiver: string | Address,
         amount: string | number | Big,
@@ -99,7 +94,6 @@ export class Token extends ContractGenerator {
                 TimeStamp.new().UTC(),
                 sender,
                 contractAddr,
-                tokenID,
                 currency,
                 receiver,
                 amount,
@@ -110,7 +104,6 @@ export class Token extends ContractGenerator {
     transferFrom(
         contractAddr: string | Address,
         sender: string | Address,
-        tokenID: string | CurrencyID,
         currency: string | CurrencyID,
         receiver: string | Address,
         target: string | Address,
@@ -122,7 +115,6 @@ export class Token extends ContractGenerator {
                 TimeStamp.new().UTC(),
                 sender,
                 contractAddr,
-                tokenID,
                 currency,
                 receiver,
                 target,
@@ -134,7 +126,6 @@ export class Token extends ContractGenerator {
     approve(
         contractAddr: string | Address,
         sender: string | Address,
-        tokenID: string | CurrencyID,
         currency: string | CurrencyID,
         approved: string | Address,
         amount: string | number | Big,
@@ -145,7 +136,6 @@ export class Token extends ContractGenerator {
                 TimeStamp.new().UTC(),
                 sender,
                 contractAddr,
-                tokenID,
                 currency,
                 approved,
                 amount,

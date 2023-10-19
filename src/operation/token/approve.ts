@@ -15,12 +15,11 @@ export class ApproveFact extends TokenFact {
         token: string,
         sender: string | Address,
         contract: string | Address,
-        tokenID: string | CurrencyID,
         currency: string | CurrencyID,
         approved: string | Address,
         amount: string | number | Big,
     ) {
-        super(HINT.TOKEN.APPROVE.FACT, token, sender, contract, tokenID, currency)
+        super(HINT.TOKEN.APPROVE.FACT, token, sender, contract, currency)
 
         this.approved = Address.from(approved)
         this.amount = Big.from(amount)
@@ -34,6 +33,7 @@ export class ApproveFact extends TokenFact {
             this.amount.compare(0) > 0,
             MitumError.detail(ECODE.INVALID_FACT, "zero amount"),
         )
+        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {

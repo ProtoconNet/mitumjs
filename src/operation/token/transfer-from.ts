@@ -16,13 +16,12 @@ export class TransferFromFact extends TokenFact {
         token: string,
         sender: string | Address,
         contract: string | Address,
-        tokenID: string | CurrencyID,
         currency: string | CurrencyID,
         receiver: string | Address,
         target: string | Address,
         amount: string | number | Big,
     ) {
-        super(HINT.TOKEN.TRANSFER_FROM.FACT, token, sender, contract, tokenID, currency)
+        super(HINT.TOKEN.TRANSFER_FROM.FACT, token, sender, contract, currency)
 
         this.receiver = Address.from(receiver)
         this.target = Address.from(target)
