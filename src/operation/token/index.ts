@@ -9,6 +9,7 @@ import { ContractGenerator, Operation } from "../base"
 
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
+import { contract, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp } from "../../types"
 
 export class Token extends ContractGenerator {
@@ -141,5 +142,15 @@ export class Token extends ContractGenerator {
                 amount,
             )
         )
+    }
+
+    async getTokenInfo(contractAddr: string | Address) {
+        const data = await getAPIData(() => contract.token.getToken(this.api, contractAddr))
+        return data ? data._embedded : null
+    }
+
+    async getTokenBalance(contractAddr: string | Address, owner: string | Address) {
+        const data = await getAPIData(() => contract.token.getTokenBalance(this.api, contractAddr, owner))
+        return data ? data._embedded : null
     }
 }
