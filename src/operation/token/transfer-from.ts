@@ -41,6 +41,8 @@ export class TransferFromFact extends TokenFact {
             this.amount.compare(0) > 0,
             MitumError.detail(ECODE.INVALID_FACT, "zero amount"),
         )
+        
+        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {
