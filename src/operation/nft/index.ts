@@ -286,4 +286,11 @@ export class NFT extends ContractGenerator {
             nftID,
         ))
     }
+
+    async getNFTs(contractAddr: string | Address) {
+        return await getAPIData(() => contract.nft.getNFTs(
+            this.api,
+            contractAddr,
+        ))
+    }
 }
