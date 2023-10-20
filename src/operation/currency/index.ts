@@ -512,7 +512,7 @@ export class Contract extends Generator {
         weight?: string | number | Big,
     ): { wallet: AccountType, operation: Operation<CreateContractAccountFact> } {
         const kp = seed ? KeyPair.fromSeed(seed, "ether") : KeyPair.random("ether")
-        const ks = new Keys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
+        const ks = new EtherKeys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
 
         return {
             wallet: {
