@@ -67,7 +67,7 @@ export const Config = {
 		},
 		ETHER: {
 			PRIVATE: getRangeConfig(67),
-			PUBLIC: getRangeConfig(133),
+			PUBLIC: getRangeConfig(69),
 		}
 	},
 	NFT: {

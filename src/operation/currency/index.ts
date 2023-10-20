@@ -16,7 +16,7 @@ import api, { getAPIData } from "../../api"
 import { Amount, CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
 import { Big, Generator, IP, TimeStamp } from "../../types"
-import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG } from "../../key"
+import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG, EtherKeys } from "../../key"
 
 type createData = {
     currency: string | CurrencyID
@@ -232,7 +232,40 @@ export class Account extends KeyG {
         }
     }
 
-    create(
+    createEtherWallet(
+        sender: string | Address,
+        currency: string | CurrencyID,
+        amount: string | number | Big,
+        seed?: string,
+        weight?: string | number | Big,
+    ): { wallet: AccountType, operation: Operation<CreateAccountFact> } {
+        const kp = seed ? KeyPair.fromSeed(seed, "ether") : KeyPair.random("ether")
+        const ks = new EtherKeys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
+
+        return {
+            wallet: {
+                privatekey: kp.privateKey.toString(),
+                publickey: kp.publicKey.toString(),
+                address: this.etherAddress(kp.publicKey),
+            },
+            operation: new Operation(
+                this.networkID,
+                new CreateAccountFact(
+                    TimeStamp.new().UTC(),
+                    sender,
+                    [
+                        new CreateAccountItem(
+                            ks,
+                            [new Amount(currency, amount)],
+                            "ether",
+                        )
+                    ],
+                ),
+            ),
+        }
+    }
+
+    createAccount(
         sender: string | Address,
         key: string | Key | PubKey,
         currency: string | CurrencyID,
@@ -267,7 +300,7 @@ export class Account extends KeyG {
                 sender,
                 [
                     new CreateAccountItem(
-                        new Keys([new PubKey(key, 100)], 100),
+                        new EtherKeys([new PubKey(key, 100)], 100),
                         [new Amount(currency, amount)],
                         "ether",
                     )
@@ -337,12 +370,24 @@ export class Account extends KeyG {
         newKey: string | Key | PubKey,
         currency: string | CurrencyID,
     ) {
+        const suffix = target.toString().slice(-3)
+        if (suffix === "mca") {
+            return new Operation(
+                this.networkID,
+                new UpdateKeyFact(
+                    TimeStamp.new().UTC(),
+                    target,
+                    new Keys([new PubKey(newKey, 100)], 100),
+                    currency,
+                ),
+            )
+        }
         return new Operation(
             this.networkID,
             new UpdateKeyFact(
                 TimeStamp.new().UTC(),
                 target,
-                new Keys([new PubKey(newKey, 100)], 100),
+                new EtherKeys([new PubKey(newKey, 100)], 100),
                 currency,
             ),
         )
@@ -354,12 +399,29 @@ export class Account extends KeyG {
         currency: string | CurrencyID,
         threshold: string | number | Big,
     ) {
+        const suffix = target.toString().slice(-3)
+        if (suffix === "mca") {
+            return new Operation(
+                this.networkID,
+                new UpdateKeyFact(
+                    TimeStamp.new().UTC(),
+                    target,
+                    new Keys(
+                        newKeys.map(k =>
+                            k instanceof PubKey ? k : new PubKey(k.key, k.weight)
+                        ),
+                        threshold,
+                    ),
+                    currency,
+                ),
+            )
+        } 
         return new Operation(
             this.networkID,
             new UpdateKeyFact(
                 TimeStamp.new().UTC(),
                 target,
-                new Keys(
+                new EtherKeys(
                     newKeys.map(k =>
                         k instanceof PubKey ? k : new PubKey(k.key, k.weight)
                     ),
@@ -442,7 +504,40 @@ export class Contract extends Generator {
         }
     }
 
-    create(
+    createEtherWallet(
+        sender: string | Address,
+        currency: string | CurrencyID,
+        amount: string | number | Big,
+        seed?: string,
+        weight?: string | number | Big,
+    ): { wallet: AccountType, operation: Operation<CreateContractAccountFact> } {
+        const kp = seed ? KeyPair.fromSeed(seed, "ether") : KeyPair.random("ether")
+        const ks = new Keys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
+
+        return {
+            wallet: {
+                privatekey: kp.privateKey.toString(),
+                publickey: kp.publicKey.toString(),
+                address: new EtherKeys([new PubKey(kp.publicKey, 100)], 100).etherAddress.toString(),
+            },
+            operation: new Operation(
+                this.networkID,
+                new CreateContractAccountFact(
+                    TimeStamp.new().UTC(),
+                    sender,
+                    [
+                        new CreateContractAccountItem(
+                            ks,
+                            [new Amount(currency, amount)],
+                            "ether",
+                        )
+                    ],
+                ),
+            ),
+        }
+    }
+
+    createAccount(
         sender: string | Address,
         key: string | Key | PubKey,
         currency: string | CurrencyID,
@@ -477,7 +572,7 @@ export class Contract extends Generator {
                 sender,
                 [
                     new CreateContractAccountItem(
-                        new Keys([new PubKey(key, 100)], 100),
+                        new EtherKeys([new PubKey(key, 100)], 100),
                         [new Amount(currency, amount)],
                         "ether",
                     )
@@ -528,7 +623,7 @@ export class Contract extends Generator {
                 sender,
                 [
                     new CreateContractAccountItem(
-                        new Keys(
+                        new EtherKeys(
                             keys.map(k =>
                                 k instanceof PubKey ? k : new PubKey(k.key, k.weight)
                             ),

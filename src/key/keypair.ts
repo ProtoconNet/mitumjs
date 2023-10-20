@@ -1,12 +1,15 @@
 import base58 from "bs58"
 
-import ethWallet from "ethereumjs-wallet"
+// import ethWallet from "ethereumjs-wallet"
+import { Wallet } from "ethers"
 import secureRandom from "secure-random"
 import { getPublicCompressed } from "eccrypto-js"
 
 import { hmac } from "@noble/hashes/hmac"
 import { sha256 as nobleSha256 } from "@noble/hashes/sha256"
 import * as secp256k1 from "@noble/secp256k1"
+import * as crypto from "crypto";
+import { ec as EC } from "elliptic";
 
 import { Key } from "./pub"
 import { KeyPairType } from "./types"
@@ -16,6 +19,7 @@ import { Config } from "../node"
 import { SUFFIX } from "../alias"
 import { sha3, sha256 } from "../utils"
 import { Assert, ECODE, MitumError, StringAssert } from "../error"
+import { privateKeyToPublicKey, compress } from "../utils/converter";
 
 interface IKeyGenerator {
     random(option?: KeyPairType): BaseKeyPair
@@ -26,7 +30,7 @@ interface IKeyGenerator {
 export abstract class BaseKeyPair {
     readonly privateKey: Key
     readonly publicKey: Key
-    protected signer: Uint8Array | ethWallet
+    protected signer: Uint8Array
     protected static generator: IKeyGenerator
 
     protected constructor(privateKey: Key) {
@@ -43,7 +47,7 @@ export abstract class BaseKeyPair {
     abstract sign(msg: string | Buffer): Buffer
     abstract verify(sig: string | Buffer, msg: string | Buffer): boolean
 
-    protected abstract getSigner(): Uint8Array | ethWallet
+    protected abstract getSigner(): Uint8Array
     protected abstract getPub(): Key
 
     static random<T extends BaseKeyPair>(option?: KeyPairType): T {
@@ -63,22 +67,23 @@ export abstract class BaseKeyPair {
     }
 
     protected ethSign(msg: string | Buffer): Buffer {
-        const sig = secp256k1.signSync(nobleSha256(msg), (this.signer as ethWallet).getPrivateKey())
+        const ec = new EC("secp256k1");
+        const key = ec.keyFromPrivate(this.privateKey.noSuffix, "hex");
 
-        const rlen = sig[3]
-        const r = sig.slice(4, 4 + rlen)
-        const slen = sig[5 + rlen]
-        const s = sig.slice(6 + rlen)
-
-        const brlen = new Big(rlen).toBuffer("fill")
-
-        const buf = Buffer.alloc(rlen + slen + 4)
-        brlen.copy(buf, 0, 0, 4)
-
-        Buffer.from(r).copy(buf, 4, 0, rlen)
-        Buffer.from(s).copy(buf, rlen + 4, 0, slen)
-
-        return buf
+        const msgHash = crypto.createHash("sha256").update(msg).digest();
+        const signature = key.sign(msgHash);
+    
+        const r = Buffer.from(signature.r.toArray());
+        const s = Buffer.from(signature.s.toArray());
+    
+        const sigLength = 4 + r.length + s.length;
+        const sigBuffer = Buffer.alloc(sigLength);
+    
+        sigBuffer.writeUInt32LE(r.length, 0);
+        sigBuffer.set(r, 4);
+        sigBuffer.set(s, 4 + r.length);
+    
+        return sigBuffer;
     }
 
     protected btcVerify(sig: string | Buffer, msg: string | Buffer): boolean {
@@ -116,7 +121,7 @@ export abstract class BaseKeyPair {
         slen.toBuffer().copy(buf, 5 + rlen.v)
         s.copy(buf, 6 + rlen.v)
 
-        return secp256k1.verify(buf, sha256(msg), secp256k1.getPublicKey((this.signer as ethWallet).getPrivateKey()))
+        return secp256k1.verify(buf, sha256(msg), secp256k1.getPublicKey(this.signer, true))
 
     }
 
@@ -145,7 +150,8 @@ export class KeyPair extends BaseKeyPair {
                 )
             }
     
-            return new KeyPair(ethWallet.generate().getPrivateKeyString().substring(2) + SUFFIX.KEY.ETHER.PRIVATE)
+            //return new KeyPair(ethWallet.generate().getPrivateKeyString().substring(2) + SUFFIX.KEY.ETHER.PRIVATE)
+            return new KeyPair(Wallet.createRandom().privateKey.substring(2) + SUFFIX.KEY.ETHER.PRIVATE)
         },
         fromPrivateKey(key: string | Key): KeyPair {
             return new KeyPair(key)
@@ -171,12 +177,12 @@ export class KeyPair extends BaseKeyPair {
         super(Key.from(privateKey))
     }
 
-    protected getSigner(): Uint8Array | ethWallet {
+    protected getSigner(): Uint8Array {
         if (this.privateKey.type === "btc") {
             return Buffer.from(base58.decode(this.privateKey.noSuffix))
         }
 
-        return ethWallet.fromPrivateKey(Buffer.from(this.privateKey.noSuffix, 'hex'))
+        return Buffer.from(this.privateKey.noSuffix, "hex");
     }
 
     protected getPub(): Key {
@@ -186,9 +192,11 @@ export class KeyPair extends BaseKeyPair {
             )
         }
 
-        return new Key(
-            '04' + (this.signer as ethWallet).getPublicKeyString().substring(2) + SUFFIX.KEY.ETHER.PUBLIC
-        )
+        const publickeyBuffer = privateKeyToPublicKey(
+            "0x" + this.privateKey.noSuffix
+        );
+
+        return new Key(compress(publickeyBuffer) + SUFFIX.KEY.ETHER.PUBLIC);
     }
 
     sign(msg: string | Buffer): Buffer {

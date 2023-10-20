@@ -1,16 +1,17 @@
 import { KeyPairType, AddressType, Account } from "./types"
 
 import { randomN } from "./random"
-import { Keys, Key, PubKey } from "./pub"
+import { Keys, Key, PubKey, EtherKeys } from "./pub"
 import { BaseKeyPair, KeyPair } from "./keypair"
 import { Address, ZeroAddress, NodeAddress } from "./address"
 
 import { Big, Generator, IP } from "../types"
+import { Assert, ECODE, MitumError } from "../error"
 
 export {
     KeyPairType, AddressType, Account,
     Address, ZeroAddress, NodeAddress,
-    Key, Keys, PubKey,
+    Key, Keys, PubKey, EtherKeys,
     BaseKeyPair, KeyPair,
     randomN,
 }
@@ -99,11 +100,21 @@ export class KeyG extends Generator {
     }
 
     address(key: string | Key): string {
+        const suffix = key.toString().slice(-3);
+        Assert.check(
+            suffix === "mpu",
+            MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid pubkey format"),
+        )
         return new Keys([new PubKey(key, 100)], 100).address.toString()
     }
 
     etherAddress(key: string | Key): string {
-        return new Keys([new PubKey(key, 100)], 100).etherAddress.toString()
+        const suffix = key.toString().slice(-3);
+        Assert.check(
+            suffix === "epu",
+            MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid pubkey format"),
+        )
+        return new EtherKeys([new PubKey(key, 100)], 100).etherAddress.toString()
     }
 
     addressForMultiSig(
@@ -117,6 +128,6 @@ export class KeyG extends Generator {
         keys: keysType,
         threshold: string | number | Big,
     ): string {
-        return new Keys(keys.map(k => k instanceof PubKey ? k : new PubKey(k.key, k.weight)), threshold).etherAddress.toString()
+        return new EtherKeys(keys.map(k => k instanceof PubKey ? k : new PubKey(k.key, k.weight)), threshold).etherAddress.toString()
     }
 }

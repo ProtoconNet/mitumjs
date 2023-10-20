@@ -7,14 +7,14 @@ import { Amount } from "../../common"
 import { SortFunc } from "../../utils"
 import { HINT, SUFFIX } from "../../alias"
 import { HintedObject } from "../../types"
-import { Keys, AddressType, Address } from "../../key"
+import { Keys, AddressType, Address, EtherKeys } from "../../key"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export class CreateContractAccountItem extends CurrencyItem {
-    readonly keys: Keys
+    readonly keys: Keys | EtherKeys
     private addressSuffix: string
     
-    constructor(keys: Keys, amounts: Amount[], addressType: AddressType) {
+    constructor(keys: Keys | EtherKeys, amounts: Amount[], addressType: AddressType) {
         super(HINT.CURRENCY.CREATE_CONTRACT_ACCOUNT.ITEM, amounts, addressType)
         this.keys = keys
 

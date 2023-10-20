@@ -1,4 +1,5 @@
 import base58 from "bs58"
+import { keccak256 as keccak256js } from "js-sha3";
 
 import { Address } from "./address"
 import { KeyPairType } from "./types"
@@ -125,10 +126,6 @@ export class Keys implements IBuffer, IHintedObject {
         return new Address(base58.encode(sha3(this.toBuffer())) + SUFFIX.ADDRESS.MITUM)
     }
 
-    get etherAddress(): Address {
-        return new Address(keccak256(this.toBuffer()).subarray(12).toString('hex') + SUFFIX.ADDRESS.ETHER)
-    }
-
     toBuffer(): Buffer {
         return Buffer.concat([
             Buffer.concat(this._keys.sort(
@@ -146,6 +143,71 @@ export class Keys implements IBuffer, IHintedObject {
                 (a, b) => Buffer.compare(Buffer.from(a.toString()), Buffer.from(b.toBuffer()))
             ).map(k => k.toHintedObject()),
             threshold: this.threshold.v,
+        }
+    }
+}
+
+export class EtherKeys implements IBuffer, IHintedObject {
+    private static hint = new Hint(HINT.CURRENCY.ETH_KEYS)
+    private readonly _keys: PubKey[]
+    readonly threshold: Big
+
+    constructor(keys: Pub[], threshold: BigArg) {
+        Assert.check(
+            Config.KEYS_IN_ACCOUNT.satisfy(keys.length),
+            MitumError.detail(ECODE.INVALID_KEYS, "keys length out of range")
+        )
+
+        this._keys = keys.map(
+            k => {
+                if (k instanceof PubKey) {
+                    return k
+                }
+
+                const [key, weight] = k
+                return new PubKey(key instanceof Key ? key.toString() : key, weight)
+            }
+        )
+        this.threshold = threshold instanceof Big ? threshold : new Big(threshold)
+
+        Assert.check(
+            Config.THRESHOLD.satisfy(this.threshold.v),
+            MitumError.detail(ECODE.INVALID_KEYS, "threshold out of range")
+        )
+        Assert.check(
+            new Set(this._keys.map(k => k.toString())).size === this._keys.length,
+            MitumError.detail(ECODE.INVALID_KEYS, "duplicate keys found in keys")
+        )
+    }
+
+    get keys(): PubKey[] {
+        return this._keys
+    }
+
+    get etherAddress(): Address {
+        return new Address(keccak256(this.toBuffer()).subarray(12).toString('hex') + SUFFIX.ADDRESS.ETHER)
+    }
+
+    toBuffer(): Buffer {
+        return Buffer.concat([
+            Buffer.concat(this._keys.sort(
+                (a, b) => Buffer.compare(Buffer.from(a.toString()), Buffer.from(b.toBuffer()))
+            ).map(k => k.toBuffer())),
+            this.threshold.toBuffer("fill")
+        ])
+    }
+
+    toHintedObject(): HintedObject {
+        const eHash = keccak256js(this.toBuffer());
+        return {
+            _hint: EtherKeys.hint.toString(),
+            hash: eHash.slice(24),
+            keys: this._keys
+            .sort((a, b) =>
+              Buffer.compare(Buffer.from(a.toString()), Buffer.from(b.toBuffer()))
+            )
+            .map((k) => k.toHintedObject()),
+          threshold: this.threshold.v,
         }
     }
 }
