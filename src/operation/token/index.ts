@@ -26,7 +26,7 @@ export class Token extends ContractGenerator {
         currency: string | CurrencyID,
         name: string | LongString,
         symbol: string | CurrencyID,
-        totalSupply?: string | number | Big,
+        initialSupply?: string | number | Big,
     ) {
         return new Operation(
             this.networkID,
@@ -37,7 +37,7 @@ export class Token extends ContractGenerator {
                 currency,
                 symbol,
                 name,
-                totalSupply ?? 0,
+                initialSupply ?? 0,
             )
         )
     }
@@ -147,6 +147,29 @@ export class Token extends ContractGenerator {
     async getTokenInfo(contractAddr: string | Address) {
         const data = await getAPIData(() => contract.token.getToken(this.api, contractAddr))
         return data ? data._embedded : null
+    }
+    
+    async getAllowance(contractAddr: string | Address, owner: string | Address, spender: string | Address) {
+        const data = await getAPIData(() => contract.token.getToken(this.api, contractAddr))
+        if (data) {
+            const approve_list = data._embedded.policy.approve_list;
+            let amount;
+            for (let i=0; i < approve_list.length; i++) {
+                if (approve_list[i].account === owner) {
+                    const approved = approve_list[i].approved;
+                    for (let j=0; j < approved.length; j++) {
+                        if (approved[j].account === spender) {
+                            amount = {
+                                'amount' : approved[j].amount
+                            };
+                        }
+                    }
+                }
+            }
+            return amount
+        } else {
+            return null
+        }
     }
 
     async getTokenBalance(contractAddr: string | Address, owner: string | Address) {
