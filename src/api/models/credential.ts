@@ -9,7 +9,7 @@ const url = (
 ) => `${IP.from(api).toString()}/did/${Address.from(contract).toString()}`
 
 async function getIssuer(api: string | IP, contract: string | Address) {
-    return await axios.get(`${url(api, contract)}/issuer`)
+    return await axios.get(`${url(api, contract)}/service`)
 }
 
 async function getCredential(
