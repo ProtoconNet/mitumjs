@@ -8,6 +8,7 @@ import {
     TimeStamp, Credential,
     Token,
     Operation,
+    Signer,
 } from "./operation"
 
 export class Mitum extends Generator {
@@ -18,6 +19,7 @@ export class Mitum extends Generator {
     private _contract: Contract
     private _block: Block
     private _operation: Operation
+    private _signer: Signer
 
     private _nft: NFT
     private _credential: Credential
@@ -35,6 +37,7 @@ export class Mitum extends Generator {
         this._currency = new Currency(this.networkID, this.api)
         this._block = new Block(this.api)
         this._operation = new Operation(this.networkID, this.api)
+        this._signer = new Signer(this.networkID, this.api)
 
         this._contract = new Contract(this.networkID, this.api)
         this._nft = new NFT(this.networkID, this.api)
@@ -82,6 +85,10 @@ export class Mitum extends Generator {
 
     get operation(): Operation {
         return this._operation
+    }
+
+    get signer(): Signer {
+        return this._signer
     }
 
     get contract(): Contract {
