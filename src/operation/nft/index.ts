@@ -14,6 +14,7 @@ import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { contract, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp } from "../../types"
+import { Assert, ECODE, MitumError } from "../../error"
 
 type collectionData = {
     name: string | LongString
@@ -41,6 +42,12 @@ export class NFT extends ContractGenerator {
         data: collectionData,
         currency: string | CurrencyID,
     ) {
+        const keysToCheck: (keyof collectionData)[] = ['name', 'uri', 'royalty', 'whitelist'];
+        keysToCheck.forEach((key) => {
+            Assert.check(data[key] !== undefined, 
+            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the collectionData structure`))
+        });
+
         return new Operation(
             this.networkID,
             new CreateCollectionFact(
@@ -62,6 +69,11 @@ export class NFT extends ContractGenerator {
         data: collectionData,
         currency: string | CurrencyID,
     ) {
+        const keysToCheck: (keyof collectionData)[] = ['name', 'uri', 'royalty', 'whitelist'];
+        keysToCheck.forEach((key) => {
+            Assert.check(data[key] !== undefined, 
+            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the collectionData structure`))
+        });
         return new Operation(
             this.networkID,
             new UpdateCollectionPolicyFact(
@@ -104,6 +116,13 @@ export class NFT extends ContractGenerator {
         currency: string | CurrencyID,
         creators: Creator[]
     ) {
+        const keysToCheck: (keyof Creator)[] = ['account', 'share'];
+        keysToCheck.forEach((key) => {
+            creators.forEach((creator) => {
+                Assert.check(creator[key] !== undefined, 
+                    MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the Creator structure`))
+            })
+        });
         return new Operation(
             this.networkID,
             new MintFact(

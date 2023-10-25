@@ -14,9 +14,9 @@ import { Operation } from "../base"
 
 import api, { getAPIData } from "../../api"
 import { Amount, CurrencyID } from "../../common"
-import { Assert, ECODE, MitumError } from "../../error"
 import { Big, Generator, IP, TimeStamp } from "../../types"
 import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG, EtherKeys } from "../../key"
+import { Assert, ECODE, MitumError } from "../../error"
 
 type createData = {
     currency: string | CurrencyID
@@ -44,6 +44,12 @@ export class Currency extends Generator {
     }
 
     create(data: createData) {
+        const keysToCheck: (keyof createData)[] = ['currency', 'genesisAddress', 'totalSupply', 'minBalance', 'feeType', 'feeReceiver'];
+        keysToCheck.forEach((key) => {
+            Assert.check(data[key] !== undefined, 
+            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the createData structure`))
+        });
+
         const amount = new Amount(data.currency, data.totalSupply)
         const design = new CurrencyDesign(
             amount,
@@ -66,6 +72,12 @@ export class Currency extends Generator {
     }
 
     setPolicy(data: createData) {
+        const keysToCheck: (keyof createData)[] = ['currency', 'genesisAddress', 'totalSupply', 'minBalance', 'feeType', 'feeReceiver'];
+        keysToCheck.forEach((key) => {
+            Assert.check(data[key] !== undefined, 
+            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the createData structure`))
+        });
+
         return new Operation(
             this.networkID,
             new UpdateCurrencyFact(

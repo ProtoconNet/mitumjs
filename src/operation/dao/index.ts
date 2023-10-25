@@ -19,6 +19,7 @@ import { Amount, CurrencyID } from "../../common"
 import { contract, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp } from "../../types"
 import { UpdatePolicyFact } from "./update-policy"
+import { Assert, ECODE, MitumError } from "../../error"
 
 type policyData = {
     token: string | CurrencyID,
@@ -53,6 +54,11 @@ export class DAO extends ContractGenerator {
         data: daoData,
         currency: string | CurrencyID,
     ) {
+        const keysToCheck: (keyof daoData)[] = ['option', 'token', 'threshold', 'fee', 'proposers', 'proposalReviewPeriod', 'registrationPeriod', 'preSnapshotPeriod', 'votingPeriod', 'postSnapshotPeriod', 'executionDelayPeriod', 'turnout', 'quorum'];
+        keysToCheck.forEach((key) => {
+            Assert.check(data[key] !== undefined, 
+            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the daoData structure`))
+        });
         return new Operation(
             this.networkID,
             new CreateDAOFact(
@@ -83,6 +89,11 @@ export class DAO extends ContractGenerator {
         data: daoData,
         currency: string | CurrencyID,
     ) {
+        const keysToCheck: (keyof daoData)[] = ['option', 'token', 'threshold', 'fee', 'proposers', 'proposalReviewPeriod', 'registrationPeriod', 'preSnapshotPeriod', 'votingPeriod', 'postSnapshotPeriod', 'executionDelayPeriod', 'turnout', 'quorum'];
+        keysToCheck.forEach((key) => {
+            Assert.check(data[key] !== undefined, 
+            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the daoData structure`))
+        });
         return new Operation(
             this.networkID,
             new UpdatePolicyFact(
@@ -120,6 +131,11 @@ export class DAO extends ContractGenerator {
         data: policyData,
         currency: string | CurrencyID,
     ): GovernanceCalldata {
+        const keysToCheck: (keyof policyData)[] = ['token', 'threshold', 'fee', 'proposers', 'proposalReviewPeriod', 'registrationPeriod', 'preSnapshotPeriod', 'votingPeriod', 'postSnapshotPeriod', 'executionDelayPeriod', 'turnout', 'quorum'];
+        keysToCheck.forEach((key) => {
+            Assert.check(data[key] !== undefined, 
+            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the policyData structure`))
+        });
         return new GovernanceCalldata(
             new DAOPolicy(
                 data.token,

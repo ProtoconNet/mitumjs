@@ -13,8 +13,9 @@ import { ContractGenerator, Operation } from "../base"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { Big, IP, TimeStamp } from "../../types"
+import { Assert, ECODE, MitumError } from "../../error"
 
-type data = {
+type createServiceData = {
     granularity: string | number | Big
     defaultPartition: string | Partition
     controllers: (string | Address)[]
@@ -55,9 +56,14 @@ export class STO extends ContractGenerator {
     createService(
         contractAddr: string | Address,
         sender: string | Address,
-        data: data,
+        data: createServiceData,
         currency: string | CurrencyID,
     ) {
+        const keysToCheck: (keyof createServiceData)[] = ['granularity', 'defaultPartition', 'controllers'];
+        keysToCheck.forEach((key) => {
+            Assert.check(data[key] !== undefined, 
+            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the createServiceData structure`))
+        });
         return new Operation(
             this.networkID,
             new CreateSecurityTokenFact(
