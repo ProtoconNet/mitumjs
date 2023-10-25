@@ -6,6 +6,7 @@ import kyc from "./kyc"
 import sto from "./sto"
 import timestamp from "./timestamp"
 import token from "./token"
+import point from "./point"
 
 export default {
     currency,
@@ -17,5 +18,6 @@ export default {
         sto,
         timestamp,
         token,
+        point,
     },
 }

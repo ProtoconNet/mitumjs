@@ -6,7 +6,7 @@ import {
     NFT,
     DAO, KYC, STO,
     TimeStamp, Credential,
-    Token,
+    Token, Point,
     Operation,
 } from "./operation"
 
@@ -26,6 +26,7 @@ export class Mitum extends Generator {
     private _kyc: KYC
     private _dao: DAO
     private _token: Token
+    private _point: Point
 
     public constructor(api?: string) {
         super(NetworkID.get(), api)
@@ -44,6 +45,7 @@ export class Mitum extends Generator {
         this._kyc = new KYC(this.networkID, this.api)
         this._dao = new DAO(this.networkID, this.api)
         this._token = new Token(this.networkID, this.api)
+        this._point = new Point(this.networkID, this.api)
     }
 
     private refresh() {
@@ -62,6 +64,7 @@ export class Mitum extends Generator {
         this._kyc = new KYC(this.networkID, this.api)
         this._dao = new DAO(this.networkID, this.api)
         this._token = new Token(this.networkID, this.api)
+        this._point = new Point(this.networkID, this.api)
     }
 
     get node(): Node {
@@ -114,6 +117,10 @@ export class Mitum extends Generator {
 
     get token(): Token {
         return this._token
+    }
+
+    get point(): Point {
+        return this._point
     }
 
     /**

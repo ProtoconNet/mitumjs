@@ -6,6 +6,7 @@ import KYC from "./kyc"
 import STO from "./sto"
 import TIMESTAMP from "./timestamp"
 import TOKEN from "./token"
+import POINT from "./point"
 
 export default {
     FACT_SIGN: "base-fact-sign",
@@ -17,4 +18,5 @@ export default {
     STO,
     TIMESTAMP,
     TOKEN,
+    POINT,
 }
