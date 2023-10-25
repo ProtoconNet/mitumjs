@@ -3,29 +3,34 @@ import { OperationJson, GeneralFactSign, NodeFactSign } from "./base"
 
 import { sha3 } from "../utils"
 import { Key, KeyPair, NodeAddress } from "../key"
-import { HintedObject, FullTimeStamp, TimeStamp } from "../types"
+import { Generator, HintedObject, FullTimeStamp, TimeStamp, IP } from "../types"
 import { SignOption } from "./base/types"
+import { Assert, ECODE, MitumError } from "../error"
 
-export class Signer {
-    readonly keypair: KeyPair
-    readonly networkID: string
+export class Signer extends Generator {
 
-    constructor(privateKey: string | Key, networkID: string) {
-        privateKey = Key.from(privateKey)
-        this.keypair = KeyPair.fromPrivateKey(privateKey)
-        this.networkID = networkID
+    constructor(
+        networkID: string,
+        api?: string | IP,
+    ) {
+        super(networkID, api)
+    }
+    
+    sign(
+        privatekey: string | Key,
+        json: HintedObject,
+        option?: SignOption
+    ) {
+        const keypair = KeyPair.fromPrivateKey(privatekey)
+        return option ? this.nodeSign(keypair as KeyPair, json as OperationJson, option.node ?? "") : this.accSign(keypair as KeyPair, json as OperationJson)
     }
 
-    sign(json: HintedObject, option?: SignOption) {
-        return option ? this.nodeSign(json as OperationJson, option.node ?? "") : this.accSign(json as OperationJson)
-    }
-
-    private accSign(json: OperationJson) {
+    private accSign(keypair: KeyPair, json: OperationJson) {
         const now = TimeStamp.new()
 
         const fs = new GeneralFactSign(
-            this.keypair.publicKey.toString(),
-            this.keypair.sign(
+            keypair.publicKey.toString(),
+            keypair.sign(
                 Buffer.concat([
                     Buffer.from(this.networkID),
                     base58.decode(json.fact.hash),
@@ -41,6 +46,11 @@ export class Signer {
             json.signs = [fs]
         }
 
+        Assert.check(
+            new Set(json.signs.map(fs => fs.signer.toString())).size === json.signs.length,
+            MitumError.detail(ECODE.INVALID_FACTSIGNS, "duplicate signers found in factsigns"),
+        )
+
         const factSigns = json.signs
             .map((s) =>
                 Buffer.concat([
@@ -49,7 +59,7 @@ export class Signer {
                     new FullTimeStamp(s.signed_at).toBuffer("super"),
                 ])
             )
-            .sort((a, b) => Buffer.compare(a, b))
+            //.sort((a, b) => Buffer.compare(a, b))
 
         const msg = Buffer.concat([
             base58.decode(json.fact.hash),
@@ -61,13 +71,14 @@ export class Signer {
         return json
     }
 
-    private nodeSign(json: OperationJson, node: string) {
+
+    private nodeSign(keypair: KeyPair, json: OperationJson, node: string) {
         const nd = new NodeAddress(node)
         const now = TimeStamp.new()
         const fs = new NodeFactSign(
             node,
-            this.keypair.publicKey.toString(),
-            this.keypair.sign(
+            keypair.publicKey.toString(),
+            keypair.sign(
                 Buffer.concat([
                     Buffer.from(this.networkID),
                     nd.toBuffer(),

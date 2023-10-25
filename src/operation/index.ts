@@ -9,6 +9,7 @@ import { KYC } from "./kyc"
 import { TimeStamp } from "./timestamp"
 import { Token } from "./token"
 import { Point } from "./point"
+import { Signer } from "./signer"
 
 import { operation as api } from "../api"
 import { Key, KeyPair } from "../key"
@@ -60,5 +61,6 @@ export {
 	TimeStamp,
 	Token,
 	Point,
+	Signer,
 	Base,
 }
