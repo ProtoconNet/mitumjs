@@ -134,15 +134,8 @@ export class Credential extends ContractGenerator {
         )
     }
 
-    async getIssuer(contractAddr: string | Address) {
-        return await getAPIData(() => contract.credential.getIssuer(this.api, contractAddr))
-    }
-
-    /**
-     * @deprecated use getIssuer()
-     */
     async getServiceInfo(contractAddr: string | Address) {
-        return await this.getIssuer(contractAddr)
+        return await getAPIData(() => contract.credential.getIssuer(this.api, contractAddr))
     }
 
     async getCredentialInfo(
