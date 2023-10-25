@@ -149,6 +149,29 @@ export class Point extends ContractGenerator {
         return data ? data._embedded : null
     }
 
+    async getAllowance(contractAddr: string | Address, owner: string | Address, spender: string | Address) {
+        const data = await getAPIData(() => contract.point.getPoint(this.api, contractAddr))
+        if (data) {
+            const approve_list = data._embedded.policy.approve_list;
+            let amount;
+            for (let i=0; i < approve_list.length; i++) {
+                if (approve_list[i].account === owner) {
+                    const approved = approve_list[i].approved;
+                    for (let j=0; j < approved.length; j++) {
+                        if (approved[j].account === spender) {
+                            amount = {
+                                'amount' : approved[j].amount
+                            };
+                        }
+                    }
+                }
+            }
+            return amount
+        } else {
+            return null
+        }
+    }
+
     async getPointBalance(contractAddr: string | Address, owner: string | Address) {
         const data = await getAPIData(() => contract.point.getPointBalance(this.api, contractAddr, owner))
         return data ? data._embedded : null
