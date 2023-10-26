@@ -9,6 +9,30 @@ import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { contract, getAPIData } from "../../api"
 import { Big, Bool, IP, ShortDate, TimeStamp } from "../../types"
+import { Assert, ECODE, MitumError } from "../../error"
+
+type templateData = {
+    templateID: string
+    templateName: string
+    serviceDate: string | ShortDate
+    expirationDate: string | ShortDate
+    templateShare: boolean | Bool
+    multiAudit: boolean | Bool
+    displayName: string
+    subjectKey: string
+    description: string
+    creator: string | Address
+}
+
+type issueData = {
+    holder: string | Address,
+    templateID: string,
+    id: string,
+    value: string,
+    validFrom: string | number | Big,
+    validUntil: string | number | Big,
+    did: string,
+}
 
 export class Credential extends ContractGenerator {
     constructor(
@@ -37,20 +61,14 @@ export class Credential extends ContractGenerator {
     addTemplate(
         contractAddr: string | Address,
         sender: string | Address,
-        data: {
-            templateID: string
-            templateName: string
-            serviceDate: string | ShortDate
-            expirationDate: string | ShortDate
-            templateShare: boolean | Bool
-            multiAudit: boolean | Bool
-            displayName: string
-            subjectKey: string
-            description: string
-            creator: string | Address
-        },
+        data: templateData,
         currency: string | CurrencyID,
     ) {
+        const keysToCheck: (keyof templateData)[] = ['templateID', 'templateName', 'serviceDate', 'expirationDate', 'templateShare', 'multiAudit', 'displayName', 'subjectKey', 'description', 'creator'];
+        keysToCheck.forEach((key) => {
+            Assert.check(data[key] !== undefined, 
+            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the templateData structure`))
+        });
         return new Operation(
             this.networkID,
             new AddTemplateFact(
@@ -75,17 +93,14 @@ export class Credential extends ContractGenerator {
     issue(
         contractAddr: string | Address,
         sender: string | Address,
-        data: {
-            holder: string | Address,
-            templateID: string,
-            id: string,
-            value: string,
-            validFrom: string | number | Big,
-            validUntil: string | number | Big,
-            did: string,
-        },
+        data: issueData,
         currency: string | CurrencyID,
     ) {
+        const keysToCheck: (keyof issueData)[] = ['holder', 'templateID', 'id', 'value', 'validFrom', 'validUntil', 'did'];
+        keysToCheck.forEach((key) => {
+            Assert.check(data[key] !== undefined, 
+            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the issueData structure`))
+        });
         return new Operation(
             this.networkID,
             new AssignFact(
