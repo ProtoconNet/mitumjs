@@ -444,6 +444,20 @@ export class Account extends KeyG {
         )
     }
 
+
+    getMultiSigAddress (
+        keys: keysType,
+        threshold: string | number | Big,
+    ) {
+        const keysArray = new Keys(
+            keys.map(k =>
+                k instanceof PubKey ? k : new PubKey(k.key, k.weight)
+            ),
+            threshold,
+        )
+        return keysArray.address.toString(); // btc
+    }
+
     async touch(
         privatekey: string | Key,
         wallet: { wallet: AccountType, operation: Operation<CreateAccountFact> }
