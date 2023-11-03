@@ -68,7 +68,7 @@ export class Currency extends Generator {
         return new Operation(
             this.networkID,
             new RegisterCurrencyFact(TimeStamp.new().UTC(), design),
-        )
+        ) 
     }
 
     setPolicy(data: createData) {
@@ -192,7 +192,7 @@ export class Currency extends Generator {
         const datas = await getAPIData(() => api.currency.getCurrencies(this.api))
 
         return datas
-            ? Object.keys(datas.links).filter(
+            ? Object.keys(datas._links).filter(
                 c => !(c === "self" || c === "currency:{currencyid}")).map(c => c)
             : null
     }
