@@ -38,7 +38,7 @@ async function getVoter(
     proposalID: string,
     voter: string | Address,
 ) {
-    return await axios.get(`${url(api, contract)}/pproposal/${proposalID}/voter/${Address.from(voter).toString()}`)
+    return await axios.get(`${url(api, contract)}/proposal/${proposalID}/voter/${Address.from(voter).toString()}`)
 }
 
 async function getVotingResult(
