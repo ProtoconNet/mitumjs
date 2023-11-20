@@ -192,8 +192,8 @@ export class DAO extends ContractGenerator {
         contractAddr: string | Address,
         sender: string | Address,
         proposalID: string,
-        delegator: string | Address,
         currency: string | CurrencyID,
+        delegator?: string | Address,
     ) {
         return new Operation(
             this.networkID,
@@ -202,7 +202,7 @@ export class DAO extends ContractGenerator {
                 sender,
                 contractAddr,
                 proposalID,
-                delegator,
+                delegator ? delegator : sender,
                 currency,
             )
         )
