@@ -312,8 +312,8 @@ export class DAO extends ContractGenerator {
         return await getAPIData(() => contract.dao.getDelegator(this.api, contractAddr, proposalID, delegator))
     }
 
-    async getVoterInfo(contractAddr: string | Address, proposalID: string, voter: string | Address) {
-        return await getAPIData(() => contract.dao.getVoter(this.api, contractAddr, proposalID, voter))
+    async getVoterInfo(contractAddr: string | Address, proposalID: string) {
+        return await getAPIData(() => contract.dao.getVoter(this.api, contractAddr, proposalID))
     }
 
     async getVotingResult(contractAddr: string | Address, proposalID: string) {
