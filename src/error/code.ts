@@ -63,5 +63,6 @@ export const ECODE = {
     },
     DAO: {
         INVALID_WHITELIST: "EC_INVALID_WHITELIST",
+        UNMATCHED_SENDER: "EC_UNMATCHED_SENDER"
     }
 } as const
