@@ -5,6 +5,7 @@ import { HINT } from "../../alias"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { BizProposal, CryptoProposal } from "./proposal"
+import { Assert, ECODE, MitumError } from "../../error"
 
 export class ProposeFact extends DAOFact {
     readonly proposal: CryptoProposal | BizProposal
@@ -19,7 +20,10 @@ export class ProposeFact extends DAOFact {
     ) {
         super(HINT.DAO.PROPOSE.FACT, token, sender, contract, proposalID, currency)
         this.proposal = proposal
-        
+ 
+        Assert.check(proposal.proposer.toString() === sender, 
+        MitumError.detail(ECODE.DAO.UNMATCHED_SENDER, `sender is unmatched with proposer of given proposal`))
+
         this._hash = this.hashing()
     }
 

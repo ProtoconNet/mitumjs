@@ -192,8 +192,8 @@ export class DAO extends ContractGenerator {
         contractAddr: string | Address,
         sender: string | Address,
         proposalID: string,
-        delegator: string | Address,
         currency: string | CurrencyID,
+        delegator?: string | Address,
     ) {
         return new Operation(
             this.networkID,
@@ -202,7 +202,7 @@ export class DAO extends ContractGenerator {
                 sender,
                 contractAddr,
                 proposalID,
-                delegator,
+                delegator ? delegator : sender,
                 currency,
             )
         )
@@ -312,8 +312,8 @@ export class DAO extends ContractGenerator {
         return await getAPIData(() => contract.dao.getDelegator(this.api, contractAddr, proposalID, delegator))
     }
 
-    async getVoterInfo(contractAddr: string | Address, proposalID: string, voter: string | Address) {
-        return await getAPIData(() => contract.dao.getVoter(this.api, contractAddr, proposalID, voter))
+    async getVoterInfo(contractAddr: string | Address, proposalID: string) {
+        return await getAPIData(() => contract.dao.getVoter(this.api, contractAddr, proposalID))
     }
 
     async getVotingResult(contractAddr: string | Address, proposalID: string) {
