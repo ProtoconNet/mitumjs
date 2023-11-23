@@ -30,9 +30,9 @@ export class VoteFact extends DAOFact {
 
     toBuffer(): Buffer {
         return Buffer.concat([
-            super.toBuffer(),
-            this.vote.toBuffer(),
-            this.currency.toBuffer(),
+        super.toBuffer(),
+        this.vote.v === 0 ? Buffer.from([0x00]) : this.vote.toBuffer(),
+        this.currency.toBuffer(),
         ])
     }
 
