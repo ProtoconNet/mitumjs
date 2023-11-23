@@ -40,6 +40,7 @@ export class IssueSecurityTokenItem extends STOItem {
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
+            this.receiver.toBuffer(),
             this.amount.toBuffer(),
             this.partition.toBuffer(),
             this.currency.toBuffer(),
