@@ -5,7 +5,7 @@ import { RevokeOperatorItem, RevokeOperatorFact } from "./revoke-operator"
 import { RedeemTokenItem, RedeemTokenFact } from "./redeem-token"
 import { SetDocumentFact } from "./set-document"
 import { TransferSecurityTokenPartitionItem, TransferSecurityTokenPartitionFact } from "./transfer-security-token-partition"
-
+import { contract, getAPIData } from "../../api"
 import { Partition } from "./partition"
 
 import { ContractGenerator, Operation } from "../base"
@@ -206,5 +206,29 @@ export class STO extends ContractGenerator {
                 ]
             )
         )
+    }
+
+    async getServiceInfo(contractAddr: string | Address) {
+        return await getAPIData(() => contract.sto.getService(this.api, contractAddr))
+    }
+
+    async getPartitionsInfo(contractAddr: string | Address, holder: string | Address) {
+        return await getAPIData(() => contract.sto.getPartitions(this.api, contractAddr, holder))
+    }
+    
+    async getBalanceByHolder(contractAddr: string | Address, holder: string | Address, partition: string) {
+        return await getAPIData(() => contract.sto.getBalanceByHolder(this.api, contractAddr, holder, partition))
+    }
+
+    async getOperatorsByHolder(contractAddr: string | Address, holder: string | Address, partition: string) {
+        return await getAPIData(() => contract.sto.getOperatorsByHolder(this.api, contractAddr, holder, partition))
+    }
+
+    async getPartitionBalanceInfo(contractAddr: string | Address, partition: string) {
+        return await getAPIData(() => contract.sto.getPartitionBalance(this.api, contractAddr, partition))
+    }
+    
+    async getAuthorizedInfo(contractAddr: string | Address, operator: string | Address) {
+        return await getAPIData(() => contract.sto.getAuthorized(this.api, contractAddr, operator))
     }
 }
