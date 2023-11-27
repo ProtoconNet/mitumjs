@@ -18,7 +18,6 @@ import { Assert, ECODE, MitumError } from "../../error"
 type createServiceData = {
     granularity: string | number | Big
     defaultPartition: string | Partition
-    controllers: (string | Address)[]
 }
 
 export class STO extends ContractGenerator {
@@ -59,7 +58,7 @@ export class STO extends ContractGenerator {
         data: createServiceData,
         currency: string | CurrencyID,
     ) {
-        const keysToCheck: (keyof createServiceData)[] = ['granularity', 'defaultPartition', 'controllers'];
+        const keysToCheck: (keyof createServiceData)[] = ['granularity', 'defaultPartition'];
         keysToCheck.forEach((key) => {
             Assert.check(data[key] !== undefined, 
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the createServiceData structure`))
@@ -74,7 +73,6 @@ export class STO extends ContractGenerator {
                         contractAddr,
                         data.granularity,
                         data.defaultPartition,
-                        data.controllers,
                         currency,
                     )
                 ]

@@ -3,52 +3,29 @@ import { Partition } from "./partition"
 import { OperationFact } from "../base"
 
 import { HINT } from "../../alias"
-import { Config } from "../../node"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { Big, HintedObject } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
-import { SortFunc, hasOverlappingAddress } from "../../utils"
-
 
 export class CreateSecurityTokenItem extends STOItem {
     readonly granularity: Big
     readonly defaultPartition: Partition
-    readonly controllers: Address[]
 
     constructor(
         contract: string | Address, 
         granularity: string | number | Big,
         defaultPartition: string | Partition,
-        controllers: (string | Address)[],
         currency: string | CurrencyID,
     ) {
         super(HINT.STO.CREATE_SECURITY_TOKEN.ITEM, contract, currency)
 
         this.granularity = Big.from(granularity)
         this.defaultPartition = Partition.from(defaultPartition)
-        this.controllers = controllers ? controllers.map(a => Address.from(a)) : []
 
         Assert.check(
             !this.granularity.isZero(),
             MitumError.detail(ECODE.INVALID_ITEM, "zero granularity"),    
-        )
-
-        Assert.check(
-            Config.STO.ADDRESS_IN_CONTROLLERS.satisfy(this.controllers.length),
-            MitumError.detail(ECODE.INVALID_ITEM, "controllers length out of range"),
-        )
-
-        Assert.check(
-            hasOverlappingAddress(this.controllers),
-            MitumError.detail(ECODE.INVALID_ITEM, "duplicate address found in controllers"),
-        )
-
-        this.controllers.forEach(
-            a => Assert.check(
-                this.contract.toString() !== a.toString(),
-                MitumError.detail(ECODE.INVALID_ITEM, "contract is same with controller address")
-            )
         )
     }
 
@@ -57,7 +34,6 @@ export class CreateSecurityTokenItem extends STOItem {
             this.contract.toBuffer(),
             this.granularity.toBuffer("fill"),
             this.defaultPartition.toBuffer(),
-            Buffer.concat(this.controllers.sort(SortFunc).map(a => a.toBuffer())),
             this.currency.toBuffer(),
         ])
     }
@@ -67,7 +43,6 @@ export class CreateSecurityTokenItem extends STOItem {
             ...super.toHintedObject(),
             granularity: this.granularity.v,
             default_partition: this.defaultPartition.toString(),
-            controllers: this.controllers.sort(SortFunc).map(a => a.toString()),
         }
     }
 }
