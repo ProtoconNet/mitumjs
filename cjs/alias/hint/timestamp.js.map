@@ -1,0 +1,1 @@
+{"version":3,"file":"timestamp.js","sourceRoot":"","sources":["../../../src/alias/hint/timestamp.ts"],"names":[],"mappings":";;AAAA,kBAAe;IACX,cAAc,EAAE;QACZ,IAAI,EAAE,+CAA+C;QACrD,SAAS,EAAE,0CAA0C;KACxD;IACD,MAAM,EAAE;QACJ,IAAI,EAAE,uCAAuC;QAC7C,SAAS,EAAE,kCAAkC;KAChD;CACJ,CAAA"}
