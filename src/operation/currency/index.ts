@@ -363,7 +363,7 @@ export class Account extends KeyG {
                 sender,
                 [
                     new CreateAccountItem(
-                        new Keys(
+                        new EtherKeys(
                             keys.map(k =>
                                 k instanceof PubKey ? k : new PubKey(k.key, k.weight)
                             ),
