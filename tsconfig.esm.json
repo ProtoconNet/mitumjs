@@ -1,9 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "NodeNext",
+    "target": "ESNext",
+    "module": "esnext",
     "outDir": "./esm",
-    "moduleResolution": "nodenext"
+    "moduleResolution": "node"
   }
 }

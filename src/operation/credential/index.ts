@@ -8,7 +8,7 @@ import { ContractGenerator, Operation } from "../base"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { contract, getAPIData } from "../../api"
-import { Big, Bool, IP, ShortDate, TimeStamp } from "../../types"
+import { Big, Bool, IP, ShortDate, TimeStamp, URIString } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
 type templateData = {
@@ -66,9 +66,11 @@ export class Credential extends ContractGenerator {
     ) {
         const keysToCheck: (keyof templateData)[] = ['templateID', 'templateName', 'serviceDate', 'expirationDate', 'templateShare', 'multiAudit', 'displayName', 'subjectKey', 'description', 'creator'];
         keysToCheck.forEach((key) => {
-            Assert.check(data[key] !== undefined, 
-            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the templateData structure`))
+            const s = data[key];
+            Assert.check(s !== undefined, MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the templateData structure`))
+            s === 'templateID' ? new URIString(s, 'templateID') : null;
         });
+
         return new Operation(
             this.networkID,
             new AddTemplateFact(
@@ -98,8 +100,9 @@ export class Credential extends ContractGenerator {
     ) {
         const keysToCheck: (keyof issueData)[] = ['holder', 'templateID', 'id', 'value', 'validFrom', 'validUntil', 'did'];
         keysToCheck.forEach((key) => {
-            Assert.check(data[key] !== undefined, 
-            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the issueData structure`))
+            const s = data[key];
+            Assert.check(s !== undefined, MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the templateData structure`))
+            s === 'id' ? new URIString(s, 'id') : null;
         });
         return new Operation(
             this.networkID,

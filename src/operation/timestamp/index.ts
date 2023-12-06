@@ -6,7 +6,7 @@ import { ContractGenerator, Operation } from "../base"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { contract, getAPIData } from "../../api"
-import { Big, IP, TimeStamp as TS } from "../../types"
+import { Big, IP, TimeStamp as TS, URIString } from "../../types"
 
 export class TimeStamp extends ContractGenerator {
     constructor(
@@ -40,6 +40,7 @@ export class TimeStamp extends ContractGenerator {
         data: string,
         currency: string | CurrencyID,
     ) {
+        new URIString(projectID, 'projectID');
         const fact = new AppendFact(
             TS.new().UTC(),
             sender,

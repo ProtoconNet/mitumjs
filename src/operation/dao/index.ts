@@ -17,7 +17,7 @@ import { ContractGenerator, Operation } from "../base"
 import { Address } from "../../key"
 import { Amount, CurrencyID } from "../../common"
 import { contract, getAPIData } from "../../api"
-import { Big, IP, LongString, TimeStamp } from "../../types"
+import { Big, IP, LongString, TimeStamp, URIString } from "../../types"
 import { UpdatePolicyFact } from "./update-policy"
 import { Assert, ECODE, MitumError } from "../../error"
 
@@ -175,6 +175,7 @@ export class DAO extends ContractGenerator {
         proposal: CryptoProposal | BizProposal,
         currency: string | CurrencyID,
     ) {
+        new URIString(proposalID, 'proposalID');
         return new Operation(
             this.networkID,
             new ProposeFact(
