@@ -58,7 +58,7 @@ export const Config = {
 	},
 	KEYS_IN_ACCOUNT: getRangeConfig(1, 10),
 	AMOUNTS_IN_ITEM: getRangeConfig(1, 10),
-	ITEMS_IN_FACT: getRangeConfig(1, 10),
+	ITEMS_IN_FACT: getRangeConfig(1, 100),
 	OPERATIONS_IN_SEAL: getRangeConfig(1, 10),
 	KEY: {
 		MITUM: {
