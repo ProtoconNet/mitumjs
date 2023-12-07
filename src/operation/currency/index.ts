@@ -277,6 +277,28 @@ export class Account extends KeyG {
         }
     }
 
+    createBatchWallet(
+        sender: string | Address,
+        n: number,
+        currency: string | CurrencyID,
+        amount: string | number | Big,
+    ): { wallet: AccountType[], operation: Operation<CreateAccountFact> } {
+        const keyArray = this.keys(n);
+        const ksArray = keyArray.map((key) => new Keys([new PubKey(key.publickey, 100)], 100));
+        const items = ksArray.map((ks) => new CreateAccountItem(ks,[new Amount(currency, amount)],"mitum",));
+        return {
+            wallet: keyArray,
+            operation: new Operation(
+                this.networkID,
+                new CreateAccountFact(
+                    TimeStamp.new().UTC(),
+                    sender,
+                    items,
+                ),
+            ),
+        }
+    }
+
     createAccount(
         sender: string | Address,
         key: string | Key | PubKey,
