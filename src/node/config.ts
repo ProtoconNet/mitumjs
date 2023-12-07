@@ -56,7 +56,7 @@ export const Config = {
 		ZERO: getRangeConfig(8, 15),
 		NODE: getRangeConfig(4, Number.MAX_SAFE_INTEGER),
 	},
-	KEYS_IN_ACCOUNT: getRangeConfig(1, 10),
+	KEYS_IN_ACCOUNT: getRangeConfig(1, 100),
 	AMOUNTS_IN_ITEM: getRangeConfig(1, 10),
 	ITEMS_IN_FACT: getRangeConfig(1, 100),
 	OPERATIONS_IN_SEAL: getRangeConfig(1, 10),
