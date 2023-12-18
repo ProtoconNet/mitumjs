@@ -172,8 +172,8 @@ export class Token extends ContractGenerator {
         }
     }
 
-    async getTokenBalance(contractAddr: string | Address, owner: string | Address) {
-        const data = await getAPIData(() => contract.token.getTokenBalance(this.api, contractAddr, owner))
+    async getTokenBalance(contractAddr: string | Address, owner: string | Address, delegate? : boolean | undefined) {
+        const data = await getAPIData(() => contract.token.getTokenBalance(this.api, contractAddr, owner, delegate))
         return data ? data._embedded : null
     }
 }

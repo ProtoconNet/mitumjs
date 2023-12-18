@@ -188,8 +188,8 @@ export class Currency extends Generator {
         )
     }
 
-    async getAllCurrencies(): Promise<string[] | null> {
-        const datas = await getAPIData(() => api.currency.getCurrencies(this.api))
+    async getAllCurrencies(delegate? : boolean | undefined): Promise<string[] | null> {
+        const datas = await getAPIData(() => api.currency.getCurrencies(this.api, delegate))
 
         return datas
             ? Object.keys(datas._links).filter(
@@ -197,8 +197,8 @@ export class Currency extends Generator {
             : null
     }
 
-    async getCurrency(cid: string | CurrencyID) {
-        const data = await getAPIData(() => api.currency.getCurrency(this.api, cid))
+    async getCurrency(cid: string | CurrencyID, delegate? : boolean | undefined) {
+        const data = await getAPIData(() => api.currency.getCurrency(this.api, cid, delegate))
         return data ? data._embedded : null
     }
 }
@@ -490,8 +490,8 @@ export class Account extends KeyG {
         return await getAPIData(() => api.operation.send(this.api, op.toHintedObject()))
     }
 
-    async getAccountInfo(address: string | Address) {
-        const data = await getAPIData(() => api.account.getAccount(this.api, address))
+    async getAccountInfo(address: string | Address, delegate?: boolean | undefined) {
+        const data = await getAPIData(() => api.account.getAccount(this.api, address, delegate))
         return data ? data._embedded : null
     }
 
@@ -500,13 +500,13 @@ export class Account extends KeyG {
         return data ? data._embedded : null
     }
 
-    async getByPublickey(publickey: string | Key | PubKey) {
-        const data = await getAPIData(() => api.account.getAccountByPublicKey(this.api, publickey))
+    async getByPublickey(publickey: string | Key | PubKey, delegate?: boolean | undefined) {
+        const data = await getAPIData(() => api.account.getAccountByPublicKey(this.api, publickey, delegate))
         return data ? data._embedded : null
     }
 
-    async balance(address: string | Address) {
-        const data = await getAPIData(() => api.account.getAccount(this.api, address))
+    async balance(address: string | Address, delegate?: boolean | undefined) {
+        const data = await getAPIData(() => api.account.getAccount(this.api, address, delegate))
         return data ? data._embedded.balance : null
     }
 }
