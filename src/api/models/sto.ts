@@ -13,7 +13,7 @@ const delegateAddress = "http://localhost:5598/v1/mitumt/delegate/call?uri="
 async function getService(
     api: string | IP, 
     contract: string | Address,
-    delegate: boolean | undefined,
+    delegate?: boolean | undefined,
 ) {
     const apiPath = `${url(api, contract)}`;
     const encodedString = encodeURIComponent(apiPath);
