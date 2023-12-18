@@ -29,8 +29,8 @@ export class Operation extends Generator {
 		return await api.getOperations(this.api)
 	}
 
-	async getOperation(hash: string) {
-		return await api.getOperation(this.api, hash)
+	async getOperation(hash: string, delegate?: boolean | undefined) {
+		return await api.getOperation(this.api, hash, delegate)
 	}
 
 	sign(
@@ -48,6 +48,13 @@ export class Operation extends Generator {
 		headers?: { [i: string]: any }
 	) {
 		return await api.send(this.api, operation, headers)
+	}
+
+	async delegateSend(
+		operation: string | HintedObject,
+		headers?: { [i: string]: any }
+	) {
+		return await api.delegateSend(operation, headers)
 	}
 }
 

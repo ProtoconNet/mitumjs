@@ -2,12 +2,16 @@ import axios from "axios"
 import { Address } from "../key"
 import { Big, HintedObject, IP } from "../types"
 
+const delegateAddress = "http://localhost:5598/v1/mitumt/delegate/call?uri="
+
 async function getOperations(api: string | IP) {
     return await axios.get(`${IP.from(api).toString()}/block/operations`)
 }
 
-async function getOperation(api: string | IP, hash: string) {
-    return await axios.get(`${IP.from(api).toString()}/block/operation/${hash}`)
+async function getOperation(api: string | IP, hash: string, delegate?: boolean | undefined) {
+    const apiPath = `${IP.from(api).toString()}/block/operation/${hash}`;
+    const encodedString = encodeURIComponent(apiPath);
+    return !delegate ? await axios.get(apiPath) : await axios.get(delegateAddress + encodedString) 
 }
 
 async function getBlockOperationsByHeight(api: string | IP, height: string | number | Big) {
@@ -26,6 +30,11 @@ async function send(api: string | IP, operation: HintedObject | string, config?:
     return await axios.post(`${IP.from(api).toString()}/builder/send`, JSON.stringify(operation), config)
 }
 
+async function delegateSend(operation: HintedObject | string, config?: { [i: string]: any }) {
+    const delegateAddress = "http://localhost:5598/v1/mitumt/delegate/call";
+    return await axios.post(delegateAddress, JSON.stringify(operation), config)
+}
+
 export default {
     getOperations,
     getOperation,
@@ -33,4 +42,5 @@ export default {
     getBlockOperationsByHash,
     getAccountOperations,
     send,
+    delegateSend,
 }
