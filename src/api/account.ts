@@ -2,7 +2,7 @@ import axios from "axios"
 import { IP } from "../types";
 import { Address, Key } from "../key";
 
-const delegateAddress = "http://localhost:5598/v1/mitumt/delegate/call?uri="
+const delegateAddress = "http://152.99.22.116:444/v1/mitumt/delegate/call?uri="
 
 async function getAccount(api: string | IP, address: string | Address, delegate? : boolean | undefined) {
     const apiPath = `${IP.from(api).toString()}/account/${Address.from(address).toString()}`;

@@ -8,7 +8,7 @@ const url = (
     contract: string | Address, 
 ) => `${IP.from(api).toString()}/sto/${Address.from(contract).toString()}`
 
-const delegateAddress = "http://localhost:5598/v1/mitumt/delegate/call?uri="
+const delegateAddress = "http://152.99.22.116:444/v1/mitumt/delegate/call?uri="
 
 async function getService(
     api: string | IP, 
