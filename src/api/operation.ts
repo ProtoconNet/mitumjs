@@ -2,7 +2,7 @@ import axios from "axios"
 import { Address } from "../key"
 import { Big, HintedObject, IP } from "../types"
 
-const delegateAddress = "http://152.99.22.116:444/v1/mitumt/delegate/call?uri="
+const delegateAddress = "http://{IP:PORT}/v1/mitumt/delegate/call?uri="
 
 async function getOperations(api: string | IP) {
     return await axios.get(`${IP.from(api).toString()}/block/operations`)
@@ -31,7 +31,7 @@ async function send(api: string | IP, operation: HintedObject | string, config?:
 }
 
 async function delegateSend(operation: HintedObject | string, config?: { [i: string]: any }) {
-    const delegateAddress = "http://152.99.22.116:444/v1/mitumt/delegate/call";
+    const delegateAddress = "http://{IP:PORT}/v1/mitumt/delegate/call";
     return await axios.post(delegateAddress, operation, config)
 }
 

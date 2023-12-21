@@ -21,7 +21,7 @@ async function getTokenBalance(
     account: string | Address,
     delegate: boolean | undefined
 ) {
-    const delegateAddress = "http://152.99.22.116:444/v1/mitumt/delegate/call?uri="
+    const delegateAddress = "http://{IP:PORT}/v1/mitumt/delegate/call?uri="
     const apiPath = `${url(api, contract)}/account/${Address.from(account).toString()}`;
     const encodedString = encodeURIComponent(apiPath);
     return !delegate ? await axios.get(apiPath) : await axios.get(delegateAddress + encodedString) 

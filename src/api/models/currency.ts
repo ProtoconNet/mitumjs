@@ -2,7 +2,7 @@ import axios from "axios"
 import { IP } from "../../types"
 import { CurrencyID } from "../../common"
 
-const delegateAddress = "http://152.99.22.116:444/v1/mitumt/delegate/call?uri="
+const delegateAddress = "http://{IP:PORT}/v1/mitumt/delegate/call?uri="
 
 async function getCurrencies(api: string | IP, delegate? : boolean | undefined) {
     const apiPath = `${IP.from(api).toString()}/currency`;
