@@ -206,16 +206,16 @@ export class STO extends ContractGenerator {
         )
     }
 
-    async getServiceInfo(contractAddr: string | Address) {
-        return await getAPIData(() => contract.sto.getService(this.api, contractAddr))
+    async getServiceInfo(contractAddr: string | Address, delegate? : boolean | undefined) {
+        return await getAPIData(() => contract.sto.getService(this.api, contractAddr, delegate))
     }
 
-    async getPartitionsInfo(contractAddr: string | Address, holder: string | Address) {
-        return await getAPIData(() => contract.sto.getPartitions(this.api, contractAddr, holder))
+    async getPartitionsInfo(contractAddr: string | Address, holder: string | Address, delegate? : boolean | undefined) {
+        return await getAPIData(() => contract.sto.getPartitions(this.api, contractAddr, holder, delegate))
     }
     
-    async getBalanceByHolder(contractAddr: string | Address, holder: string | Address, partition: string) {
-        return await getAPIData(() => contract.sto.getBalanceByHolder(this.api, contractAddr, holder, partition))
+    async getBalanceByHolder(contractAddr: string | Address, holder: string | Address, partition: string, delegate? : boolean | undefined) {
+        return await getAPIData(() => contract.sto.getBalanceByHolder(this.api, contractAddr, holder, partition, delegate))
     }
 
     async getOperatorsByHolder(contractAddr: string | Address, holder: string | Address, partition: string) {

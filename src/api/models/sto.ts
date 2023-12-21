@@ -8,19 +8,27 @@ const url = (
     contract: string | Address, 
 ) => `${IP.from(api).toString()}/sto/${Address.from(contract).toString()}`
 
+const delegateAddress = "http://{IP:PORT}/v1/mitumt/delegate/call?uri="
+
 async function getService(
     api: string | IP, 
     contract: string | Address,
+    delegate?: boolean | undefined,
 ) {
-    return await axios.get(`${url(api, contract)}`)
+    const apiPath = `${url(api, contract)}`;
+    const encodedString = encodeURIComponent(apiPath);
+    return !delegate ? await axios.get(apiPath) : await axios.get(delegateAddress + encodedString) 
 }
 
 async function getPartitions(
     api: string | IP, 
     contract: string | Address,
     holder: string | Address,
+    delegate? : boolean | undefined,
 ) {
-    return await axios.get(`${url(api, contract)}/holder/${Address.from(holder).toString()}/partitions`)
+    const apiPath = `${url(api, contract)}/holder/${Address.from(holder).toString()}/partitions`;
+    const encodedString = encodeURIComponent(apiPath);
+    return !delegate ? await axios.get(apiPath) : await axios.get(delegateAddress + encodedString) 
 }
 
 async function getBalanceByHolder(
@@ -28,8 +36,11 @@ async function getBalanceByHolder(
     contract: string | Address,
     holder: string | Address,
     partition: string,
+    delegate? : boolean | undefined,
 ) {
-    return await axios.get(`${url(api, contract)}/holder/${Address.from(holder).toString()}/partition/${partition}/balance`)
+    const apiPath = `${url(api, contract)}/holder/${Address.from(holder).toString()}/partition/${partition}/balance`;
+    const encodedString = encodeURIComponent(apiPath);
+    return !delegate ? await axios.get(apiPath) : await axios.get(delegateAddress + encodedString) 
 }
 
 async function getOperatorsByHolder(

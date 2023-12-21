@@ -2,12 +2,18 @@ import axios from "axios"
 import { IP } from "../../types"
 import { CurrencyID } from "../../common"
 
-async function getCurrencies(api: string | IP) {
-    return await axios.get(`${IP.from(api).toString()}/currency`)
+const delegateAddress = "http://{IP:PORT}/v1/mitumt/delegate/call?uri="
+
+async function getCurrencies(api: string | IP, delegate? : boolean | undefined) {
+    const apiPath = `${IP.from(api).toString()}/currency`;
+    const encodedString = encodeURIComponent(apiPath);
+    return !delegate ? await axios.get(apiPath) : await axios.get(delegateAddress + encodedString) 
 }
 
-async function getCurrency(api: string | IP, currency: string | CurrencyID) {
-    return await axios.get(`${IP.from(api).toString()}/currency/${CurrencyID.from(currency).toString()}`)
+async function getCurrency(api: string | IP, currency: string | CurrencyID, delegate? : boolean | undefined) {
+    const apiPath = `${IP.from(api).toString()}/currency/${CurrencyID.from(currency).toString()}`;
+    const encodedString = encodeURIComponent(apiPath);
+    return !delegate ? await axios.get(apiPath) : await axios.get(delegateAddress + encodedString) 
 }
 
 export default {
