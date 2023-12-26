@@ -21,16 +21,17 @@ export class Operation extends Generator {
 	constructor(
 		networkID: string,
 		api?: string | IP,
+		delegateIP?: string | IP,
 	) {
-		super(networkID, api)
+		super(networkID, api, delegateIP)
 	}
 
 	async getAllOperations() {
-		return await api.getOperations(this.api)
+		return await api.getOperations(this.api, this.delegateIP)
 	}
 
-	async getOperation(hash: string, delegate?: boolean | undefined) {
-		return await api.getOperation(this.api, hash, delegate)
+	async getOperation(hash: string) {
+		return await api.getOperation(this.api, hash, this.delegateIP)
 	}
 
 	sign(
@@ -47,14 +48,7 @@ export class Operation extends Generator {
 		operation: string | HintedObject,
 		headers?: { [i: string]: any }
 	) {
-		return await api.send(this.api, operation, headers)
-	}
-
-	async delegateSend(
-		operation: string | HintedObject,
-		headers?: { [i: string]: any }
-	) {
-		return await api.delegateSend(operation, headers)
+		return await api.send(this.api, operation, this.delegateIP, headers)
 	}
 }
 

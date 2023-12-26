@@ -11,8 +11,8 @@ export {
 }
 
 export class Node extends Generator {
-    constructor(api?: string | IP) {
-        super("", api)
+    constructor(api?: string | IP, delegateIP?: string | IP) {
+        super("", api, delegateIP)
     }
 
     async getNodeInfo() {
@@ -20,13 +20,13 @@ export class Node extends Generator {
             this.api !== undefined || this.api !== null,
             MitumError.detail(ECODE.NO_API, "no api"),
         )
-        return await node.getNode(this.api)
+        return await node.getNode(this.api, this.delegateIP)
     }
 }
 
 export class Block extends Generator {
-    constructor(api?: string | IP) {
-        super("", api)
+    constructor(api?: string | IP, delegate?: string | IP) {
+        super("", api, delegate)
     }
 
     async getAllBlocks() {
@@ -34,7 +34,7 @@ export class Block extends Generator {
             this.api !== undefined || this.api !== null,
             MitumError.detail(ECODE.NO_API, "no api"),
         )
-        return await block.getBlocks(this.api)
+        return await block.getBlocks(this.api, this.delegateIP)
     }
 
     async getBlockByHash(hash: string) {
@@ -42,7 +42,7 @@ export class Block extends Generator {
             this.api !== undefined || this.api !== null,
             MitumError.detail(ECODE.NO_API, "no api"),
         )
-        return await block.getBlockByHash(this.api, hash)
+        return await block.getBlockByHash(this.api, hash, this.delegateIP)
     }
 
     async getBlockByHeight(height: number | string) {
@@ -50,7 +50,7 @@ export class Block extends Generator {
             this.api !== undefined || this.api !== null,
             MitumError.detail(ECODE.NO_API, "no api"),
         )
-        return await block.getBlockByHeight(this.api, height)
+        return await block.getBlockByHeight(this.api, height, this.delegateIP)
     }
 
     async getOperationsByHash(hash: string) {
@@ -58,7 +58,7 @@ export class Block extends Generator {
             this.api !== undefined || this.api !== null,
             MitumError.detail(ECODE.NO_API, "no api"),
         )
-        return await operation.getBlockOperationsByHash(this.api, hash)
+        return await operation.getBlockOperationsByHash(this.api, hash, this.delegateIP)
     }
 
     async getOperationsByHeight(height: number | string) {
@@ -66,6 +66,6 @@ export class Block extends Generator {
             this.api !== undefined || this.api !== null,
             MitumError.detail(ECODE.NO_API, "no api"),
         )
-        return await operation.getBlockOperationsByHeight(this.api, height)
+        return await operation.getBlockOperationsByHeight(this.api, height, this.delegateIP)
     }
 }

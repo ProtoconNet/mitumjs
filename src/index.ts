@@ -30,44 +30,44 @@ export class Mitum extends Generator {
     private _token: Token
     private _point: Point
 
-    public constructor(api?: string) {
-        super(NetworkID.get(), api)
-        this._node = new Node(this.api)
+    public constructor(api?: string, delegateIP?: string) {
+        super(NetworkID.get(), api, delegateIP)
+        this._node = new Node(this.api, this.delegateIP)
 
-        this._account = new Account(this.networkID,this. api)
-        this._currency = new Currency(this.networkID, this.api)
-        this._block = new Block(this.api)
-        this._operation = new Operation(this.networkID, this.api)
+        this._account = new Account(this.networkID,this.api, this.delegateIP)
+        this._currency = new Currency(this.networkID, this.api, this.delegateIP)
+        this._block = new Block(this.api, this.delegateIP)
+        this._operation = new Operation(this.networkID, this.api, this.delegateIP)
         this._signer = new Signer(this.networkID, this.api)
 
-        this._contract = new Contract(this.networkID, this.api)
-        this._nft = new NFT(this.networkID, this.api)
-        this._credential = new Credential(this.networkID, this.api)
-        this._timestamp = new TimeStamp(this.networkID, this.api)
-        this._sto = new STO(this.networkID, this.api)
-        this._kyc = new KYC(this.networkID, this.api)
-        this._dao = new DAO(this.networkID, this.api)
-        this._token = new Token(this.networkID, this.api)
-        this._point = new Point(this.networkID, this.api)
+        this._contract = new Contract(this.networkID, this.api, this.delegateIP)
+        this._nft = new NFT(this.networkID, this.api, this.delegateIP)
+        this._credential = new Credential(this.networkID, this.api, this.delegateIP)
+        this._timestamp = new TimeStamp(this.networkID, this.api, this.delegateIP)
+        this._sto = new STO(this.networkID, this.api, this.delegateIP)
+        this._kyc = new KYC(this.networkID, this.api, this.delegateIP)
+        this._dao = new DAO(this.networkID, this.api, this.delegateIP)
+        this._token = new Token(this.networkID, this.api, this.delegateIP)
+        this._point = new Point(this.networkID, this.api, this.delegateIP)
     }
 
     private refresh() {
-        this._node = new Node(this.api)
+        this._node = new Node(this.api, this.delegateIP)
 
-        this._account = new Account(this.networkID,this. api)
-        this._currency = new Currency(this.networkID, this.api)
-        this._block = new Block(this.api)
-        this._operation = new Operation(this.networkID, this.api)
+        this._account = new Account(this.networkID, this.api, this.delegateIP)
+        this._currency = new Currency(this.networkID, this.api, this.delegateIP)
+        this._block = new Block(this.api, this.delegateIP)
+        this._operation = new Operation(this.networkID, this.api, this.delegateIP)
 
-        this._contract = new Contract(this.networkID, this.api)
-        this._nft = new NFT(this.networkID, this.api)
-        this._credential = new Credential(this.networkID, this.api)
-        this._timestamp = new TimeStamp(this.networkID, this.api)
-        this._sto = new STO(this.networkID, this.api)
-        this._kyc = new KYC(this.networkID, this.api)
-        this._dao = new DAO(this.networkID, this.api)
-        this._token = new Token(this.networkID, this.api)
-        this._point = new Point(this.networkID, this.api)
+        this._contract = new Contract(this.networkID, this.api, this.delegateIP)
+        this._nft = new NFT(this.networkID, this.api, this.delegateIP)
+        this._credential = new Credential(this.networkID, this.api, this.delegateIP)
+        this._timestamp = new TimeStamp(this.networkID, this.api, this.delegateIP)
+        this._sto = new STO(this.networkID, this.api, this.delegateIP)
+        this._kyc = new KYC(this.networkID, this.api, this.delegateIP)
+        this._dao = new DAO(this.networkID, this.api, this.delegateIP)
+        this._token = new Token(this.networkID, this.api, this.delegateIP)
+        this._point = new Point(this.networkID, this.api, this.delegateIP)
     }
 
     get node(): Node {
@@ -140,6 +140,15 @@ export class Mitum extends Generator {
     setAPI(api?: string | IP) {
         super.setAPI(api)
         this.refresh()
+    }
+
+    setDelegate(delegateIP: string | IP) {
+        super.setDelegate(delegateIP)
+        this.refresh()
+    }
+
+    getDelegate(): string {
+        return this.delegateIP.toString()
     }
 
     /**

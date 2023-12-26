@@ -8,27 +8,25 @@ const url = (
     contract: string | Address, 
 ) => `${IP.from(api).toString()}/sto/${Address.from(contract).toString()}`
 
-const delegateAddress = "http://{IP:PORT}/v1/mitumt/delegate/call?uri="
+const delegateUri = (delegateIP: string | IP) => `${IP.from(delegateIP).toString()}?uri=`
 
 async function getService(
     api: string | IP, 
     contract: string | Address,
-    delegate?: boolean | undefined,
+    delegateIP: string | IP
 ) {
     const apiPath = `${url(api, contract)}`;
-    const encodedString = encodeURIComponent(apiPath);
-    return !delegate ? await axios.get(apiPath) : await axios.get(delegateAddress + encodedString) 
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getPartitions(
     api: string | IP, 
     contract: string | Address,
     holder: string | Address,
-    delegate? : boolean | undefined,
+    delegateIP: string | IP
 ) {
     const apiPath = `${url(api, contract)}/holder/${Address.from(holder).toString()}/partitions`;
-    const encodedString = encodeURIComponent(apiPath);
-    return !delegate ? await axios.get(apiPath) : await axios.get(delegateAddress + encodedString) 
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getBalanceByHolder(
@@ -36,11 +34,10 @@ async function getBalanceByHolder(
     contract: string | Address,
     holder: string | Address,
     partition: string,
-    delegate? : boolean | undefined,
+    delegateIP: string | IP
 ) {
     const apiPath = `${url(api, contract)}/holder/${Address.from(holder).toString()}/partition/${partition}/balance`;
-    const encodedString = encodeURIComponent(apiPath);
-    return !delegate ? await axios.get(apiPath) : await axios.get(delegateAddress + encodedString) 
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getOperatorsByHolder(
@@ -48,24 +45,30 @@ async function getOperatorsByHolder(
     contract: string | Address,
     holder: string | Address,
     partition: string,
+    delegateIP: string | IP
 ) {
-    return await axios.get(`${url(api, contract)}/holder/${Address.from(holder).toString()}/partition/${partition}/operators`)
+    const apiPath = `${url(api, contract)}/holder/${Address.from(holder).toString()}/partition/${partition}/operators`;
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getPartitionBalance(
     api: string | IP, 
     contract: string | Address,
     partition: string,
+    delegateIP: string | IP
 ) {
-    return await axios.get(`${url(api, contract)}/partition/${partition}/balance`)
+    const apiPath = `${url(api, contract)}/partition/${partition}/balance`;
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getAuthorized(
     api: string | IP, 
     contract: string | Address,
     operator: string | Address,
+    delegateIP: string | IP
 ) {
-    return await axios.get(`${url(api, contract)}/operator/${Address.from(operator).toString()}/holders`)
+    const apiPath = `${url(api, contract)}/operator/${Address.from(operator).toString()}/holders`;
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 export default {

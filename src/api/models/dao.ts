@@ -8,19 +8,25 @@ const url = (
     contract: string | Address, 
 ) => `${IP.from(api).toString()}/dao/${Address.from(contract).toString()}`
 
+const delegateUri = (delegateIP: string | IP) => `${IP.from(delegateIP).toString()}?uri=`
+
 async function getService(
     api: string | IP, 
     contract: string | Address,
+    delegateIP: string | IP
 ) {
-    return await axios.get(`${url(api, contract)}/service`)
+    const apiPath = `${url(api, contract)}/service`;
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
 async function getProposal(
     api: string | IP, 
     contract: string | Address,
     proposalID: string,
+    delegateIP: string | IP
 ) {
-    return await axios.get(`${url(api, contract)}/proposal/${proposalID}`)
+    const apiPath = `${url(api, contract)}/proposal/${proposalID}`;
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
 async function getDelegator(
@@ -28,24 +34,30 @@ async function getDelegator(
     contract: string | Address,
     proposalID: string,
     delegator: string | Address,
+    delegateIP: string | IP
 ) {
-    return await axios.get(`${url(api, contract)}/proposal/${proposalID}/delegator/${Address.from(delegator).toString()}`)
+    const apiPath = `${url(api, contract)}/proposal/${proposalID}/delegator/${Address.from(delegator).toString()}`;
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
 async function getVoter(
     api: string | IP, 
     contract: string | Address,
     proposalID: string,
+    delegateIP: string | IP
 ) {
-    return await axios.get(`${url(api, contract)}/proposal/${proposalID}/voter`)
+    const apiPath = `${url(api, contract)}/proposal/${proposalID}/voter`;
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
 async function getVotingResult(
     api: string | IP, 
     contract: string | Address,
     proposalID: string,
+    delegateIP: string | IP
 ) {
-    return await axios.get(`${url(api, contract)}/proposal/${proposalID}/votingpower`)
+    const apiPath = `${url(api, contract)}/proposal/${proposalID}/votingpower`;
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
 export default {

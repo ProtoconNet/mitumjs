@@ -14,8 +14,9 @@ export class KYC extends ContractGenerator {
     constructor(
         networkID: string,
         api?: string | IP,
+        delegateIP?: string | IP,
     ) {
-        super(networkID, api)
+        super(networkID, api, delegateIP)
     }
 
     createService(
