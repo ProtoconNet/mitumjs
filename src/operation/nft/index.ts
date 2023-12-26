@@ -32,8 +32,9 @@ export class NFT extends ContractGenerator {
     constructor(
         networkID: string,
         api?: string | IP,
+        delegateIP?: string | IP,
     ) {
-        super(networkID, api)
+        super(networkID, api, delegateIP)
     }
 
     createCollection(
@@ -239,7 +240,7 @@ export class NFT extends ContractGenerator {
     }
 
     async getCollectionInfo(contractAddr: string | Address) {
-        const data = await getAPIData(() => contract.nft.getCollection(this.api, contractAddr))
+        const data = await getAPIData(() => contract.nft.getCollection(this.api, contractAddr, this.delegateIP))
         return data ? data._embedded : null
     }
 
@@ -256,6 +257,7 @@ export class NFT extends ContractGenerator {
             this.api,
             contractAddr,
             nftID,
+            this.delegateIP
         ))
 
         return data ? data._embedded.owner : null
@@ -266,6 +268,7 @@ export class NFT extends ContractGenerator {
             this.api,
             contractAddr,
             nftID,
+            this.delegateIP
         ))
 
         return data ? data._embedded.approved : null
@@ -275,6 +278,7 @@ export class NFT extends ContractGenerator {
         const data = await getAPIData(() => contract.nft.getNFTs(
             this.api,
             contractAddr,
+            this.delegateIP
         ))
 
         return data ? data._embedded.length : null
@@ -285,6 +289,7 @@ export class NFT extends ContractGenerator {
             this.api,
             contractAddr,
             nftID,
+            this.delegateIP
         ))
 
         return data ? data._embedded.uri : null
@@ -295,6 +300,7 @@ export class NFT extends ContractGenerator {
             this.api,
             contractAddr,
             owner,
+            this.delegateIP
         ))
     }
 
@@ -303,6 +309,7 @@ export class NFT extends ContractGenerator {
             this.api,
             contractAddr,
             nftID,
+            this.delegateIP
         ))
     }
 
@@ -310,6 +317,7 @@ export class NFT extends ContractGenerator {
         return await getAPIData(() => contract.nft.getNFTs(
             this.api,
             contractAddr,
+            this.delegateIP
         ))
     }
 }

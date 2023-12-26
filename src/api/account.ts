@@ -2,18 +2,16 @@ import axios from "axios"
 import { IP } from "../types";
 import { Address, Key } from "../key";
 
-const delegateAddress = "http://{IP:PORT}/v1/mitumt/delegate/call?uri="
+const delegateUri = (delegateIP: string | IP) => `${IP.from(delegateIP).toString()}?uri=`
 
-async function getAccount(api: string | IP, address: string | Address, delegate? : boolean | undefined) {
+async function getAccount(api: string | IP, address: string | Address, delegateIP: string | IP) {
     const apiPath = `${IP.from(api).toString()}/account/${Address.from(address).toString()}`;
-    const encodedString = encodeURIComponent(apiPath);
-    return !delegate ? await axios.get(apiPath) : await axios.get(delegateAddress + encodedString) 
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
-async function getAccountByPublicKey(api: string | IP, publicKey: string | Key, delegate? : boolean | undefined) {
+async function getAccountByPublicKey(api: string | IP, publicKey: string | Key, delegateIP: string | IP) {
     const apiPath = `${IP.from(api).toString()}/accounts?publickey=${Key.from(publicKey).toString()}`;
-    const encodedString = encodeURIComponent(apiPath);
-    return !delegate ? await axios.get(apiPath) : await axios.get(delegateAddress + encodedString) 
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
 export default {

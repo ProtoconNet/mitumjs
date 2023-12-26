@@ -16,8 +16,9 @@ export class Token extends ContractGenerator {
     constructor(
         networkID: string,
         api?: string | IP,
+        delegateIP?: string | IP,
     ) {
-        super(networkID, api)
+        super(networkID, api, delegateIP)
     }
 
     registerToken(
@@ -145,12 +146,12 @@ export class Token extends ContractGenerator {
     }
 
     async getTokenInfo(contractAddr: string | Address) {
-        const data = await getAPIData(() => contract.token.getToken(this.api, contractAddr))
+        const data = await getAPIData(() => contract.token.getToken(this.api, contractAddr, this.delegateIP))
         return data ? data._embedded : null
     }
     
     async getAllowance(contractAddr: string | Address, owner: string | Address, spender: string | Address) {
-        const data = await getAPIData(() => contract.token.getToken(this.api, contractAddr))
+        const data = await getAPIData(() => contract.token.getToken(this.api, contractAddr, this.delegateIP))
         if (data) {
             const approve_list = data._embedded.policy.approve_list;
             let amount;
@@ -172,8 +173,8 @@ export class Token extends ContractGenerator {
         }
     }
 
-    async getTokenBalance(contractAddr: string | Address, owner: string | Address, delegate? : boolean | undefined) {
-        const data = await getAPIData(() => contract.token.getTokenBalance(this.api, contractAddr, owner, delegate))
+    async getTokenBalance(contractAddr: string | Address, owner: string | Address) {
+        const data = await getAPIData(() => contract.token.getTokenBalance(this.api, contractAddr, owner, this.delegateIP))
         return data ? data._embedded : null
     }
 }

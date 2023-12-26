@@ -12,8 +12,9 @@ export class TimeStamp extends ContractGenerator {
     constructor(
         networkID: string,
         api?: string | IP,
+        delegateIP?: string | IP,
     ) {
-        super(networkID, api)
+        super(networkID, api, delegateIP)
     }
 
     createService(
@@ -55,7 +56,7 @@ export class TimeStamp extends ContractGenerator {
     }
 
     async getServiceInfo(contractAddr: string | Address) {
-        return await getAPIData(() => contract.timestamp.getService(this.api, contractAddr))
+        return await getAPIData(() => contract.timestamp.getService(this.api, contractAddr, this.delegateIP))
     }
 
     async getTimestampInfo(
@@ -63,6 +64,6 @@ export class TimeStamp extends ContractGenerator {
         projectID: string,
         tid: string | number | Big,
     ) {
-        return await getAPIData(() => contract.timestamp.getTimeStamp(this.api, contractAddr, projectID, tid))
+        return await getAPIData(() => contract.timestamp.getTimeStamp(this.api, contractAddr, projectID, tid, this.delegateIP))
     }
 }
