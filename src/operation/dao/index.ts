@@ -44,8 +44,9 @@ export class DAO extends ContractGenerator {
     constructor(
         networkID: string,
         api?: string | IP,
+        delegateIP?: string | IP,
     ) {
-        super(networkID, api)
+        super(networkID, api, delegateIP)
     }
 
     createService(
@@ -302,22 +303,22 @@ export class DAO extends ContractGenerator {
     }
 
     async getServiceInfo(contractAddr: string | Address) {
-        return await getAPIData(() => contract.dao.getService(this.api, contractAddr))
+        return await getAPIData(() => contract.dao.getService(this.api, contractAddr, this.delegateIP))
     }
 
     async getProposalInfo(contractAddr: string | Address, proposalID: string) {
-        return await getAPIData(() => contract.dao.getProposal(this.api, contractAddr, proposalID))
+        return await getAPIData(() => contract.dao.getProposal(this.api, contractAddr, proposalID,this.delegateIP))
     }
 
     async getDelegatorInfo(contractAddr: string | Address, proposalID: string, delegator: string | Address) {
-        return await getAPIData(() => contract.dao.getDelegator(this.api, contractAddr, proposalID, delegator))
+        return await getAPIData(() => contract.dao.getDelegator(this.api, contractAddr, proposalID, delegator, this.delegateIP))
     }
 
     async getVoterInfo(contractAddr: string | Address, proposalID: string) {
-        return await getAPIData(() => contract.dao.getVoter(this.api, contractAddr, proposalID))
+        return await getAPIData(() => contract.dao.getVoter(this.api, contractAddr, proposalID, this.delegateIP))
     }
 
     async getVotingResult(contractAddr: string | Address, proposalID: string) {
-        return await getAPIData(() => contract.dao.getVotingResult(this.api, contractAddr, proposalID))
+        return await getAPIData(() => contract.dao.getVotingResult(this.api, contractAddr, proposalID, this.delegateIP))
     }
 }

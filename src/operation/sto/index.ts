@@ -24,8 +24,9 @@ export class STO extends ContractGenerator {
     constructor(
         networkID: string,
         api?: string | IP,
+        delegateIP?: string | IP,
     ) {
-        super(networkID, api)
+        super(networkID, api, delegateIP)
     }
 
     authorizeOperator(
@@ -207,26 +208,26 @@ export class STO extends ContractGenerator {
     }
 
     async getServiceInfo(contractAddr: string | Address) {
-        return await getAPIData(() => contract.sto.getService(this.api, contractAddr))
+        return await getAPIData(() => contract.sto.getService(this.api, contractAddr, this.delegateIP))
     }
 
     async getPartitionsInfo(contractAddr: string | Address, holder: string | Address) {
-        return await getAPIData(() => contract.sto.getPartitions(this.api, contractAddr, holder))
+        return await getAPIData(() => contract.sto.getPartitions(this.api, contractAddr, holder, this.delegateIP))
     }
     
     async getBalanceByHolder(contractAddr: string | Address, holder: string | Address, partition: string) {
-        return await getAPIData(() => contract.sto.getBalanceByHolder(this.api, contractAddr, holder, partition))
+        return await getAPIData(() => contract.sto.getBalanceByHolder(this.api, contractAddr, holder, partition, this.delegateIP))
     }
 
     async getOperatorsByHolder(contractAddr: string | Address, holder: string | Address, partition: string) {
-        return await getAPIData(() => contract.sto.getOperatorsByHolder(this.api, contractAddr, holder, partition))
+        return await getAPIData(() => contract.sto.getOperatorsByHolder(this.api, contractAddr, holder, partition, this.delegateIP))
     }
 
     async getPartitionBalanceInfo(contractAddr: string | Address, partition: string) {
-        return await getAPIData(() => contract.sto.getPartitionBalance(this.api, contractAddr, partition))
+        return await getAPIData(() => contract.sto.getPartitionBalance(this.api, contractAddr, partition, this.delegateIP))
     }
     
     async getAuthorizedInfo(contractAddr: string | Address, operator: string | Address) {
-        return await getAPIData(() => contract.sto.getAuthorized(this.api, contractAddr, operator))
+        return await getAPIData(() => contract.sto.getAuthorized(this.api, contractAddr, operator, this.delegateIP))
     }
 }

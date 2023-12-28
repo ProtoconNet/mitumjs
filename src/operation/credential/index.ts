@@ -38,8 +38,9 @@ export class Credential extends ContractGenerator {
     constructor(
         networkID: string,
         api?: string | IP,
+        delegateIP?: string | IP,
     ) {
-        super(networkID, api)
+        super(networkID, api, delegateIP)
     }
 
     createService(
@@ -153,7 +154,7 @@ export class Credential extends ContractGenerator {
     }
 
     async getServiceInfo(contractAddr: string | Address) {
-        return await getAPIData(() => contract.credential.getIssuer(this.api, contractAddr))
+        return await getAPIData(() => contract.credential.getIssuer(this.api, contractAddr, this.delegateIP))
     }
 
     async getCredentialInfo(
@@ -161,27 +162,27 @@ export class Credential extends ContractGenerator {
         templateID: string,
         credentialID: string,
     ) {
-        return await getAPIData(() => contract.credential.getCredential(this.api, contractAddr, templateID, credentialID))
+        return await getAPIData(() => contract.credential.getCredential(this.api, contractAddr, templateID, credentialID, this.delegateIP))
     }
 
     async getTemplate(
         contractAddr: string | Address,
         templateID: string,
     ) {
-        return await getAPIData(() => contract.credential.getTemplate(this.api, contractAddr, templateID))
+        return await getAPIData(() => contract.credential.getTemplate(this.api, contractAddr, templateID, this.delegateIP))
     }
 
     async getAllCredentials(
         contractAddr: string | Address,
         templateID: string,
     ) {
-        return await getAPIData(() => contract.credential.getCredentials(this.api, contractAddr, templateID))
+        return await getAPIData(() => contract.credential.getCredentials(this.api, contractAddr, templateID, this.delegateIP))
     }
 
     async claimCredential(
         contractAddr: string | Address,
         holder: string | Address,
     ) {
-        return await getAPIData(() => contract.credential.getCredentialByHolder(this.api, contractAddr, holder))
+        return await getAPIData(() => contract.credential.getCredentialByHolder(this.api, contractAddr, holder, this.delegateIP))
     }
 }

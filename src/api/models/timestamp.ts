@@ -8,11 +8,15 @@ const url = (
     contract: string | Address,
 ) => `${IP.from(api).toString()}/timestamp/${Address.from(contract).toString()}`
 
+const delegateUri = (delegateIP: string | IP) => `${IP.from(delegateIP).toString()}?uri=`
+
 async function getService(
     api: string | IP, 
     contract: string | Address,
+    delegateIP: string | IP
 ) {
-    return await axios.get(`${url(api, contract)}/service`)
+    const apiPath = `${url(api, contract)}/service`;
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getTimeStamp(
@@ -20,8 +24,10 @@ async function getTimeStamp(
     contract: string | Address,
     projectID: string,
     tid: string | number | Big,
+    delegateIP: string | IP
 ) {
-    return await axios.get(`${url(api, contract)}/project/${projectID}/id/${Big.from(tid).toString()}`)
+    const apiPath = `${url(api, contract)}/project/${projectID}/id/${Big.from(tid).toString()}`;
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 export default {

@@ -21,8 +21,8 @@ type keysType =
     | Array<{ key: string | Key | PubKey; weight: string | number | Big }>
 
 export class KeyG extends Generator {
-    constructor(networkID: string, api?: string | IP) {
-        super(networkID, api)
+    constructor(networkID: string, api?: string | IP, delegateIP? : string | IP) {
+        super(networkID, api, delegateIP)
     }
 
     key(seed?: string): Account {
