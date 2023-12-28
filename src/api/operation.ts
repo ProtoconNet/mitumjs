@@ -31,7 +31,9 @@ async function getAccountOperations(api: string | IP, address: string | Address,
 
 async function send(api: string | IP, operation: HintedObject | string, delegateIP: string | IP, config?: { [i: string]: any }) {
     const apiPath = `${IP.from(api).toString()}/builder/send`;
-    return !delegateIP ? await axios.post(apiPath, JSON.stringify(operation), config) : await axios.post(delegateIP.toString(), operation, config)
+    return !delegateIP 
+    ? await axios.post(apiPath, JSON.stringify(operation), config) 
+    : await axios.post(delegateIP.toString(), { ...Object(operation), uri: apiPath }, config)
 }
 
 export default {
