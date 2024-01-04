@@ -1,23 +1,28 @@
 {
-  "name": "mitum",
-  "version": "1.0.1",
+  "name": "@mitumjs/mitumjs",
+  "version": "1.0.2",
   "description": "framework for mitum network",
   "main": "cjs/index.js",
-  "module": "esm/index.js",
-  "types": "dist/cjs/index.d.ts",
+  "module": "esm/wrapper.js",
+  "types": "cjs/index.d.ts",
   "scripts": {
-    "test": "jest",
-    "build": "npm run build:cjs & npm run build:esm",
     "build:cjs": "tsc --p ./tsconfig.cjs.json",
-    "build:esm": "tsc --p ./tsconfig.esm.json",
+    "test-esm": "node --experimental-vm-modules ./node_modules/.bin/jest ./esm/esm.test.js",
+    "test-cjs": "node ./node_modules/.bin/jest ./cjs/cjs.test.js",
     "check:orphans": "npx madge --orphans ./src/**/*",
     "check:circular": "npx madge --circular --image ./circular.svg ./src/**/*",
     "check:dependency": "npx madge --dot ./src/**/* > ./dot.gv "
+  },
+  "exports": {
+    "require": "./cjs/index.js",
+    "import": "./esm/wrapper.js"
   },
   "keywords": [
     "mitum",
     "protocon",
     "mitum-currency",
+    "mitum-token",
+    "mitum-point",
     "mitum-nft",
     "mitum-sto",
     "mitum-dao",
@@ -25,16 +30,16 @@
     "mitum-kyc",
     "mitum-timestamp"
   ],
-  "author": "protocon",
+  "author": "socialinfratech",
   "license": "GPL-3.0-or-later",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ProtoconNet/mitum-sdk-js.git"
+    "url": "git+https://github.com/ProtoconNet/mitumjs.git"
   },
   "bugs": {
-    "url": "https://github.com/ProtoconNet/mitum-sdk-js/issues"
+    "url": "https://github.com/ProtoconNet/mitumjs/issues"
   },
-  "homepage": "https://github.com/ProtoconNet/mitum-sdk-js#readme",
+  "homepage": "https://github.com/ProtoconNet/mitumjs#readme",
   "devDependencies": {
     "@babel/preset-env": "^7.22.20",
     "@babel/preset-typescript": "^7.22.15",
