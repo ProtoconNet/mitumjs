@@ -23,19 +23,15 @@ $ git clone https://github.com/ProtoconNet/mitumjs.git
 $ git clone git@github.com:ProtoconNet/mitumjs.git
 $ cd mitumjs
 $ npm i
+# run build, if you want cjs or esm module
 $ npm run build
-# link locally
-$ npm link
-# Use in another project
-$ cd another_project_folder
-$ npm link mitum
 ```
 
 </br> 
 
 ## Usage
 
-- Assume that the paths where CJS and ESM code is stored are "./cjs" and "./esm" respectively.
+- After running build, a directory **<code>dist</code>** include **<code>bundle.cjs.cjs</code>** and **<code>bundle.esm.mjs</code>** files will be created.
 
 - This is an example of how to 'require' a CJS module.
     
@@ -47,7 +43,8 @@ $ npm link mitum
     
 
 ```jsx
-const { Mitum } = require("./cjs");
+//cjs_test.cjs
+const { Mitum } = require("./dist/bundle.cjs.cjs");
 
 const mitum = new Mitum(/* "RPC-URL" */);
 
@@ -58,16 +55,79 @@ mitum.setNode(rpcurl);
 
 - This is an example of using an ESM module by 'importing' it.
     
+    Some of the modules used for cryptography are CommonJS modules and may not support all module.exports as named exports.
+
+    **⚠️So you have to fix that part manually.**
+
     The rest of the usage is the same, except for the syntax to 'import' the Mitum module at the beginning.
     
+Open the <code>bundle.esm.mjs</code> files and fix below lines.
 
 ```jsx
-import Mitum from "./esm/index.js";
+//line 5
+import { sha3_256, keccak256 as keccak256$1 } from 'js-sha3';
+//line 14
+import { ec } from 'elliptic';
+```
+
+<br>
+
+The above lines need to be fix like below
+
+```jsx
+//line 5
+import pkg from 'js-sha3';
+const { sha3_256, keccak256: keccak256$1 } = pkg;
+
+//line 14
+import pkg2 from 'elliptic';
+const { ec } = pkg2;
+```
+
+<br>
+
+In other words, the Import part of bundle.esm.mjs should be as follows.
+
+```jsx
+import Int64 from 'int64-buffer';
+import bigInt from 'big-integer';
+import axios from 'axios';
+import base58 from 'bs58';
+import pkg2 from 'js-sha3';
+const { sha3_256, keccak256: keccak256$1 } = pkg2;
+import { Wallet } from 'ethers';
+import secureRandom from 'secure-random';
+import { getPublicCompressed } from 'eccrypto-js';
+import { hmac } from '@noble/hashes/hmac';
+import { sha256 as sha256$1 } from '@noble/hashes/sha256';
+import * as secp256k1 from '@noble/secp256k1';
+import { getPublicKey } from '@noble/secp256k1';
+import * as crypto from 'crypto';
+import pkg from 'elliptic';
+const { ec } = pkg;
+import { writeFile } from 'fs';
+```
+
+<br>
+
+After fix the builded file, you can import <code>Mitum</code> like below
+
+```jsx
+//esm_test.mjs
+import Mitum from "./dist/esm_test.mjs";
 
 const mitum = new Mitum(/* "RPC-URL" */);
 ```
 
-</br> 
+
+> **⚠️ Note**
+> 
+> If you want to specify whether to use CommonJS or ESM in your package, add the following entry in the <code>package.json</code> : </br>
+> <code>"type": "commonjs"</code> or <code>"type": "module"</code>. <br>
+> Also, consider explicitly specifying the file extension as <code>.cjs</code> or <code>.mjs</code> rather than <code>.js</code> in the execution file.</br>
+
+</br>
+
 
 ## Functions
 
