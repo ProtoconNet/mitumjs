@@ -1,4 +1,6 @@
 node_modules/
+src/
+rollup.config.mjs
 package-lock.json
-**.test.js
 **.DS_Store
+tsconfig.json
