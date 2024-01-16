@@ -25,8 +25,8 @@ export class Node extends Generator {
 }
 
 export class Block extends Generator {
-    constructor(api?: string | IP, delegate?: string | IP) {
-        super("", api, delegate)
+    constructor(api?: string | IP, delegateIP?: string | IP) {
+        super("", api, delegateIP)
     }
 
     async getAllBlocks() {
