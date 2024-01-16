@@ -145,8 +145,16 @@ export class KeyPair extends BaseKeyPair {
             option = option ?? "btc"
     
             if (option === "btc") {
+                const safeRandomArray = () => {
+                    while (true) {
+                        const randomArray = secureRandom(32, { type: "Uint8Array" }); 
+                        if (randomArray[0] !== 0) {
+                            return randomArray
+                        }
+                    }
+                }
                 return new KeyPair(
-                    base58.encode(Buffer.from(secureRandom(32, { type: "Uint8Array" }))) + SUFFIX.KEY.MITUM.PRIVATE
+                    base58.encode(Buffer.from(safeRandomArray())) + SUFFIX.KEY.MITUM.PRIVATE
                 )
             }
     
