@@ -260,7 +260,7 @@ export class Account extends KeyG {
             wallet: {
                 privatekey: kp.privateKey.toString(),
                 publickey: kp.publicKey.toString(),
-                address: this.etherAddress(kp.publicKey),
+                address: ks.etherAddress.toString()
             },
             operation: new Operation(
                 this.networkID,
@@ -569,7 +569,7 @@ export class Contract extends Generator {
             wallet: {
                 privatekey: kp.privateKey.toString(),
                 publickey: kp.publicKey.toString(),
-                address: new EtherKeys([new PubKey(kp.publicKey, 100)], 100).etherAddress.toString(),
+                address: ks.etherAddress.toString()
             },
             operation: new Operation(
                 this.networkID,
