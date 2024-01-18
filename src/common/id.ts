@@ -39,21 +39,3 @@ export class CurrencyID extends ID {
         return s instanceof CurrencyID ? s : new CurrencyID(s)
     }
 }
-
-export class ContractID extends ID {
-    constructor(s: string) {
-        super(s)
-        Assert.check(
-            Config.CONTRACT_ID.satisfy(s.length),
-            MitumError.detail(ECODE.INVALID_CONTRACT_ID, "contract id length out of range")
-        )
-        Assert.check(
-            /^[A-Z0-9][A-Z0-9_\.\!\$\*\@]*[A-Z0-9]$/.test(s),
-            MitumError.detail(ECODE.INVALID_CONTRACT_ID, "invalid contract id format"),
-        )
-    }
-
-    static from(s: string | ContractID): ContractID {
-        return s instanceof ContractID ? s : new ContractID(s)
-    }
-}

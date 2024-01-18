@@ -1,10 +1,10 @@
 import { CreateSecurityTokenItem, CreateSecurityTokenFact } from "./create-security-token"
-import { IssueSecurityTokenItem, IssueSecurityTokenFact } from "./issue-sercurity-token"
+import { IssueItem, IssueFact } from "./issue"
 import { AuthorizeOperatorItem, AuthorizeOperatorFact } from "./authorize-operator"
 import { RevokeOperatorItem, RevokeOperatorFact } from "./revoke-operator"
-import { RedeemTokenItem, RedeemTokenFact } from "./redeem-token"
+import { RedeemItem, RedeemFact } from "./redeem"
 import { SetDocumentFact } from "./set-document"
-import { TransferSecurityTokenPartitionItem, TransferSecurityTokenPartitionFact } from "./transfer-security-token-partition"
+import { TransferByPartitionItem, TransferByPartitionFact } from "./transfer-by-partition"
 import { contract, getAPIData } from "../../api"
 import { Partition } from "./partition"
 
@@ -91,11 +91,11 @@ export class STO extends ContractGenerator {
     ) {
         return new Operation(
             this.networkID,
-            new IssueSecurityTokenFact(
+            new IssueFact(
                 TimeStamp.new().UTC(),
                 sender,
                 [
-                    new IssueSecurityTokenItem(
+                    new IssueItem(
                         contractAddr,
                         receiver,
                         amount,
@@ -117,11 +117,11 @@ export class STO extends ContractGenerator {
     ) {
         return new Operation(
             this.networkID,
-            new RedeemTokenFact(
+            new RedeemFact(
                 TimeStamp.new().UTC(),
                 sender,
                 [
-                    new RedeemTokenItem(
+                    new RedeemItem(
                         contractAddr,
                         tokenHolder,
                         amount,
@@ -190,11 +190,11 @@ export class STO extends ContractGenerator {
     ) {
         return new Operation(
             this.networkID,
-            new TransferSecurityTokenPartitionFact(
+            new TransferByPartitionFact(
                 TimeStamp.new().UTC(),
                 sender,
                 [
-                    new TransferSecurityTokenPartitionItem(
+                    new TransferByPartitionItem(
                         contractAddr,
                         holder,
                         receiver,
