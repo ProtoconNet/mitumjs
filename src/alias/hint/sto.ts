@@ -4,7 +4,7 @@ export default {
         FACT: "mitum-sto-create-security-token-operation-fact",
         OPERATION: "mitum-sto-create-security-token-operation",
     },
-    ISSUE_SECURITY_TOKEN: {
+    ISSUE: {
         ITEM: "mitum-sto-issue-item",
         FACT: "mitum-sto-issue-operation-fact",
         OPERATION: "mitum-sto-issue-operation",
@@ -23,7 +23,7 @@ export default {
         FACT: "mitum-sto-set-document-operation-fact",
         OPERATION: "mitum-sto-set-document-operation",
     },
-    TRANSFER_SECURITY_TOKEN_PARTITION: {
+    TRANSFER_BY_PARTITION: {
         ITEM: "mitum-sto-transfer-by-partition-item",
         FACT: "mitum-sto-transfer-by-partition-operation-fact",
         OPERATION: "mitum-sto-transfer-by-partition-operation",
