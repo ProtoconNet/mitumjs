@@ -8,7 +8,7 @@ import { CurrencyID } from "../../common"
 import { Big, HintedObject } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
-export class IssueSecurityTokenItem extends STOItem {
+export class IssueItem extends STOItem {
     readonly receiver: Address
     readonly amount: Big
     readonly partition: Partition
@@ -20,7 +20,7 @@ export class IssueSecurityTokenItem extends STOItem {
         partition: string | Partition,
         currency: string | CurrencyID,
     ) {
-        super(HINT.STO.ISSUE_SECURITY_TOKEN.ITEM, contract, currency)
+        super(HINT.STO.ISSUE.ITEM, contract, currency)
 
         this.receiver = Address.from(receiver)
         this.amount  = Big.from(amount)
@@ -57,9 +57,9 @@ export class IssueSecurityTokenItem extends STOItem {
     }
 }
 
-export class IssueSecurityTokenFact extends OperationFact<IssueSecurityTokenItem> {
-    constructor(token: string, sender: string | Address, items: IssueSecurityTokenItem[]) {
-        super(HINT.STO.ISSUE_SECURITY_TOKEN.FACT, token, sender, items)
+export class IssueFact extends OperationFact<IssueItem> {
+    constructor(token: string, sender: string | Address, items: IssueItem[]) {
+        super(HINT.STO.ISSUE.FACT, token, sender, items)
 
         Assert.check(
             new Set(items.map(it => it.toString())).size === items.length,
@@ -68,6 +68,6 @@ export class IssueSecurityTokenFact extends OperationFact<IssueSecurityTokenItem
     }
 
     get operationHint() {
-        return HINT.STO.ISSUE_SECURITY_TOKEN.OPERATION
+        return HINT.STO.ISSUE.OPERATION
     }
 }
