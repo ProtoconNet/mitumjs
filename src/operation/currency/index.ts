@@ -198,8 +198,8 @@ export class Currency extends Generator {
             : null
     }
 
-    async getCurrency(cid: string | CurrencyID) {
-        const data = await getAPIData(() => api.currency.getCurrency(this.api, cid, this.delegateIP))
+    async getCurrency(currencyID: string | CurrencyID) {
+        const data = await getAPIData(() => api.currency.getCurrency(this.api, currencyID, this.delegateIP))
         return data ? data._embedded : null
     }
 }
