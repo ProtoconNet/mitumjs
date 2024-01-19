@@ -701,9 +701,4 @@ export class Contract extends Generator {
 
         return await getAPIData(() => api.operation.send(this.api, op.toHintedObject(), this.delegateIP))
     }
-
-    async getContractInfo(address: string | Address) {
-        const data = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
-        return data ? data._embedded : null
-    }
 }
