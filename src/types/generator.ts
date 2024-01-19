@@ -11,22 +11,8 @@ export abstract class Generator {
         this._delegateIP = delegateIP ? IP.from(delegateIP) : undefined
     }
 
-    /**
-     * @deprecated use setNetworkID(networkID: string)
-     */
-    setChainID(networkID: string) {
-        this.setNetworkID(networkID)
-    }
-
     setNetworkID(networkID: string) {
         this._networkID = networkID
-    }
-
-    /**
-     * @deprecated use setAPI(api?: string | IP)
-     */
-    setNode(api?: string | IP) {
-        this.setAPI(api)
     }
 
     setAPI(api?: string | IP) {
