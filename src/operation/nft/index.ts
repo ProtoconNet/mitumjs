@@ -244,14 +244,6 @@ export class NFT extends ContractGenerator {
         return data ? data._embedded : null
     }
 
-    /**
-     * @deprecated use getCollectionInfo()
-     */
-    async getCollectionPolicy(contractAddr: string | Address) {
-        const design = await this.getCollectionInfo(contractAddr)
-        return design ? design.policy : null
-    }
-
     async ownerOf(contractAddr: string | Address, nftID: string | number | Big) {
         const data = await getAPIData(() => contract.nft.getNFT(
             this.api,
