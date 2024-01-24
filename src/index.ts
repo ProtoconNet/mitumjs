@@ -130,7 +130,7 @@ export class Mitum extends Generator {
         return this._point
     }
 
-    setAPI(api?: string | IP) {
+    setAPI(api: string | IP) {
         super.setAPI(api)
         this.refresh()
     }
