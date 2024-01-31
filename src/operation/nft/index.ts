@@ -217,7 +217,7 @@ export class NFT extends ContractGenerator {
         )
     }
 
-    signNFT(
+    sign(
         contractAddr: string | Address,
         creator: string | Address,
         nftID: string | number | Big,
