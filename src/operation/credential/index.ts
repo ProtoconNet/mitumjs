@@ -154,7 +154,7 @@ export class Credential extends ContractGenerator {
     }
 
     async getServiceInfo(contractAddr: string | Address) {
-        return await getAPIData(() => contract.credential.getIssuer(this.api, contractAddr, this.delegateIP))
+        return await getAPIData(() => contract.credential.getService(this.api, contractAddr, this.delegateIP))
     }
 
     async getCredentialInfo(

@@ -130,14 +130,7 @@ export class Mitum extends Generator {
         return this._point
     }
 
-    /**
-     * @deprecated use setAPI(api?: string | IP)
-     */
-    setNode(api?: string) {
-        this.setAPI(api)
-    }
-
-    setAPI(api?: string | IP) {
+    setAPI(api: string | IP) {
         super.setAPI(api)
         this.refresh()
     }
@@ -147,28 +140,21 @@ export class Mitum extends Generator {
         this.refresh()
     }
 
-    getDelegate(): string {
-        return this.delegateIP.toString()
-    }
-
-    /**
-     * @deprecated use .api (get)
-     */
-    getNode(): string {
-        return this.api.toString()
+    setNetworkID(networkID: string) {
+        super.setNetworkID(networkID)
+        this.refresh()
     }
 
     getAPI(): string {
         return this.api.toString()
     }
 
-    getChain(): string {
-        return this.networkID
+    getDelegate(): string {
+        return this.delegateIP.toString()
     }
 
-    setChain(networkID: string) {
-        super.setNetworkID(networkID)
-        this.refresh()
+    getNetworkID(): string {
+        return this.networkID
     }
 }
 

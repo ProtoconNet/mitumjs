@@ -217,7 +217,7 @@ export class NFT extends ContractGenerator {
         )
     }
 
-    signNFT(
+    sign(
         contractAddr: string | Address,
         creator: string | Address,
         nftID: string | number | Big,
@@ -242,14 +242,6 @@ export class NFT extends ContractGenerator {
     async getCollectionInfo(contractAddr: string | Address) {
         const data = await getAPIData(() => contract.nft.getCollection(this.api, contractAddr, this.delegateIP))
         return data ? data._embedded : null
-    }
-
-    /**
-     * @deprecated use getCollectionInfo()
-     */
-    async getCollectionPolicy(contractAddr: string | Address) {
-        const design = await this.getCollectionInfo(contractAddr)
-        return design ? design.policy : null
     }
 
     async ownerOf(contractAddr: string | Address, nftID: string | number | Big) {

@@ -18,7 +18,7 @@ import { Big, Generator, IP, TimeStamp } from "../../types"
 import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG, EtherKeys } from "../../key"
 import { Assert, ECODE, MitumError } from "../../error"
 
-type createData = {
+type currencyPolicyData = {
     currency: string | CurrencyID
     genesisAddress: string | Address
     totalSupply: string | number | Big
@@ -44,8 +44,8 @@ export class Currency extends Generator {
         super(networkID, api, delegateIP)
     }
 
-    create(data: createData) {
-        const keysToCheck: (keyof createData)[] = ['currency', 'genesisAddress', 'totalSupply', 'minBalance', 'feeType', 'feeReceiver'];
+    registerCurrency(data: currencyPolicyData) {
+        const keysToCheck: (keyof currencyPolicyData)[] = ['currency', 'genesisAddress', 'totalSupply', 'minBalance', 'feeType', 'feeReceiver'];
         keysToCheck.forEach((key) => {
             Assert.check(data[key] !== undefined, 
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the createData structure`))
@@ -72,8 +72,8 @@ export class Currency extends Generator {
         ) 
     }
 
-    setPolicy(data: createData) {
-        const keysToCheck: (keyof createData)[] = ['currency', 'genesisAddress', 'totalSupply', 'minBalance', 'feeType', 'feeReceiver'];
+    updateCurrency(data: currencyPolicyData) {
+        const keysToCheck: (keyof currencyPolicyData)[] = ['currency', 'genesisAddress', 'totalSupply', 'minBalance', 'feeType', 'feeReceiver'];
         keysToCheck.forEach((key) => {
             Assert.check(data[key] !== undefined, 
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the createData structure`))
@@ -198,8 +198,8 @@ export class Currency extends Generator {
             : null
     }
 
-    async getCurrency(cid: string | CurrencyID) {
-        const data = await getAPIData(() => api.currency.getCurrency(this.api, cid, this.delegateIP))
+    async getCurrency(currencyID: string | CurrencyID) {
+        const data = await getAPIData(() => api.currency.getCurrency(this.api, currencyID, this.delegateIP))
         return data ? data._embedded : null
     }
 }
@@ -468,20 +468,6 @@ export class Account extends KeyG {
         )
     }
 
-
-    getMultiSigAddress (
-        keys: keysType,
-        threshold: string | number | Big,
-    ) {
-        const keysArray = new Keys(
-            keys.map(k =>
-                k instanceof PubKey ? k : new PubKey(k.key, k.weight)
-            ),
-            threshold,
-        )
-        return keysArray.address.toString(); // btc
-    }
-
     async touch(
         privatekey: string | Key,
         wallet: { wallet: AccountType, operation: Operation<CreateAccountFact> }
@@ -494,12 +480,12 @@ export class Account extends KeyG {
 
     async getAccountInfo(address: string | Address) {
         const data = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
-        return data ? data._embedded : null
+        return data._embedded ? data._embedded : null
     }
 
     async getOperations(address: string | Address) {
         const data = await getAPIData(() => api.operation.getAccountOperations(this.api, address, this.delegateIP))
-        return data ? data._embedded : null
+        return data._embedded ? data._embedded : null
     }
 
     async getByPublickey(publickey: string | Key | PubKey) {
@@ -714,10 +700,5 @@ export class Contract extends Generator {
         op.sign(privatekey)
 
         return await getAPIData(() => api.operation.send(this.api, op.toHintedObject(), this.delegateIP))
-    }
-
-    async getContractInfo(address: string | Address) {
-        const data = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
-        return data ? data._embedded : null
     }
 }
