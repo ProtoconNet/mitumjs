@@ -480,12 +480,12 @@ export class Account extends KeyG {
 
     async getAccountInfo(address: string | Address) {
         const data = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
-        return data ? data._embedded : null
+        return data._embedded ? data._embedded : null
     }
 
     async getOperations(address: string | Address) {
         const data = await getAPIData(() => api.operation.getAccountOperations(this.api, address, this.delegateIP))
-        return data ? data._embedded : null
+        return data._embedded ? data._embedded : null
     }
 
     async getByPublickey(publickey: string | Key | PubKey) {
