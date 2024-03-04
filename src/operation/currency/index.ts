@@ -674,6 +674,11 @@ export class Contract extends Generator {
         )
     }
 
+    async getContractInfo(address: string | Address) {
+        const data = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
+        return data._embedded ? data._embedded : null
+    }
+
     updateOperator(
         sender: string | Address,
         contract: string | Address,
