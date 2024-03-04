@@ -54,10 +54,12 @@ export abstract class OperationFact<T extends Item> extends Fact {
         this.sender = Address.from(sender)
 
         Assert.check(Config.ITEMS_IN_FACT.satisfy(items.length))
-        Assert.check(
+  
+        hint !== "mitum-nft-mint-operation-fact" ? Assert.check(
             new Set(items.map(i => i.toString())).size === items.length,
             MitumError.detail(ECODE.INVALID_ITEMS, "duplicate items found")
-        )
+        ) 
+        : null;
         this.items = items
 
         this._hash = this.hashing()
