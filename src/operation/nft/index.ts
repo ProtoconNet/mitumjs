@@ -288,10 +288,8 @@ export class NFT extends ContractGenerator {
     }
 
     async totalSupply(contractAddr: string | Address) {
-        const data = await getAPIData(() => contract.nft.getNFTs(
-            this.api,
+        const data = await getAPIData(() => this.getNFTs(
             contractAddr,
-            this.delegateIP
         ))
 
         return data ? data._embedded.length : null
@@ -326,11 +324,12 @@ export class NFT extends ContractGenerator {
         ))
     }
 
-    async getNFTs(contractAddr: string | Address) {
+    async getNFTs(contractAddr: string | Address, factHash?: string | undefined) {
         return await getAPIData(() => contract.nft.getNFTs(
             this.api,
             contractAddr,
-            this.delegateIP
+            this.delegateIP,
+            factHash
         ))
     }
 }
