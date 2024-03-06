@@ -108,6 +108,27 @@ export class NFT extends ContractGenerator {
         )]))
     }
 
+    multiMint(
+        contractAddr: string | Address,
+        sender: string | Address,
+        receiver: string | Address,
+        n: number,
+        uri: string | LongString,
+        hash: string | LongString,
+        currency: string | CurrencyID,
+        creator: string | Address,
+    ) {
+        const items = Array.from({ length: n }).map(() => new MintItem(
+            contractAddr,
+            receiver,
+            hash,
+            uri,
+            new Signers(100, [new Signer(creator, 100, false)]),
+            currency,
+        ));
+        return new Operation(this.networkID, new MintFact(TimeStamp.new().UTC(), sender, items))
+    }
+
     mintForMultiCreators(
         contractAddr: string | Address,
         sender: string | Address,
@@ -267,13 +288,12 @@ export class NFT extends ContractGenerator {
     }
 
     async totalSupply(contractAddr: string | Address) {
-        const data = await getAPIData(() => contract.nft.getNFTs(
+        const data = await getAPIData(() => contract.nft.getNFTCount(
             this.api,
             contractAddr,
-            this.delegateIP
+            this.delegateIP,
         ))
-
-        return data ? data._embedded.length : null
+        return data._embedded ? Number(data._embedded.nft_count) : null
     }
 
     async tokenURI(contractAddr: string | Address, nftID: number) {
@@ -305,11 +325,12 @@ export class NFT extends ContractGenerator {
         ))
     }
 
-    async getNFTs(contractAddr: string | Address) {
+    async getNFTs(contractAddr: string | Address, factHash?: string | undefined) {
         return await getAPIData(() => contract.nft.getNFTs(
             this.api,
             contractAddr,
-            this.delegateIP
+            this.delegateIP,
+            factHash
         ))
     }
 }

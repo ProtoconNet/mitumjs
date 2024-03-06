@@ -23,9 +23,19 @@ async function getNFT(
 async function getNFTs(
     api: string | IP,
     contract: string | Address,
-    delegateIP: string | IP
+    delegateIP: string | IP,
+    factHash: string | undefined,
 ) {
-    const apiPath = `${url(api, contract)}/nfts`;
+    const apiPath = !factHash ? `${url(api, contract)}/nfts` : `${url(api, contract)}/nfts?facthash=${factHash}`;
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
+}
+
+async function getNFTCount(
+    api: string | IP,
+    contract: string | Address,
+    delegateIP: string | IP,
+) {
+    const apiPath = `${url(api, contract)}/count`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
@@ -51,6 +61,7 @@ async function getAccountOperators(
 export default {
     getNFT,
     getNFTs,
+    getNFTCount,
     getCollection,
     getAccountOperators,
 }
