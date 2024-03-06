@@ -288,8 +288,12 @@ export class NFT extends ContractGenerator {
     }
 
     async totalSupply(contractAddr: string | Address) {
-        const data = await this.getNFTs(contractAddr)
-        return data ? data._embedded.length : null
+        const data = await getAPIData(() => contract.nft.getNFTCount(
+            this.api,
+            contractAddr,
+            this.delegateIP,
+        ))
+        return data._embedded ? Number(data._embedded.nft_count) : null
     }
 
     async tokenURI(contractAddr: string | Address, nftID: number) {
