@@ -1,3 +1,4 @@
+// ECODE: MitumJS Inner Proccess Error code
 export type ErrorCode = (
     typeof ECODE[keyof typeof ECODE]
     | typeof ECODE.CURRENCY[keyof typeof ECODE.CURRENCY]
@@ -67,3 +68,94 @@ export const ECODE = {
         UNMATCHED_SENDER: "EC_UNMATCHED_SENDER"
     }
 } as const
+
+
+// ECODE: Mitum Node Process Error code
+export const PCODE = {
+    P0A: [""],    
+    P0M: [""],
+    P00: [""],
+    // Fact isValid
+    P01: ["Invalid fact"],
+    // Item isValid
+    P02: ["Invalid item"],
+    // Preprocess
+    P03: ["PreProcess"],
+    // Decode JSON
+    P04: ["Decode Json"],
+    // Node Op isValid
+    P05: ["Invalid BaseNodeOperation"],
+    // Decode BSON
+    P06: ["Decode Bson"],  
+    // Op isValid
+    P07: ["Invalid BaseOperation"],  
+} as const
+
+
+export const DCODE = {
+    D00A: [""],
+    D00C: [""],
+    D00D: [""],
+    D000: [""],
+    // data validation
+    D101: [""],
+    D102: ["array length"],
+    D103: ["Value out of range"],
+    D104: ["Type mismatch"],
+    D105: ["duplicated value in array"],
+    D106: [""],  
+    D107: [""],
+    D108: [""],
+    D109: [""],
+    D110: [""],
+    D111: [""],
+    D112: [""],
+    D113: ["self targeted"],
+    D114: [""],
+    D115: [""],
+    D116: [""],  
+    D117: [""],  
+    // signature related
+    D201: ["Invalid signing"],
+    D202: [""],
+    D203: [""],
+    D204: [""],
+    // authorization related
+    D301: [""],
+    D302: [""],
+    // insufficient balance
+    D401: [""],
+    // state related
+    D501: ["Account not found", "Currency not found"],
+    D502: [""],
+    D503: ["Account exists"],
+    D504: [""],
+    D505: [""],
+    D506: ["Account not authorized"],  
+    D507: [""],  
+    D508: [""],  
+} as const
+
+export const assignCodeFromErrorMessage = (errorMessage: string): string[] => {
+    const errorCodes : string[] = [];
+
+    for (const [pcode, msg] of Object.entries(PCODE)) {
+        if (msg[0] !== "" && errorMessage.includes(msg[0])) {
+            errorCodes.push(pcode);
+            break; // 매칭된 값이 하나라도 있으면 더 이상 확인하지 않고 다음 입력으로 이동합니다.
+        }
+    }
+
+    for (const [dcode, msgs] of Object.entries(DCODE)) {
+        if (msgs[0] !== "") {
+            for (const msg of msgs) {
+                if (errorMessage.includes(msg)) {
+                    errorCodes.push(dcode);
+                    break; // 매칭된 값이 하나라도 있으면 더 이상 확인하지 않고 다음 입력으로 이동합니다.
+                }
+            }
+        }
+    }
+
+    return errorCodes
+}

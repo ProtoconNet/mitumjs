@@ -1,4 +1,4 @@
-import { ECODE } from "./code"
+import { ECODE, assignCodeFromErrorMessage } from "./code"
 import { MitumError, Assert, StringAssert } from "./assert"
 
 export {
@@ -6,4 +6,5 @@ export {
     MitumError,
     Assert,
     StringAssert,
+    assignCodeFromErrorMessage,
 } 
