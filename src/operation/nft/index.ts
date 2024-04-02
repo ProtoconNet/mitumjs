@@ -261,50 +261,50 @@ export class NFT extends ContractGenerator {
     }
 
     async getCollectionInfo(contractAddr: string | Address) {
-        const data = await getAPIData(() => contract.nft.getCollection(this.api, contractAddr, this.delegateIP))
-        return data ? data._embedded : null
+        return await getAPIData(() => contract.nft.getCollection(this.api, contractAddr, this.delegateIP))
     }
 
     async ownerOf(contractAddr: string | Address, nftID: string | number | Big) {
-        const data = await getAPIData(() => contract.nft.getNFT(
+        const response = await getAPIData(() => contract.nft.getNFT(
             this.api,
             contractAddr,
             nftID,
             this.delegateIP
-        ))
-
-        return data ? data._embedded.owner : null
+        ));
+        response.data = response && response.data && response.data.owner ? response.data.owner : null;
+        return response
     }
 
     async getApproved(contractAddr: string | Address, nftID: number) {
-        const data = await getAPIData(() => contract.nft.getNFT(
+        const response = await getAPIData(() => contract.nft.getNFT(
             this.api,
             contractAddr,
             nftID,
             this.delegateIP
-        ))
-
-        return data ? data._embedded.approved : null
+        ));
+        response.data = response && response.data && response.data.approved ? response.data.approved : null;
+        return response
     }
 
     async totalSupply(contractAddr: string | Address) {
-        const data = await getAPIData(() => contract.nft.getNFTCount(
+        const response = await getAPIData(() => contract.nft.getNFTCount(
             this.api,
             contractAddr,
             this.delegateIP,
-        ))
-        return data._embedded ? Number(data._embedded.nft_count) : null
+        ));
+        response.data = response && response.data && response.data.nft_count ? Number(response.data.nft_count) : null;
+        return response
     }
 
     async tokenURI(contractAddr: string | Address, nftID: number) {
-        const data = await getAPIData(() => contract.nft.getNFT(
+        const response = await getAPIData(() => contract.nft.getNFT(
             this.api,
             contractAddr,
             nftID,
             this.delegateIP
-        ))
-
-        return data ? data._embedded.uri : null
+        ));
+        response.data = response && response.data && response.data.uri ? response.data.uri : null;
+        return response
     }
 
     async isApprovedForAll(contractAddr: string | Address, owner: string) {

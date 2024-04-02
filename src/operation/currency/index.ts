@@ -190,17 +190,18 @@ export class Currency extends Generator {
     }
 
     async getAllCurrencies(): Promise<string[] | null> {
-        const datas = await getAPIData(() => api.currency.getCurrencies(this.api, this.delegateIP))
+        const response = await getAPIData(() => api.currency.getCurrencies(this.api, this.delegateIP), true);
 
-        return datas
-            ? Object.keys(datas._links).filter(
-                c => !(c === "self" || c === "currency:{currencyid}")).map(c => c)
-            : null
+        response.data = response && response.data && response.data._links ?
+            Object.keys(response.data._links)
+                .filter(c => !(c === "self" || c === "currency:{currencyid}"))
+                .map(c => c)
+            : null;
+        return response
     }
 
     async getCurrency(currencyID: string | CurrencyID) {
-        const data = await getAPIData(() => api.currency.getCurrency(this.api, currencyID, this.delegateIP))
-        return data ? data._embedded : null
+        return await getAPIData(() => api.currency.getCurrency(this.api, currencyID, this.delegateIP))
     }
 }
 
@@ -472,30 +473,26 @@ export class Account extends KeyG {
         privatekey: string | Key,
         wallet: { wallet: AccountType, operation: Operation<CreateAccountFact> }
     ) {
-        const op = wallet.operation
-        op.sign(privatekey)
+        const op = wallet.operation;
+        op.sign(privatekey);
 
         return await getAPIData(() => api.operation.send(this.api, op.toHintedObject(), this.delegateIP))
     }
 
     async getAccountInfo(address: string | Address) {
-        const data = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
-        return data._embedded ? data._embedded : null
+        return await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
     }
 
     async getOperations(address: string | Address) {
-        const data = await getAPIData(() => api.operation.getAccountOperations(this.api, address, this.delegateIP))
-        return data._embedded ? data._embedded : null
+        return await getAPIData(() => api.operation.getAccountOperations(this.api, address, this.delegateIP))
     }
 
     async getByPublickey(publickey: string | Key | PubKey) {
-        const data = await getAPIData(() => api.account.getAccountByPublicKey(this.api, publickey, this.delegateIP))
-        return data ? data._embedded : null
+        return await getAPIData(() => api.account.getAccountByPublicKey(this.api, publickey, this.delegateIP))
     }
 
     async balance(address: string | Address) {
-        const data = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
-        return data ? data._embedded.balance : null
+        return await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
     }
 }
 
@@ -675,8 +672,7 @@ export class Contract extends Generator {
     }
 
     async getContractInfo(address: string | Address) {
-        const data = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
-        return data._embedded ? data._embedded : null
+        return await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
     }
 
     updateOperator(

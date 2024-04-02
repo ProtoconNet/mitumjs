@@ -14,6 +14,8 @@ import { Signer } from "./signer"
 import { operation as api } from "../api"
 import { Key, KeyPair } from "../key"
 import { Generator, HintedObject, IP } from "../types"
+import { getAPIData } from "../api"
+import { isOpFact } from "../utils/typeGuard"
 
 import * as Base from "./base"
 
@@ -27,11 +29,12 @@ export class Operation extends Generator {
 	}
 
 	async getAllOperations() {
-		return await api.getOperations(this.api, this.delegateIP)
+		return await getAPIData(() => api.getOperations(this.api, this.delegateIP))
 	}
 
+
 	async getOperation(hash: string) {
-		return await api.getOperation(this.api, hash, this.delegateIP)
+		return await getAPIData(() => api.getOperation(this.api, hash, this.delegateIP))
 	}
 
 	sign(
@@ -45,10 +48,20 @@ export class Operation extends Generator {
 	}
 
 	async send(
-		operation: string | HintedObject,
+		operation: string | HintedObject | OP<Fact>,
 		headers?: { [i: string]: any }
 	) {
-		return await api.send(this.api, operation, this.delegateIP, headers)
+		const res = await getAPIData(() => 
+		api.send(
+			this.api,
+			isOpFact(operation) 
+			  ? operation.toHintedObject() 
+			  : operation, 
+			this.delegateIP, 
+			headers
+		  )
+		);
+        return res
 	}
 }
 

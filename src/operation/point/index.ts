@@ -11,6 +11,7 @@ import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { contract, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp } from "../../types"
+import { calculateAllowance } from "../../utils/contractUtils"
 
 export class Point extends ContractGenerator {
     constructor(
@@ -146,35 +147,16 @@ export class Point extends ContractGenerator {
     }
 
     async getPointInfo(contractAddr: string | Address) {
-        const data = await getAPIData(() => contract.point.getPoint(this.api, contractAddr, this.delegateIP))
-        return data ? data._embedded : null
+        return await getAPIData(() => contract.point.getPoint(this.api, contractAddr, this.delegateIP))
     }
 
     async getAllowance(contractAddr: string | Address, owner: string | Address, spender: string | Address) {
-        const data = await getAPIData(() => contract.point.getPoint(this.api, contractAddr, this.delegateIP))
-        if (data) {
-            const approve_list = data._embedded.policy.approve_list;
-            let amount;
-            for (let i=0; i < approve_list.length; i++) {
-                if (approve_list[i].account === owner) {
-                    const approved = approve_list[i].approved;
-                    for (let j=0; j < approved.length; j++) {
-                        if (approved[j].account === spender) {
-                            amount = {
-                                'amount' : approved[j].amount
-                            };
-                        }
-                    }
-                }
-            }
-            return amount
-        } else {
-            return null
-        }
+        const response = await getAPIData(() => contract.point.getPoint(this.api, contractAddr, this.delegateIP))
+        response.data = calculateAllowance(response, owner, spender);
+        return response
     }
 
     async getPointBalance(contractAddr: string | Address, owner: string | Address) {
-        const data = await getAPIData(() => contract.point.getPointBalance(this.api, contractAddr, owner, this.delegateIP))
-        return data ? data._embedded : null
+        return await getAPIData(() => contract.point.getPointBalance(this.api, contractAddr, owner, this.delegateIP))
     }
 }
