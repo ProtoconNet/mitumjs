@@ -4,8 +4,10 @@ import account from "./account"
 import block from "./block"
 import node from "./node"
 import operation from "./operation"
-
 import models from "./models"
+
+import { SuccessResponse, ErrorResponse } from "../types/interface"
+import { assignCodeFromErrorMessage } from "../error"
 
 const currency = models.currency
 const contract = models.contract
@@ -28,12 +30,34 @@ export default {
     contract,
 }
 
-export async function getAPIData(f: () => Promise<AxiosResponse>) {
-    const res = await f()
 
-    if (res.status !== 200) {
-        return null
+
+export async function getAPIData(f: () => Promise<AxiosResponse>, _links? : boolean): Promise<any> {
+    try {
+        const res = await f();
+        const parsedResponse: SuccessResponse = {
+            status: res.status,
+            method: res.config.method,
+            url: res.config.url,
+            request_body: res.config.data,
+            data: _links ? { _embedded: res.data._embedded, _links: res.data._links } : res.data._embedded,
+        };
+        return parsedResponse;
+
+    } catch (error: any) {
+        if (error.response) {
+            const { response } = error;
+            const parsedError: ErrorResponse = {
+                status: response.status,
+                method: response.config.method,
+                url: response.config.url,
+                error_code: response.data ? assignCodeFromErrorMessage(response.data) : [],
+                request_body: response.config.data,
+                error_message: response.data,
+            };
+            return parsedError;
+        } else {
+            throw error;
+        }
     }
-
-    return res.data
 }
