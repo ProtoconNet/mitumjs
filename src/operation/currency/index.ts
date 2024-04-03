@@ -11,6 +11,7 @@ import { MintItem, MintFact } from "./mint"
 import { CurrencyDesign, CurrencyPolicy, NilFeeer, FixedFeeer, RatioFeeer } from "./currency-design"
 
 import { Operation } from "../base"
+import { Operation as OP } from "../"
 
 import api, { getAPIData } from "../../api"
 import { Amount, CurrencyID } from "../../common"
@@ -476,7 +477,7 @@ export class Account extends KeyG {
         const op = wallet.operation;
         op.sign(privatekey);
 
-        return await getAPIData(() => api.operation.send(this.api, op.toHintedObject(), this.delegateIP))
+        return await new OP(this.networkID, this.api, this.delegateIP).send(op);
     }
 
     async getAccountInfo(address: string | Address) {
@@ -700,6 +701,6 @@ export class Contract extends Generator {
         const op = wallet.operation
         op.sign(privatekey)
 
-        return await getAPIData(() => api.operation.send(this.api, op.toHintedObject(), this.delegateIP))
+        return await new OP(this.networkID, this.api, this.delegateIP).send(op);
     }
 }
