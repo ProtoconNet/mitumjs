@@ -32,7 +32,6 @@ export class Operation extends Generator {
 		return await getAPIData(() => api.getOperations(this.api, this.delegateIP))
 	}
 
-
 	async getOperation(hash: string) {
 		return await getAPIData(() => api.getOperation(this.api, hash, this.delegateIP))
 	}
@@ -48,21 +47,83 @@ export class Operation extends Generator {
 	}
 
 	async send(
-		operation: string | HintedObject | OP<Fact>,
+		_operation: string | HintedObject | OP<Fact>,
 		headers?: { [i: string]: any }
-	) {
-		const res = await getAPIData(() => 
+	): Promise<OperationResponse> {
+		const sendResponse = await getAPIData(() => 
 		api.send(
 			this.api,
-			isOpFact(operation) 
-			  ? operation.toHintedObject() 
-			  : operation, 
+			isOpFact(_operation) 
+			  ? _operation.toHintedObject() 
+			  : _operation, 
 			this.delegateIP, 
 			headers
 		  )
 		);
-        return res
+
+		return new OperationResponse(sendResponse, this.api, this.delegateIP)
 	}
+}
+
+export class OperationResponse {
+    readonly response: any;
+    private _api: string | IP;
+    private _delegateIP: string | IP;
+
+    constructor(response: string, api: string | IP, delegateIP: string | IP) {
+        this.response = response;
+        this._api = api;
+        this._delegateIP = delegateIP;
+    }
+
+    async wait(timeout?: number, interval?: number) : Promise<any> {
+		if (this.response.status !== 200) { throw new Error("Failed to send operation") }
+
+        let elapsedTime = 0;
+		const maxTimeout = timeout ?? 10000;
+		const timeoutInterval = interval ?? 1000;
+
+		const validatePositiveInteger = (val: any, name: string) => {
+			if (!Number.isSafeInteger(val) || val <= 0) {
+				throw new Error(`${name} must be a positive integer`)
+			}
+		}
+		validatePositiveInteger(maxTimeout, "timeout");
+		validatePositiveInteger(timeoutInterval, "interval");
+	
+		if (maxTimeout <= timeoutInterval) {
+			if (interval === undefined) {
+				throw new Error("Default interval is 1000, so timeout must be greater than that.");
+			} else if (timeout === undefined) {
+				throw new Error("Default timeout is 10000, so interval must be less than that.");
+			} else {
+				throw new Error("timeout must be larger than interval.");
+			}
+		}
+
+		let stop = false;
+        while (!stop && elapsedTime < maxTimeout) {
+            try {
+                const receipt = await getAPIData(() => api.getOperation(this._api, this.response.data.fact.hash, this._delegateIP));
+                if (receipt.data && receipt.data.in_state) {
+                    console.log('\x1b[34m%s\x1b[0m', `operation in_state is true`)
+                    return receipt;
+                } else if (receipt.data && receipt.data.in_state === false) {
+                    console.log('\x1b[31m%s\x1b[0m', `operation in_state is false. reason: ${receipt.data.reason}`);
+                    return receipt;
+                } else {
+                    // console.log('\x1b[33m%s\x1b[0m', "Get retrying...");
+                }
+            } catch (error: any) {
+                console.error('\x1b[31m\x1b[0m', `Error orccur: ${error}`);
+				stop = true;
+            }
+    
+            elapsedTime += timeoutInterval;
+            await new Promise(resolve => setTimeout(resolve, timeoutInterval));
+        }
+    }
+
 }
 
 export {
