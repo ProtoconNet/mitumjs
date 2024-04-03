@@ -72,84 +72,261 @@ export const ECODE = {
 
 // ECODE: Mitum Node Process Error code
 export const PCODE = {
-    P0A: [""],    
-    P0M: [""],
-    P00: [""],
-    // Fact isValid
-    P01: ["Invalid fact"],
-    // Item isValid
-    P02: ["Invalid item"],
-    // Preprocess
-    P03: ["PreProcess"],
-    // Decode JSON
-    P04: ["Decode Json"],
-    // Node Op isValid
-    P05: ["Invalid BaseNodeOperation"],
-    // Decode BSON
-    P06: ["Decode Bson"],  
-    // Op isValid
-    P07: ["Invalid BaseOperation"],  
+    P0A: {
+        keyword: [""],
+        description: "AMBIGUOUS",
+        subject: "",
+    },    
+    P0M: {
+        keyword: [""],
+        description: "MITUM CORE",
+        subject: "",
+    },
+    P00: {
+        keyword: [""],
+        description: "UNDEFINED",
+        subject: "",
+    },
+    P01: {
+        keyword: ["Invalid BaseOperation"],
+        description: "Error from IsValid(BaseOperation)",
+        subject: "",
+    },
+    P02: {
+        keyword: ["Invalid BaseNodeOperation"],
+        description: "Error from IsValid(BaseNodeOperation)",
+        subject: "",
+    },
+    P03: {
+        keyword: ["Invalid fact"],
+        description: "Error from IsValid(Fact)",
+        subject: "",
+    },
+    P04: {
+        keyword: ["Invalid item"],
+        description: "Error from IsValid(Item)",
+        subject: "",
+    },
+    P05: {
+        keyword: ["PreProcess"],
+        description: "Error from PreProcess",
+        subject: "",
+    },
+    P06: {
+        keyword: ["Decode Json"],
+        description: "Error from DecodeJSON",
+        subject: "",
+    },
+    P07: {
+        keyword: ["Decode Bson"],
+        description: "Error from DecodeBSON",
+        subject: "",
+    },
 } as const
 
 
 export const DCODE = {
-    D00A: [""],
-    D00C: [""],
-    D00D: [""],
-    D000: [""],
+    D00A: {
+        keyword: [""],
+        description: "",
+        subject: "",
+    },
+    D00C: {
+        keyword: [""],
+        description: "",
+        subject: "",
+    },
+    D00D: {
+        keyword: [""],
+        description: "",
+        subject: "",
+    },
+    D000: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
     // data validation
-    D101: [""],
-    D102: ["array length"],
-    D103: ["Value out of range"],
-    D104: ["Type mismatch"],
-    D105: ["duplicated value in array"],
-    D106: [""],  
-    D107: [""],
-    D108: [""],
-    D109: [""],
-    D110: [""],
-    D111: [""],
-    D112: [""],
-    D113: ["self targeted"],
-    D114: [""],
-    D115: [""],
-    D116: [""],  
-    D117: [""],  
+    D101: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D102: {
+        keyword: ["Array length"],
+        description: "",
+        subject: ""
+    },
+    D103: {
+        keyword: ["Value out of range", "Operation token size too large"],
+        description: "",
+        subject: ""
+    },
+    D104: {
+        keyword: ["Type mismatch"],
+        description: "",
+        subject: ""
+    },
+    D105: {
+        keyword: ["Duplicated value"],
+        description: "",
+        subject: ""
+    },
+    D106: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D107: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D108: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D109: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D110: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D111: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D112: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D113: {
+        keyword: ["Self targeted"],
+        description: "",
+        subject: ""
+    },
+    D114: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D115: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D116: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D117: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
     // signature related
-    D201: ["Invalid signing"],
-    D202: [""],
-    D203: [""],
-    D204: [""],
+    D201: {
+        keyword: ["Invalid signing"],
+        description: "",
+        subject: ""
+    },
+    D202: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D203: {
+        keyword: ["Not enough signs"],
+        description: "",
+        subject: ""
+    },
+    D204: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
     // authorization related
-    D301: [""],
-    D302: [""],
+    D301: {
+        keyword: ["Account not authorized"],
+        description: "",
+        subject: ""
+    },
+    D302: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
     // insufficient balance
-    D401: [""],
+    D401: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
     // state related
-    D501: ["Account not found", "Currency not found"],
-    D502: [""],
-    D503: ["Account exists"],
-    D504: [""],
-    D505: [""],
-    D506: ["Account not authorized"],  
-    D507: [""],  
-    D508: [""],  
+    D501: {
+        keyword: ["Account not found", "Currency not found"],
+        description: "",
+        subject: ""
+    },
+    D502: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D503: {
+        keyword: ["Account exists", "Currency already registered"],
+        description: "",
+        subject: ""
+    },
+    D504: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D505: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D506: {
+        // 수정될 예정
+        keyword: ["Contract account disallowed"],  
+        description: "",
+        subject: ""
+    },
+    D507: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
+    D508: {
+        keyword: [""],
+        description: "",
+        subject: ""
+    },
 } as const
 
 export const assignCodeFromErrorMessage = (errorMessage: string): string[] => {
     const errorCodes : string[] = [];
 
-    for (const [pcode, msg] of Object.entries(PCODE)) {
-        if (msg[0] !== "" && errorMessage.includes(msg[0])) {
+    for (const [pcode, obj] of Object.entries(PCODE)) {
+        if (obj.keyword[0] !== "" && errorMessage.includes(obj.keyword[0])) {
             errorCodes.push(pcode);
-            break; // 매칭된 값이 하나라도 있으면 더 이상 확인하지 않고 다음 입력으로 이동합니다.
         }
     }
 
-    for (const [dcode, msgs] of Object.entries(DCODE)) {
-        if (msgs[0] !== "") {
-            for (const msg of msgs) {
-                if (errorMessage.includes(msg)) {
+    for (const [dcode, obj] of Object.entries(DCODE)) {
+        if (obj.keyword[0] !== "") {
+            for (const keyword of obj.keyword) {
+                if (errorMessage.includes(keyword)) {
                     errorCodes.push(dcode);
                     break; // 매칭된 값이 하나라도 있으면 더 이상 확인하지 않고 다음 입력으로 이동합니다.
                 }
