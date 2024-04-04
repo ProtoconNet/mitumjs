@@ -93,9 +93,9 @@ export class OperationResponse {
 	
 		if (maxTimeout <= timeoutInterval) {
 			if (interval === undefined) {
-				throw new Error("Default interval is 1000, so timeout must be greater than that.");
+				throw new Error("default interval is 1000, so timeout must be greater than that.");
 			} else if (timeout === undefined) {
-				throw new Error("Default timeout is 10000, so interval must be less than that.");
+				throw new Error("default timeout is 10000, so interval must be less than that.");
 			} else {
 				throw new Error("timeout must be larger than interval.");
 			}
@@ -112,7 +112,7 @@ export class OperationResponse {
                     console.log('\x1b[31m%s\x1b[0m', `operation in_state is false. reason: ${receipt.data.reason}`);
                     return receipt;
                 } else {
-                    // console.log('\x1b[33m%s\x1b[0m', "Get retrying...");
+                    // console.log('\x1b[33m%s\x1b[0m', "Polling...");
                 }
             } catch (error: any) {
                 console.error('\x1b[31m\x1b[0m', `Error orccur: ${error}`);
@@ -122,6 +122,9 @@ export class OperationResponse {
             elapsedTime += timeoutInterval;
             await new Promise(resolve => setTimeout(resolve, timeoutInterval));
         }
+		if (!stop) {
+			throw new Error(`timeout reached (${maxTimeout/1000} seconds).`);
+		}
     }
 
 }
