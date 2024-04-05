@@ -2,13 +2,12 @@ import axios from "axios"
 
 import { Address } from "../../key"
 import { IP } from "../../types"
+import { delegateUri } from "../../utils/apiPathUtils"
 
 const url = (
     api: string | IP, 
     contract: string | Address, 
 ) => `${IP.from(api).toString()}/token/${Address.from(contract).toString()}`
-
-const delegateUri = (delegateIP: string | IP) => `${IP.from(delegateIP).toString()}?uri=`
 
 async function getToken(
     api: string | IP,
