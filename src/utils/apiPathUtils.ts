@@ -33,8 +33,8 @@ export const apiPathWithParams = (apiPath: string, limit?: number, offset?: numb
 export const apiPathWithHashParams = (apiPath: string, factHash?:string, limit?: number, offset?: number, reverse?: true) => {
     let hash: any; let query1: any; let query2: any; let query3: any;
 
-    if (hash !== undefined) {
-        if (typeof(hash) !== "string") {
+    if (factHash !== undefined) {
+        if (typeof(factHash) !== "string") {
             {throw new Error("factHash must be a string")}
         }
         hash = `fathash=${factHash}`;
