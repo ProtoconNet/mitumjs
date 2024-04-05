@@ -47,15 +47,15 @@ export class Operation extends Generator {
 	}
 
 	async send(
-		_operation: string | HintedObject | OP<Fact>,
+		operation: string | HintedObject | OP<Fact>,
 		headers?: { [i: string]: any }
 	): Promise<OperationResponse> {
 		const sendResponse = await getAPIData(() => 
 		api.send(
 			this.api,
-			isOpFact(_operation) 
-			  ? _operation.toHintedObject() 
-			  : _operation, 
+			isOpFact(operation) 
+			  ? operation.toHintedObject() 
+			  : operation, 
 			this.delegateIP, 
 			headers
 		  )
