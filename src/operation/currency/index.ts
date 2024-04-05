@@ -484,8 +484,11 @@ export class Account extends KeyG {
         return await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
     }
 
-    async getOperations(address: string | Address) {
-        return await getAPIData(() => api.operation.getAccountOperations(this.api, address, this.delegateIP))
+    async getOperations(
+        address: string | Address, 
+        limit?: number, offset?: [number, number], reverse?: true
+    ) {
+        return await getAPIData(() => api.operation.getAccountOperations(this.api, address, this.delegateIP, limit, offset, reverse))
     }
 
     async getByPublickey(publickey: string | Key | PubKey) {

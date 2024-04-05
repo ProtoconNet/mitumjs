@@ -2,13 +2,12 @@ import axios from "axios"
 
 import { Address } from "../../key"
 import { Big, IP } from "../../types"
+import { delegateUri, apiPathWithHashParams } from "../../utils/apiPathUtils"
 
 const url = (
     api: string | IP, 
     contract: string | Address, 
 ) => `${IP.from(api).toString()}/nft/${Address.from(contract).toString()}`
-
-const delegateUri = (delegateIP: string | IP) => `${IP.from(delegateIP).toString()}?uri=`
 
 async function getNFT(
     api: string | IP,
@@ -24,9 +23,10 @@ async function getNFTs(
     api: string | IP,
     contract: string | Address,
     delegateIP: string | IP,
-    factHash: string | undefined,
+    factHash?: string,
+    limit?: number, offset?: number, reverse?: true
 ) {
-    const apiPath = !factHash ? `${url(api, contract)}/nfts` : `${url(api, contract)}/nfts?facthash=${factHash}`;
+    const apiPath = apiPathWithHashParams(`${url(api, contract)}/nfts`, factHash, limit, offset, reverse);
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 

@@ -28,8 +28,8 @@ export class Operation extends Generator {
 		super(networkID, api, delegateIP)
 	}
 
-	async getAllOperations() {
-		return await getAPIData(() => api.getOperations(this.api, this.delegateIP))
+	async getAllOperations(limit?: number, offset?: [number, number], reverse?: true) {
+		return await getAPIData(() => api.getOperations(this.api, this.delegateIP, limit, offset, reverse))
 	}
 
 	async getOperation(hash: string) {

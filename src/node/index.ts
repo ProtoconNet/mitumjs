@@ -30,12 +30,12 @@ export class Block extends Generator {
         super("", api, delegateIP)
     }
 
-    async getAllBlocks() {
+    async getAllBlocks(limit?: number, offset?: number, reverse?: true) {
         Assert.check(
             this.api !== undefined || this.api !== null,
             MitumError.detail(ECODE.NO_API, "no api"),
         )
-        return await getAPIData(() => block.getBlocks(this.api, this.delegateIP))
+        return await getAPIData(() => block.getBlocks(this.api, this.delegateIP, limit, offset, reverse))
     }
 
     async getBlockByHash(hash: string) {
@@ -54,19 +54,19 @@ export class Block extends Generator {
         return await getAPIData(() => block.getBlockByHeight(this.api, height, this.delegateIP))
     }
 
-    async getOperationsByHash(hash: string) {
-        Assert.check(
-            this.api !== undefined || this.api !== null,
-            MitumError.detail(ECODE.NO_API, "no api"),
-        )
-        return await getAPIData(() => operation.getBlockOperationsByHash(this.api, hash, this.delegateIP))
-    }
+    // async getOperationsByHash(hash: string) {
+    //     Assert.check(
+    //         this.api !== undefined || this.api !== null,
+    //         MitumError.detail(ECODE.NO_API, "no api"),
+    //     )
+    //     return await getAPIData(() => operation.getBlockOperationsByHash(this.api, hash, this.delegateIP))
+    // }
 
-    async getOperationsByHeight(height: number | string) {
+    async getOperationsByHeight(height: number | string,limit?: number, offset?: number, reverse?: true) {
         Assert.check(
             this.api !== undefined || this.api !== null,
             MitumError.detail(ECODE.NO_API, "no api"),
         )
-        return await getAPIData(() => operation.getBlockOperationsByHeight(this.api, height, this.delegateIP))
+        return await getAPIData(() => operation.getBlockOperationsByHeight(this.api, height, this.delegateIP, limit, offset, reverse))
     }
 }

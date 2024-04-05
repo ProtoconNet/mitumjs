@@ -325,12 +325,15 @@ export class NFT extends ContractGenerator {
         ))
     }
 
-    async getNFTs(contractAddr: string | Address, factHash?: string | undefined) {
+    async getNFTs(contractAddr: string | Address, factHash?: string, limit?: number, offset?: number, reverse?: true) {
         return await getAPIData(() => contract.nft.getNFTs(
             this.api,
             contractAddr,
             this.delegateIP,
-            factHash
+            factHash,
+            limit,
+            offset,
+            reverse
         ))
     }
 }
