@@ -112,7 +112,7 @@ export class OperationResponse {
                     console.log('\x1b[31m%s\x1b[0m', `operation in_state is false. reason: ${receipt.data.reason}`);
                     return receipt;
                 } else {
-                    // console.log('\x1b[33m%s\x1b[0m', "Polling...");
+                    console.log('\x1b[33m%s\x1b[0m', "polling...");
                 }
             } catch (error: any) {
                 console.error('\x1b[31m\x1b[0m', `Error orccur: ${error}`);
