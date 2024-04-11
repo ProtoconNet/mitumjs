@@ -30,8 +30,6 @@ export default {
     contract,
 }
 
-
-
 export async function getAPIData(f: () => Promise<AxiosResponse>, _links? : boolean): Promise<any> {
     try {
         const res = await f();
@@ -54,6 +52,16 @@ export async function getAPIData(f: () => Promise<AxiosResponse>, _links? : bool
                 error_code: response.data ? assignCodeFromErrorMessage(response.data) : [],
                 request_body: response.config.data,
                 error_message: response.data,
+            };
+            return parsedError;
+        } else if (error.code) {
+            const parsedError: ErrorResponse = {
+                status: 500,
+                method: error.config.method,
+                url: error.config.url,
+                error_code: [],
+                request_body: error.config.data,
+                error_message: error.code,
             };
             return parsedError;
         } else {
