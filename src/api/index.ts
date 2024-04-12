@@ -65,7 +65,7 @@ export async function getAPIData(f: () => Promise<AxiosResponse>, _links? : bool
             };
             return parsedError;
         } else {
-            throw error;
+            throw new Error(`Unknown error orccur!\n${error}`);
         }
     }
 }

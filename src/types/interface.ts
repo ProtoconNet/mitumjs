@@ -19,7 +19,7 @@ export interface ErrorResponse {
     // error_code: ['P01D010', 'P02D002']
     // request_body: '{"_hint":"mitum-currency-transfer-operation-v0.0.1","fact":{....}}'
     // error_message: 'handle new operation invalid signing :  check threshold unknown key found, 26vyVJFoLZqVPmP8UADoNCsEyJYD4498vdy7uoiHgFKRUmpu'
-    status: number;
+    status?: number;
     method: string | undefined;
     url: string | undefined;
     error_code: string[];
@@ -33,7 +33,7 @@ export interface SuccessResponse {
     // url: 'http://121.134.233.47:24321/builder/send',
     // request_body: '{"_hint":"mitum-currency-transfer-operation-v0.0.1","fact":{....}}'
     // data: { hash: 'BmVZH5RhaVTqe9r1Qs8fyRFSm6gGnHgChKk9AwnRinnu', fact: {...}}
-    status: number;
+    status?: number;
     method: string | undefined;
     url: string | undefined;
     request_body: string | undefined;

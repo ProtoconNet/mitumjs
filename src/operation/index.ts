@@ -14,8 +14,11 @@ import { Signer } from "./signer"
 import { operation as api } from "../api"
 import { Key, KeyPair } from "../key"
 import { Generator, HintedObject, IP } from "../types"
+import { ErrorResponse } from "../types/interface"
 import { getAPIData } from "../api"
 import { isOpFact } from "../utils/typeGuard"
+
+import { delegateUri } from "../utils/apiPathUtils"
 
 import * as Base from "./base"
 
@@ -105,25 +108,36 @@ export class OperationResponse {
         while (!stop && elapsedTime < maxTimeout) {
             try {
                 const receipt = await getAPIData(() => api.getOperation(this._api, this.response.data.fact.hash, this._delegateIP));
-                if (receipt.data && receipt.data.in_state) {
-                    console.log('\x1b[34m%s\x1b[0m', `operation in_state is true`)
-                    return receipt;
-                } else if (receipt.data && receipt.data.in_state === false) {
-                    console.log('\x1b[31m%s\x1b[0m', `operation in_state is false. reason: ${receipt.data.reason}`);
-                    return receipt;
-                } else {
+                if (receipt.data) {
+					if (receipt.data.in_state) {
+						console.log('\x1b[34m%s\x1b[0m', `operation in_state is true`)
+						return receipt;
+					} else {
+						console.log('\x1b[31m%s\x1b[0m', `operation in_state is false. reason: ${receipt.data.reason}`);
+						return receipt;
+					}
+				} else {
                     console.log('\x1b[33m%s\x1b[0m', "polling...");
                 }
             } catch (error: any) {
-                console.error('\x1b[31m\x1b[0m', `Error orccur: ${error}`);
 				stop = true;
+				throw(error);
             }
-    
             elapsedTime += timeoutInterval;
             await new Promise(resolve => setTimeout(resolve, timeoutInterval));
         }
 		if (!stop) {
-			throw new Error(`timeout reached (${maxTimeout/1000} seconds).`);
+			const apiPath = `${IP.from(this._api).toString()}/block/operation/${this.response.data.fact.hash}`;
+			const parsedError: ErrorResponse = {
+				// 없는 factHash도 조회시 200번 응답이 나오기때문에 status를 뭐라고 하기 애매함.
+				status: undefined,
+				method: 'get',
+				url: !this._delegateIP ? apiPath : delegateUri(this._delegateIP) + encodeURIComponent(apiPath),
+				error_code: [],
+				request_body: undefined,
+				error_message: `timeout reached (${maxTimeout/1000} seconds).`,
+			};
+			return parsedError;
 		}
     }
 
