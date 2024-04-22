@@ -14,7 +14,7 @@ import { Signer } from "./signer"
 import { operation as api } from "../api"
 import { Key, KeyPair } from "../key"
 import { Generator, HintedObject, IP } from "../types"
-import { ErrorResponse } from "../types/interface"
+import { ErrorResponse } from "../types"
 import { getAPIData } from "../api"
 import { isOpFact } from "../utils/typeGuard"
 

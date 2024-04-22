@@ -6,7 +6,7 @@ import node from "./node"
 import operation from "./operation"
 import models from "./models"
 
-import { SuccessResponse, ErrorResponse } from "../types/interface"
+import { SuccessResponse, ErrorResponse } from "../types"
 import { assignCodeFromErrorMessage } from "../error"
 
 const currency = models.currency

@@ -1,5 +1,5 @@
 import { Address } from "../key";
-import { SuccessResponse } from "../types/interface"
+import { SuccessResponse } from "../types"
 
 export const calculateAllowance = (response: SuccessResponse, owner: string | Address, spender: string | Address) => {
     interface AllowanceItem {
