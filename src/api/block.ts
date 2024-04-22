@@ -1,6 +1,6 @@
 import axios from "axios"
 import { Big, IP } from "../types"
-import { delegateUri, apiPathWithParams } from "../utils/apiPathUtils"
+import { delegateUri, apiPathWithParams } from "../utils"
 
 async function getBlocks(
     api: string | IP,

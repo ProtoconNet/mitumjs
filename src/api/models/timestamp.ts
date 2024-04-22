@@ -2,7 +2,7 @@ import axios from "axios"
 
 import { Address } from "../../key"
 import { Big, IP } from "../../types"
-import { delegateUri } from "../../utils/apiPathUtils"
+import { delegateUri } from "../../utils"
 
 const url = (
     api: string | IP, 

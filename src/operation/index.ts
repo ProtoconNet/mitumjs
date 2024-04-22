@@ -18,7 +18,7 @@ import { ErrorResponse } from "../types/interface"
 import { getAPIData } from "../api"
 import { isOpFact } from "../utils/typeGuard"
 
-import { delegateUri } from "../utils/apiPathUtils"
+import { delegateUri } from "../utils"
 
 import * as Base from "./base"
 

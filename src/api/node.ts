@@ -1,6 +1,6 @@
 import axios from "axios"
 import { IP } from "../types"
-import { delegateUri } from "../utils/apiPathUtils"
+import { delegateUri } from "../utils"
 
 async function getNode(api: string | IP, delegateIP: string | IP) {
     const apiPath = `${IP.from(api).toString()}/`;

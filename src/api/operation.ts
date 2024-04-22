@@ -2,7 +2,7 @@ import axios from "axios"
 import { Address } from "../key"
 import { Big, HintedObject, IP } from "../types"
 
-import { delegateUri, apiPathWithParams, apiPathWithParamsExt } from "../utils/apiPathUtils"
+import { delegateUri, apiPathWithParams, apiPathWithParamsExt } from "../utils"
 
 async function getOperations(
     api: string | IP, 

@@ -1,7 +1,7 @@
 import axios from "axios"
 import { IP } from "../../types"
 import { CurrencyID } from "../../common"
-import { delegateUri } from "../../utils/apiPathUtils"
+import { delegateUri } from "../../utils"
 
 async function getCurrencies(api: string | IP, delegateIP: string | IP) {
     const apiPath = `${IP.from(api).toString()}/currency`;
