@@ -496,7 +496,9 @@ export class Account extends KeyG {
     }
 
     async balance(address: string | Address) {
-        return await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
+        const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
+        response.data = response.data? response.data.balance : null
+        return response
     }
 }
 
