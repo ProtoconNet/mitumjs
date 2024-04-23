@@ -18,14 +18,14 @@ export class Signer extends Generator {
     
     sign(
         privatekey: string | Key,
-        json: HintedObject,
+        operation: HintedObject,
         option?: SignOption
     ) {
         const keypair = KeyPair.fromPrivateKey(privatekey)
-        return option ? this.nodeSign(keypair as KeyPair, json as OperationJson, option.node ?? "") : this.accSign(keypair as KeyPair, json as OperationJson)
+        return option ? this.nodeSign(keypair as KeyPair, operation as OperationJson, option.node ?? "") : this.accSign(keypair as KeyPair, operation as OperationJson)
     }
 
-    private accSign(keypair: KeyPair, json: OperationJson) {
+    private accSign(keypair: KeyPair, operation: OperationJson) {
         const now = TimeStamp.new()
 
         const fs = new GeneralFactSign(
@@ -33,25 +33,25 @@ export class Signer extends Generator {
             keypair.sign(
                 Buffer.concat([
                     Buffer.from(this.networkID),
-                    base58.decode(json.fact.hash),
+                    base58.decode(operation.fact.hash),
                     now.toBuffer(),
                 ])
             ),
             now.toString(),
         ).toHintedObject()
 
-        if (json.signs !== undefined) {
-            json.signs = [...json.signs, fs]
+        if (operation.signs !== undefined) {
+            operation.signs = [...operation.signs, fs]
         } else {
-            json.signs = [fs]
+            operation.signs = [fs]
         }
 
         Assert.check(
-            new Set(json.signs.map(fs => fs.signer.toString())).size === json.signs.length,
+            new Set(operation.signs.map(fs => fs.signer.toString())).size === operation.signs.length,
             MitumError.detail(ECODE.INVALID_FACTSIGNS, "duplicate signers found in factsigns"),
         )
 
-        const factSigns = json.signs
+        const factSigns = operation.signs
             .map((s) =>
                 Buffer.concat([
                     Buffer.from(s.signer),
@@ -62,17 +62,17 @@ export class Signer extends Generator {
             //.sort((a, b) => Buffer.compare(a, b))
 
         const msg = Buffer.concat([
-            base58.decode(json.fact.hash),
+            base58.decode(operation.fact.hash),
             Buffer.concat(factSigns),
         ])
 
-        json.hash = base58.encode(sha3(msg))
+        operation.hash = base58.encode(sha3(msg))
 
-        return json
+        return operation
     }
 
 
-    private nodeSign(keypair: KeyPair, json: OperationJson, node: string) {
+    private nodeSign(keypair: KeyPair, operation: OperationJson, node: string) {
         const nd = new NodeAddress(node)
         const now = TimeStamp.new()
         const fs = new NodeFactSign(
@@ -82,20 +82,20 @@ export class Signer extends Generator {
                 Buffer.concat([
                     Buffer.from(this.networkID),
                     nd.toBuffer(),
-                    base58.decode(json.fact.hash),
+                    base58.decode(operation.fact.hash),
                     now.toBuffer(),
                 ])
             ),
             now.toString(),
         ).toHintedObject()
 
-        if (json.signs) {
-            json.signs = [...json.signs, fs]
+        if (operation.signs) {
+            operation.signs = [...operation.signs, fs]
         } else {
-            json.signs = [fs]
+            operation.signs = [fs]
         }
 
-        const factSigns = json.signs
+        const factSigns = operation.signs
             .map((s) =>
                 Buffer.concat([
                     Buffer.from(s.signer),
@@ -106,12 +106,12 @@ export class Signer extends Generator {
             .sort((a, b) => Buffer.compare(a, b))
 
         const msg = Buffer.concat([
-            base58.decode(json.fact.hash),
+            base58.decode(operation.fact.hash),
             Buffer.concat(factSigns),
         ])
 
-        json.hash = base58.encode(sha3(msg))
+        operation.hash = base58.encode(sha3(msg))
 
-        return json
+        return operation
     }
 }
