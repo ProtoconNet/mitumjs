@@ -3,10 +3,13 @@ import { Keys, PubKey } from "./pub"
 import { BaseKeyPair, KeyPair } from "./keypair"
 
 import { Config } from "../node"
-import { Assert } from "../error"
+import { Assert, ECODE, MitumError} from "../error"
 
 function getRandomN(n: number, f: () => BaseKeyPair): { keys: Keys, keypairs: BaseKeyPair[] } {
-    Assert.get(Config.KEYS_IN_ACCOUNT.satisfy(n)).excute()
+    Assert.check(
+        Config.KEYS_IN_ACCOUNT.satisfy(n),
+        MitumError.detail(ECODE.INVALID_KEYS, `${n} is out of range`)
+    )
 
     n = Math.floor(n)
 
