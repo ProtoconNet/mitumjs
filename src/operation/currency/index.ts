@@ -481,14 +481,18 @@ export class Account extends KeyG {
     }
 
     async getAccountInfo(address: string | Address) {
-        return await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
+        const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
+        response.data = response.data? response.data : null;
+        return response
     }
 
     async getOperations(
         address: string | Address, 
         limit?: number, offset?: [number, number], reverse?: true
     ) {
-        return await getAPIData(() => api.operation.getAccountOperations(this.api, address, this.delegateIP, limit, offset, reverse))
+        const response = await getAPIData(() => api.operation.getAccountOperations(this.api, address, this.delegateIP, limit, offset, reverse));
+        response.data = response.data? response.data : null;
+        return response
     }
 
     async getByPublickey(publickey: string | Key | PubKey) {
@@ -497,7 +501,7 @@ export class Account extends KeyG {
 
     async balance(address: string | Address) {
         const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
-        response.data = response.data? response.data.balance : null
+        response.data = response.data? response.data.balance : null;
         return response
     }
 }
