@@ -36,7 +36,9 @@ export class Operation extends Generator {
 	}
 
 	async getOperation(hash: string) {
-		return await getAPIData(() => api.getOperation(this.api, hash, this.delegateIP))
+		const response = await getAPIData(() => api.getOperation(this.api, hash, this.delegateIP));
+		response.data = response.data ? response.data : null;
+		return response
 	}
 
 	sign(
