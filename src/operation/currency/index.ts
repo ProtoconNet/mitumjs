@@ -190,7 +190,7 @@ export class Currency extends Generator {
         )
     }
 
-    async getAllCurrencies(): Promise<string[] | null> {
+    async getAllCurrencies(): Promise<any> {
         const response = await getAPIData(() => api.currency.getCurrencies(this.api, this.delegateIP), true);
 
         response.data = response && response.data && response.data._links ?
