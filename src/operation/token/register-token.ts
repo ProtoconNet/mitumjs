@@ -26,7 +26,7 @@ export class RegisterTokenFact extends TokenFact {
         this.initialSupply = Big.from(initialSupply)
 
         Assert.check(
-            this.initialSupply.compare(0) > 0,
+            this.initialSupply.compare(0) >= 0,
             MitumError.detail(ECODE.INVALID_FACT, "initialSupply under zero"),
         )
         this._hash = this.hashing()
