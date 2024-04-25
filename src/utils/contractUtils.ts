@@ -1,7 +1,7 @@
 import { Address } from "../key";
 import { SuccessResponse } from "../types"
 
-export const calculateAllowance = (response: SuccessResponse, owner: string | Address, spender: string | Address) => {
+export const calculateAllowance = (response: SuccessResponse, owner: string | Address, approved: string | Address) => {
     interface AllowanceItem {
         _hint: string;
         account: string;
@@ -18,7 +18,7 @@ export const calculateAllowance = (response: SuccessResponse, owner: string | Ad
         const approveList: AllowanceItem[] = response.data.policy.approve_list;
         const approval = approveList.find(item => item.account === owner);
         if (approval) {
-            const allowance = approval.approved.find(item => item.account === spender);
+            const allowance = approval.approved.find(item => item.account === approved);
             if (allowance) {
                 amount = allowance.amount;
             }

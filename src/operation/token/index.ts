@@ -150,10 +150,10 @@ export class Token extends ContractGenerator {
         return await getAPIData(() => contract.token.getToken(this.api, contractAddr, this.delegateIP))
     }
     
-    async getAllowance(contractAddr: string | Address, owner: string | Address, spender: string | Address) {
+    async getAllowance(contractAddr: string | Address, owner: string | Address, approved: string | Address) {
         const response = await getAPIData(() => contract.token.getToken(this.api, contractAddr, this.delegateIP));
         if (response.data) {
-            response.data = calculateAllowance(response, owner, spender);
+            response.data = calculateAllowance(response, owner, approved);
         }
         return response
     }
