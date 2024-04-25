@@ -12,16 +12,20 @@ export const calculateAllowance = (response: SuccessResponse, owner: string | Ad
         }[];
     }
 
-    let amount = 0;
-    if (response && response.data && response.data.approve_list) {
-        const approveList: AllowanceItem[] = response.data.approve_list;
+    let amount: string = '0';
+    
+    if (response.data.policy && response.data.policy.approve_list) {
+        const approveList: AllowanceItem[] = response.data.policy.approve_list;
         const approval = approveList.find(item => item.account === owner);
         if (approval) {
             const allowance = approval.approved.find(item => item.account === spender);
             if (allowance) {
-                amount = Number(allowance.amount);
+                amount = allowance.amount;
             }
         }
+        return {'amount': amount};
+    } else {
+        throw new Error(`Unknown error orccur: token policy or policy.approve_list does not exist`);
     }
-    return {"amount": amount};
+    
 }
