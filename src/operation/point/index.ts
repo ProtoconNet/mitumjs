@@ -150,9 +150,11 @@ export class Point extends ContractGenerator {
         return await getAPIData(() => contract.point.getPoint(this.api, contractAddr, this.delegateIP))
     }
 
-    async getAllowance(contractAddr: string | Address, owner: string | Address, spender: string | Address) {
-        const response = await getAPIData(() => contract.point.getPoint(this.api, contractAddr, this.delegateIP))
-        response.data = calculateAllowance(response, owner, spender);
+    async getAllowance(contractAddr: string | Address, owner: string | Address, approved: string | Address) {
+        const response = await getAPIData(() => contract.point.getPoint(this.api, contractAddr, this.delegateIP));
+        if (response.data) {
+            response.data = calculateAllowance(response, owner, approved);
+        }
         return response
     }
 
