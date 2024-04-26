@@ -156,6 +156,34 @@ export class Currency extends Generator {
         )
     }
 
+    batchTransfer(
+        sender: string | Address,
+        receivers: string[] | Address[],
+        currency: string | CurrencyID,
+        amounts: string[] | number[] | Big[],
+    ) {
+        console.log(receivers.length, amounts.length)
+        Assert.check(
+            receivers.length !== 0 && amounts.length !== 0, 
+            MitumError.detail(ECODE.INVALID_LENGTH, "The array must not be empty."),
+        )
+        Assert.check(
+            receivers.length === amounts.length, 
+            MitumError.detail(ECODE.INVALID_LENGTH, "The lengths of the receivers and amounts must be the same."),
+        )
+        return new Operation(
+            this.networkID,
+            new TransferFact(
+                TimeStamp.new().UTC(),
+                sender,
+                receivers.map((receiver, idx) => new TransferItem(
+                    receiver, [new Amount(currency, amounts[idx])]
+                    )
+                ),
+            ),
+        )
+    }
+
     withdraw(
         sender: string | Address,
         target: string | Address,
@@ -221,7 +249,7 @@ export class Account extends KeyG {
         amount: string | number | Big,
         seed?: string,
         weight?: string | number | Big,
-    ): { wallet: AccountType, operation: Operation<CreateAccountFact> } {
+    ): { wallet: AccountType, operation: Operation<TransferFact> } {
         const kp = seed ? KeyPair.fromSeed(seed) : KeyPair.random()
         const ks = new Keys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
 
@@ -233,14 +261,13 @@ export class Account extends KeyG {
             },
             operation: new Operation(
                 this.networkID,
-                new CreateAccountFact(
+                new TransferFact(
                     TimeStamp.new().UTC(),
                     sender,
                     [
-                        new CreateAccountItem(
-                            ks,
-                            [new Amount(currency, amount)],
-                            "mitum",
+                        new TransferItem(
+                            ks.address,
+                            [new Amount(currency, amount)]
                         )
                     ],
                 ),
@@ -248,6 +275,7 @@ export class Account extends KeyG {
         }
     }
 
+    // Temporarily unavailable with touch function
     createEtherWallet(
         sender: string | Address,
         currency: string | CurrencyID,
@@ -281,20 +309,53 @@ export class Account extends KeyG {
         }
     }
 
+    // When Ethereum style singlesig is applied, it will be replaced with the function below
+    // createEtherWallet(
+    //     sender: string | Address,
+    //     currency: string | CurrencyID,
+    //     amount: string | number | Big,
+    //     seed?: string,
+    //     weight?: string | number | Big,
+    // ): { wallet: AccountType, operation: Operation<TransferFact> } {
+    //     const kp = seed ? KeyPair.fromSeed(seed, "ether") : KeyPair.random("ether")
+    //     const ks = new EtherKeys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
+
+    //     return {
+    //         wallet: {
+    //             privatekey: kp.privateKey.toString(),
+    //             publickey: kp.publicKey.toString(),
+    //             address: ks.etherAddress.toString()
+    //         },
+    //         operation: new Operation(
+    //             this.networkID,
+    //             new TransferFact(
+    //                 TimeStamp.new().UTC(),
+    //                 sender,
+    //                 [
+    //                     new TransferItem(
+    //                         ks.etherAddress,
+    //                         [new Amount(currency, amount)],
+    //                     )
+    //                 ],
+    //             ),
+    //         ),
+    //     }
+    // }
+
     createBatchWallet(
         sender: string | Address,
         n: number,
         currency: string | CurrencyID,
         amount: string | number | Big,
-    ): { wallet: AccountType[], operation: Operation<CreateAccountFact> } {
+    ): { wallet: AccountType[], operation: Operation<TransferFact> } {
         const keyArray = this.keys(n);
         const ksArray = keyArray.map((key) => new Keys([new PubKey(key.publickey, 100)], 100));
-        const items = ksArray.map((ks) => new CreateAccountItem(ks,[new Amount(currency, amount)],"mitum",));
+        const items = ksArray.map((ks) => new TransferItem(ks.address,[new Amount(currency, amount)]));
         return {
             wallet: keyArray,
             operation: new Operation(
                 this.networkID,
-                new CreateAccountFact(
+                new TransferFact(
                     TimeStamp.new().UTC(),
                     sender,
                     items,
@@ -309,16 +370,16 @@ export class Account extends KeyG {
         currency: string | CurrencyID,
         amount: string | number | Big,
     ) {
+        const ks = new Keys([new PubKey(key, 100)], 100);
         return new Operation(
             this.networkID,
-            new CreateAccountFact(
+            new TransferFact(
                 TimeStamp.new().UTC(),
                 sender,
                 [
-                    new CreateAccountItem(
-                        new Keys([new PubKey(key, 100)], 100),
-                        [new Amount(currency, amount)],
-                        "mitum",
+                    new TransferItem(
+                        ks.address,
+                        [new Amount(currency, amount)]
                     )
                 ],
             )
@@ -346,6 +407,29 @@ export class Account extends KeyG {
             )
         )
     }
+
+    // When Ethereum style singlesig is applied, it will be replaced with the function below
+    // createEtherAccount(
+    //     sender: string | Address,
+    //     key: string | Key | PubKey,
+    //     currency: string | CurrencyID,
+    //     amount: string | number | Big,
+    // ) {
+    //     const ks = new EtherKeys([new PubKey(key, 100)], 100);
+    //     return new Operation(
+    //         this.networkID,
+    //         new TransferFact(
+    //             TimeStamp.new().UTC(),
+    //             sender,
+    //             [
+    //                 new TransferItem(
+    //                     ks.etherAddress,
+    //                     [new Amount(currency, amount)],
+    //                 )
+    //             ],
+    //         )
+    //     )
+    // }
 
     createMultiSig(
         sender: string | Address,
@@ -403,6 +487,9 @@ export class Account extends KeyG {
         )
     }
 
+    /**
+     * @deprecated This function is deprecated, use updateMultiSig instead.
+     */
     update(
         target: string | Address,
         newKey: string | Key | PubKey,
@@ -472,7 +559,7 @@ export class Account extends KeyG {
 
     async touch(
         privatekey: string | Key,
-        wallet: { wallet: AccountType, operation: Operation<CreateAccountFact> }
+        wallet: { wallet: AccountType, operation: Operation<TransferFact> }
     ) {
         const op = wallet.operation;
         op.sign(privatekey);
