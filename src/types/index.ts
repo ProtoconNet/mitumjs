@@ -3,7 +3,7 @@ import { HintedObject } from "./hinted"
 import { Big, Float, Uint8, Bool } from "./math"
 import { TimeStamp, FullTimeStamp } from "./time"
 import { ShortDate, LongString, IP, URIString } from "./string"
-import { IBuffer, IString, IHintedObject, SuccessResponse, ErrorResponse } from "./interface"
+import { IBuffer, IString, IHintedObject, error_code, SuccessResponse, ErrorResponse } from "./interface"
 
 export {
     Generator,
@@ -11,5 +11,5 @@ export {
     Big, Float, Uint8, Bool,
     TimeStamp, FullTimeStamp,
     LongString, ShortDate, IP, URIString,
-    IBuffer, IString, IHintedObject, SuccessResponse, ErrorResponse,
+    IBuffer, IString, IHintedObject, error_code, SuccessResponse, ErrorResponse,
 }

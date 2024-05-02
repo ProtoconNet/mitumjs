@@ -1,3 +1,5 @@
+import { error_code } from '../types'
+
 // ECODE: MitumJS Inner Proccess Error code
 export type ErrorCode = (
     typeof ECODE[keyof typeof ECODE]
@@ -67,7 +69,8 @@ export const ECODE = {
     DAO: {
         INVALID_WHITELIST: "EC_INVALID_WHITELIST",
         UNMATCHED_SENDER: "EC_UNMATCHED_SENDER"
-    }
+    },
+    TIME_OUT: "EC_TIME_OUT"
 } as const
 
 
@@ -315,12 +318,13 @@ export const DCODE = {
     },
 } as const
 
-export const assignCodeFromErrorMessage = (errorMessage: string): string[] => {
-    const errorCodes : string[] = [];
+export const assignCodeFromErrorMessage = (errorMessage: string): error_code => {
+    const pcodeArr : string[] = [];
+    const dcodeArr : string[] = [];
 
     for (const [pcode, obj] of Object.entries(PCODE)) {
         if (obj.keyword[0] !== "" && errorMessage.includes(obj.keyword[0])) {
-            errorCodes.push(pcode);
+            pcodeArr.push(pcode);
         }
     }
 
@@ -328,12 +332,11 @@ export const assignCodeFromErrorMessage = (errorMessage: string): string[] => {
         if (obj.keyword[0] !== "") {
             for (const keyword of obj.keyword) {
                 if (errorMessage.includes(keyword)) {
-                    errorCodes.push(dcode);
-                    break; // 매칭된 값이 하나라도 있으면 더 이상 확인하지 않고 다음 입력으로 이동합니다.
+                    dcodeArr.push(dcode);
                 }
             }
         }
     }
 
-    return errorCodes
+    return {pcode: pcodeArr, dcode: dcodeArr}
 }
