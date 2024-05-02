@@ -14,7 +14,8 @@ import { Signer } from "./signer"
 import { operation as api } from "../api"
 import { Key, KeyPair } from "../key"
 import { Generator, HintedObject, IP } from "../types"
-import { ErrorResponse } from "../types"
+// import { ErrorResponse } from "../types"
+import { Assert, ECODE, MitumError } from "../error"
 import { getAPIData } from "../api"
 import { isOpFact } from "../utils/typeGuard"
 
@@ -128,19 +129,10 @@ export class OperationResponse {
             elapsedTime += timeoutInterval;
             await new Promise(resolve => setTimeout(resolve, timeoutInterval));
         }
-		if (!stop) {
-			const apiPath = `${IP.from(this._api).toString()}/block/operation/${this.response.data.fact.hash}`;
-			const parsedError: ErrorResponse = {
-				// 없는 factHash도 조회시 200번 응답이 나오기때문에 status를 뭐라고 하기 애매함.
-				status: undefined,
-				method: 'get',
-				url: !this._delegateIP ? apiPath : delegateUri(this._delegateIP) + encodeURIComponent(apiPath),
-				error_code: [],
-				request_body: undefined,
-				error_message: `timeout reached (${maxTimeout/1000} seconds).`,
-			};
-			return parsedError;
-		}
+		const apiPath = `${IP.from(this._api).toString()}/block/operation/${this.response.data.fact.hash}`;
+		const url = !this._delegateIP ? apiPath : delegateUri(this._delegateIP) + encodeURIComponent(apiPath);
+
+		Assert.check(stop, MitumError.detail(ECODE.TIME_OUT, `timeout reached (${maxTimeout/1000} seconds).\nurl: ${url}`))
     }
 
 }
