@@ -30,7 +30,7 @@ export default {
     contract,
 }
 
-export async function getAPIData(f: () => Promise<AxiosResponse>, _links? : boolean): Promise<any> {
+export async function getAPIData(f: () => Promise<AxiosResponse>, _links? : boolean): Promise<SuccessResponse | ErrorResponse> {
     try {
         const res = await f();
         const parsedResponse: SuccessResponse = {
