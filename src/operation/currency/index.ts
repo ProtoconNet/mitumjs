@@ -18,6 +18,7 @@ import { Amount, CurrencyID } from "../../common"
 import { Big, Generator, IP, TimeStamp } from "../../types"
 import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG, EtherKeys } from "../../key"
 import { Assert, ECODE, MitumError } from "../../error"
+import { isSuccessResponse  } from "../../utils"
 
 type currencyPolicyData = {
     currency: string | CurrencyID
@@ -221,11 +222,13 @@ export class Currency extends Generator {
     async getAllCurrencies(): Promise<any> {
         const response = await getAPIData(() => api.currency.getCurrencies(this.api, this.delegateIP), true);
 
-        response.data = response && response.data && response.data._links ?
+        if (isSuccessResponse(response)) {
+            response.data = response.data._links ?
             Object.keys(response.data._links)
                 .filter(c => !(c === "self" || c === "currency:{currencyid}"))
                 .map(c => c)
             : null;
+        }
         return response
     }
 
@@ -569,7 +572,9 @@ export class Account extends KeyG {
 
     async getAccountInfo(address: string | Address) {
         const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
-        response.data = response.data? response.data : null;
+        if (isSuccessResponse(response)) {
+            response.data = response.data? response.data : null;
+        }
         return response
     }
 
@@ -578,7 +583,9 @@ export class Account extends KeyG {
         limit?: number, offset?: [number, number], reverse?: true
     ) {
         const response = await getAPIData(() => api.operation.getAccountOperations(this.api, address, this.delegateIP, limit, offset, reverse));
-        response.data = response.data? response.data : null;
+        if (isSuccessResponse(response)) {
+            response.data = response.data? response.data : null;
+        }
         return response
     }
 
@@ -588,7 +595,9 @@ export class Account extends KeyG {
 
     async balance(address: string | Address) {
         const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
-        response.data = response.data? response.data.balance : null;
+        if (isSuccessResponse(response)) {
+            response.data = response.data.balance ? response.data.balance : null;
+        }
         return response
     }
 }

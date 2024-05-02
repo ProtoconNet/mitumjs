@@ -15,6 +15,7 @@ import { CurrencyID } from "../../common"
 import { contract, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
+import { isSuccessResponse } from "../../utils"
 
 type collectionData = {
     name: string | LongString
@@ -271,7 +272,10 @@ export class NFT extends ContractGenerator {
             nftID,
             this.delegateIP
         ));
-        response.data = response && response.data && response.data.owner ? response.data.owner : null;
+
+        if (isSuccessResponse(response)) {
+            response.data = response.data.owner;
+        }
         return response
     }
 
@@ -282,7 +286,10 @@ export class NFT extends ContractGenerator {
             nftID,
             this.delegateIP
         ));
-        response.data = response && response.data && response.data.approved ? response.data.approved : null;
+
+        if (isSuccessResponse(response)) {
+            response.data = response.data.approved;
+        }
         return response
     }
 
@@ -292,7 +299,10 @@ export class NFT extends ContractGenerator {
             contractAddr,
             this.delegateIP,
         ));
-        response.data = response && response.data && response.data.nft_count ? Number(response.data.nft_count) : null;
+
+        if (isSuccessResponse(response)) {
+            response.data = Number(response.data.nft_count);
+        }
         return response
     }
 
@@ -303,7 +313,10 @@ export class NFT extends ContractGenerator {
             nftID,
             this.delegateIP
         ));
-        response.data = response && response.data && response.data.uri ? response.data.uri : null;
+
+        if (isSuccessResponse(response)) {
+            response.data = response.data.uri;
+        }
         return response
     }
 

@@ -12,6 +12,7 @@ import { CurrencyID } from "../../common"
 import { contract, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp } from "../../types"
 import { calculateAllowance } from "../../utils/contractUtils"
+import { isSuccessResponse } from "../../utils"
 
 export class Token extends ContractGenerator {
     constructor(
@@ -152,7 +153,7 @@ export class Token extends ContractGenerator {
     
     async getAllowance(contractAddr: string | Address, owner: string | Address, approved: string | Address) {
         const response = await getAPIData(() => contract.token.getToken(this.api, contractAddr, this.delegateIP));
-        if (response.data) {
+        if (isSuccessResponse(response)) {
             response.data = calculateAllowance(response, owner, approved);
         }
         return response

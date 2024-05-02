@@ -13,12 +13,12 @@ import { Signer } from "./signer"
 
 import { operation as api } from "../api"
 import { Key, KeyPair } from "../key"
-import { Generator, HintedObject, IP } from "../types"
+import { Generator, HintedObject, IP, SuccessResponse, ErrorResponse } from "../types"
 import { Assert, ECODE, MitumError } from "../error"
 import { getAPIData } from "../api"
 import { isOpFact } from "../utils/typeGuard"
 
-import { delegateUri } from "../utils"
+import { delegateUri, isSuccessResponse } from "../utils"
 
 import * as Base from "./base"
 
@@ -37,7 +37,9 @@ export class Operation extends Generator {
 
 	async getOperation(hash: string) {
 		const response = await getAPIData(() => api.getOperation(this.api, hash, this.delegateIP));
-		response.data = response.data ? response.data : null;
+		if (isSuccessResponse(response)) {
+			response.data = response.data ? response.data : null;
+		}
 		return response
 	}
 
@@ -75,7 +77,7 @@ export class OperationResponse {
     private _api: string | IP;
     private _delegateIP: string | IP;
 
-    constructor(response: string, api: string | IP, delegateIP: string | IP) {
+    constructor(response: SuccessResponse | ErrorResponse, api: string | IP, delegateIP: string | IP) {
         this.response = response;
         this._api = api;
         this._delegateIP = delegateIP;
@@ -110,7 +112,7 @@ export class OperationResponse {
         while (!stop && elapsedTime < maxTimeout) {
             try {
                 const receipt = await getAPIData(() => api.getOperation(this._api, this.response.data.fact.hash, this._delegateIP));
-                if (receipt.data) {
+                if (isSuccessResponse(receipt)) {
 					if (receipt.data.in_state) {
 						console.log('\x1b[34m%s\x1b[0m', `operation in_state is true`)
 						return receipt;
