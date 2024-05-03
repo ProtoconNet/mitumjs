@@ -70,58 +70,75 @@ export const ECODE = {
         INVALID_WHITELIST: "EC_INVALID_WHITELIST",
         UNMATCHED_SENDER: "EC_UNMATCHED_SENDER"
     },
-    TIME_OUT: "EC_TIME_OUT"
+    TIME_OUT: "EC_TIME_OUT",
+    TRANSACTION_REVERTED: "EC_TRANSACTION_REVERTED"
 } as const
 
 
 // ECODE: Mitum Node Process Error code
 export const PCODE = {
-    P0A: {
+    AMBIGUOUS: {
+        code: "P0A",
         keyword: [""],
         description: "AMBIGUOUS",
         subject: "",
-    },    
-    P0M: {
+    },
+    MITUM_CORE: {
+        code: "P0M",
         keyword: [""],
         description: "MITUM CORE",
         subject: "",
     },
-    P00: {
+    UNDEFINED: {
+        code: "P00",
         keyword: [""],
         description: "UNDEFINED",
         subject: "",
     },
-    P01: {
+    IV_BASE_OP:{
+        code: "P01",
         keyword: ["Invalid BaseOperation"],
         description: "Error from IsValid(BaseOperation)",
         subject: "",
     },
-    P02: {
+    IV_BASE_NODE_OP: {
+        code: "P02",
         keyword: ["Invalid BaseNodeOperation"],
         description: "Error from IsValid(BaseNodeOperation)",
         subject: "",
     },
-    P03: {
+    IV_BASE_STATE: {
+        code: "P03",
+        keyword: ["Invalid BaseState"],
+        description: "Error from IsValid(BaseState)",
+        subject: "",
+    },
+    IV_FACT: {
+        code: "P04",
         keyword: ["Invalid fact"],
         description: "Error from IsValid(Fact)",
         subject: "",
     },
-    P04: {
+    IV_ITEM: {
+        code: "P05",
         keyword: ["Invalid item"],
         description: "Error from IsValid(Item)",
         subject: "",
     },
-    P05: {
+    PREPROCESS: {
+        code: "P06",
         keyword: ["PreProcess"],
         description: "Error from PreProcess",
         subject: "",
     },
-    P06: {
+    DECODE_JSON: {
+        code: "P07",
         keyword: ["Decode Json"],
         description: "Error from DecodeJSON",
         subject: "",
     },
-    P07: {
+    DECODE_BSON: {
+        code: "P08",
         keyword: ["Decode Bson"],
         description: "Error from DecodeBSON",
         subject: "",
@@ -130,188 +147,223 @@ export const PCODE = {
 
 
 export const DCODE = {
-    D00A: {
+    AMBIGUOUS: {
+        code: "D00A",
         keyword: [""],
-        description: "",
+        description: "AMBIGUOUS",
         subject: "",
     },
-    D00C: {
+    COMPLEX: {
+        code: "D00C",
         keyword: [""],
-        description: "",
+        description: "COMPLEX",
         subject: "",
     },
-    D00D: {
+    OP_DEP: {
+        code: "D00D",
         keyword: [""],
-        description: "",
+        description: "Operation dependent",
         subject: "",
     },
-    D000: {
+    UNDEFINED: {
+        code: "D000",
         keyword: [""],
-        description: "",
+        description: "UNDEFINED",
         subject: ""
     },
     // data validation
-    D101: {
-        keyword: [""],
-        description: "",
+    EMPTY: {
+        code: "D101",
+        keyword: ["Operation has empty token"],
+        description: "EMPTY or NULL",
         subject: ""
     },
-    D102: {
+    IV_LENGTH: {
+        code: "D102",
         keyword: ["Array length"],
-        description: "",
+        description: "length of array",
         subject: ""
     },
-    D103: {
+    IV_RANGE: {
+        code: "D103",
         keyword: ["Value out of range", "Operation token size too large"],
-        description: "",
+        description: "Out of range",
         subject: ""
     },
-    D104: {
-        keyword: ["Type mismatch"],
-        description: "",
+    IV_TYPE: {
+        code: "D104",
+        keyword: ["Type mismatch", "Invalid account type", "Invalid value"],
+        description: "Invalid type",
         subject: ""
     },
-    D105: {
+    DUPLICATED_VAL: {
+        code: "D105",
         keyword: ["Duplicated value"],
-        description: "",
+        description: "Duplicated value",
         subject: ""
     },
     D106: {
+        code: "D106",
         keyword: [""],
         description: "",
         subject: ""
     },
-    D107: {
+    IV_CHAR: {
+        code: "D107",
+        keyword: [""],
+        description: "Special characters",
+        subject: ""
+    },
+    DECODE_FACT: {
+        code: "D108",
         keyword: [""],
         description: "",
         subject: ""
     },
-    D108: {
+    DECODE_ITEM: {
+        code: "D109",
         keyword: [""],
         description: "",
         subject: ""
     },
-    D109: {
+    DECODE_OP: {
+        code: "D110",
         keyword: [""],
         description: "",
         subject: ""
     },
-    D110: {
+    UNMARSHAL_ITEM: {
+        code: "D111",
         keyword: [""],
         description: "",
         subject: ""
     },
-    D111: {
+    UNMARSHAL_FACT: {
+        code: "D112",
         keyword: [""],
         description: "",
         subject: ""
     },
-    D112: {
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    D113: {
+    SELF_TARGETED: {
+        code: "D113",
         keyword: ["Self targeted"],
         description: "",
         subject: ""
     },
     D114: {
+        code: "D114",
         keyword: [""],
         description: "",
         subject: ""
     },
     D115: {
+        code: "D115",
         keyword: [""],
         description: "",
         subject: ""
     },
     D116: {
+        code: "D116",
         keyword: [""],
         description: "",
         subject: ""
     },
     D117: {
+        code: "D117",
         keyword: [""],
         description: "",
         subject: ""
     },
     // signature related
-    D201: {
+    IV_SIGN: {
+        code: "D201",
         keyword: ["Invalid signing"],
         description: "",
         subject: ""
     },
     D202: {
+        code: "D202",
         keyword: [""],
         description: "",
         subject: ""
     },
-    D203: {
+    LACK_OF_SIGN: {
+        code: "D203",
         keyword: ["Not enough signs"],
         description: "",
         subject: ""
     },
     D204: {
+        code: "D204",
         keyword: [""],
         description: "",
         subject: ""
     },
     // authorization related
-    D301: {
+    UNAUTHORIZED_AC: {
+        code: "D301",
         keyword: ["Account not authorized"],
-        description: "",
+        description: "sender is not owner neither operator of the contract",
         subject: ""
     },
-    D302: {
+    NOT_IN_WHITELIST: {
+        code: "D302",
         keyword: [""],
-        description: "",
+        description: "account not in the whitelist",
         subject: ""
     },
     // insufficient balance
     D401: {
+        code: "D401",
         keyword: [""],
         description: "",
         subject: ""
     },
     // state related
-    D501: {
-        keyword: ["Account not found", "Currency not found"],
+    STATE_NOT_FOUND: {
+        code: "D501",
+        keyword: ["Account not found", "Currency not found", "Contract account not found", "Service not found"],
         description: "",
         subject: ""
     },
     D502: {
+        code: "D502",
         keyword: [""],
         description: "",
         subject: ""
     },
-    D503: {
-        keyword: ["Account exists", "Currency already registered"],
+    STATE_EXIST: {
+        code: "D503",
+        keyword: ["Account exists", "Contract account exist", "Currency exist", "State exist"],
         description: "",
         subject: ""
     },
     D504: {
+        code: "D504",
         keyword: [""],
         description: "",
         subject: ""
     },
-    D505: {
-        keyword: [""],
+    IV_STATE_VAL: {
+        code: "D505",
+        keyword: ["Invalid state value"],
         description: "",
         subject: ""
     },
-    D506: {
-        // 수정될 예정
-        keyword: ["Contract account disallowed"],  
+    CONTRACT_ACCOUNT: {
+        code: "D506",
+        keyword: ["Contract account not allowed"],  
         description: "",
         subject: ""
     },
     D507: {
+        code: "D507",
         keyword: [""],
         description: "",
         subject: ""
     },
     D508: {
+        code: "D508",
         keyword: [""],
         description: "",
         subject: ""
@@ -322,17 +374,17 @@ export const assignCodeFromErrorMessage = (errorMessage: string): error_code => 
     const pcodeArr : string[] = [];
     const dcodeArr : string[] = [];
 
-    for (const [pcode, obj] of Object.entries(PCODE)) {
+    for (const [_, obj] of Object.entries(PCODE)) {
         if (obj.keyword[0] !== "" && errorMessage.includes(obj.keyword[0])) {
-            pcodeArr.push(pcode);
+            pcodeArr.push(obj.code);
         }
     }
 
-    for (const [dcode, obj] of Object.entries(DCODE)) {
+    for (const [_, obj] of Object.entries(DCODE)) {
         if (obj.keyword[0] !== "") {
             for (const keyword of obj.keyword) {
                 if (errorMessage.includes(keyword)) {
-                    dcodeArr.push(dcode);
+                    dcodeArr.push(obj.code);
                 }
             }
         }
@@ -340,3 +392,5 @@ export const assignCodeFromErrorMessage = (errorMessage: string): error_code => 
 
     return {pcode: pcodeArr, dcode: dcodeArr}
 }
+
+Object.keys(PCODE)
