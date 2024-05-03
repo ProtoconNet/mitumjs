@@ -16,6 +16,13 @@ export class Signer extends Generator {
         super(networkID, api)
     }
     
+    /**
+     * Sign the given operation in JSON format using given private key.
+	 * @param {string | Key} [privatekey] - The private key used for signing.
+	 * @param {HintedObject} [operation] - The operation in JSON object (HintedObject) to be signed.
+	 * @param {SignOption} [option] - (Optional) Option for node sign.
+	 * @returns The signed operation in JSON object (HintedObject).
+     */
     sign(
         privatekey: string | Key,
         operation: HintedObject,
