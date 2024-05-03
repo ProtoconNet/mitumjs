@@ -23,6 +23,16 @@ export class Token extends ContractGenerator {
         super(networkID, api, delegateIP)
     }
 
+    /**
+     * Generate a `register-token` operation for registering a token on a contract.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | LongString} [name] - The name of the token to register.
+     * @param {string | CurrencyID} [symbol] - The symbol of the token to register.
+     * @param {string | number | Big} [initialSupply] - (Optional) The initial supply of the token to register. If not provided, the default value is 0.
+     * @returns `register-token` operation.
+     */
     registerToken(
         contractAddr: string | Address,
         sender: string | Address,
@@ -45,6 +55,15 @@ export class Token extends ContractGenerator {
         )
     }
 
+    /**
+     * Generate a `mint` operation for minting tokens and allocating them to a receiver.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | Address} [receiver] - The receiver's address. 
+     * @param {string | number | Big} [amount] - The amount to mint.
+     * @returns `mint` operation.
+     */
     mint(
         contractAddr: string | Address,
         sender: string | Address,
@@ -65,6 +84,15 @@ export class Token extends ContractGenerator {
         )
     }
 
+    /**
+     * Generate a `burn` operation for burning tokens from a target account.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | Address} [target] - The target account's address.
+     * @param {string | number | Big} [amount] - The amount to burn.
+     * @returns `burn` operation
+     */
     burn(
         contractAddr: string | Address,
         sender: string | Address,
@@ -85,6 +113,15 @@ export class Token extends ContractGenerator {
         )
     }
 
+    /**
+     * Generate an `transfer` operation for transferring tokens from the sender to a receiver.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency - The currency ID.
+     * @param {string | Address} [receiver] - The receiver's address.
+     * @param {string | number | Big} [amount] - The amount to transfer.
+     * @returns `transfer` operation.
+     */
     transfer(
         contractAddr: string | Address,
         sender: string | Address,
@@ -105,6 +142,16 @@ export class Token extends ContractGenerator {
         )
     }
 
+    /**
+     * Generate a `transfer-from` operation for transferring tokens from target account to receiver.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | Address} [receiver] - The receiver's address.
+     * @param {string | Address} [target] - The target account's address.
+     * @param {string | number | Big} [amount] - The amount to transfer.
+     * @returns `transfer-from` operation.
+     */
     transferFrom(
         contractAddr: string | Address,
         sender: string | Address,
@@ -127,6 +174,15 @@ export class Token extends ContractGenerator {
         )
     }
 
+    /**
+     * Generate an `approve` operation for approving certain amount tokens to approved account.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | Address} [approved] - The address to approve.
+     * @param {string | number | Big} [amount] - The amount to approve.
+     * @returns `approve` operation
+     */
     approve(
         contractAddr: string | Address,
         sender: string | Address,
@@ -147,10 +203,29 @@ export class Token extends ContractGenerator {
         )
     }
 
+    /**
+     * Get information about the specific token on the contract.
+     * @async
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @returns `data` of `SuccessResponse` is token information:
+     * - `_hint`: Hint for token design,
+     * - `symbol`: Symbol of the token,
+     * - `name`: Name of the token,
+     * - `policy`: Token policy object including `_hint`, `total_supply`, `approve_list`
+     */
     async getTokenInfo(contractAddr: string | Address) {
         return await getAPIData(() => contract.token.getToken(this.api, contractAddr, this.delegateIP))
     }
-    
+
+    /**
+     * Get the allowance information granted by the owner for a specific token.
+     * @async
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [owner] - The token owner's address.
+     * @param {string | Address} [approved] - Address of approved account.
+     * @returns `data` of `SuccessResponse` is token allowance information:
+     * - `amount`: String of allowance amount
+     */
     async getAllowance(contractAddr: string | Address, owner: string | Address, approved: string | Address) {
         const response = await getAPIData(() => contract.token.getToken(this.api, contractAddr, this.delegateIP));
         if (isSuccessResponse(response)) {
@@ -159,6 +234,14 @@ export class Token extends ContractGenerator {
         return response
     }
 
+    /**
+     * Get token balance for given account.
+     * @async
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [owner] - The token owner's address.
+     * @returns`data` of `SuccessResponse` is token balance information:
+     * - `amount`: String of amount
+     */
     async getTokenBalance(contractAddr: string | Address, owner: string | Address) {
         return await getAPIData(() => contract.token.getTokenBalance(this.api, contractAddr, owner, this.delegateIP))
     }
