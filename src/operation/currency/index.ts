@@ -46,6 +46,12 @@ export class Currency extends Generator {
         super(networkID, api, delegateIP)
     }
 
+    /**
+     * Generate a `register-currency` operation for registering a new currency.
+     * **Signature of nodes** is required, not a general account signature.
+     * @param {currencyPolicyData} [data] - The currency policy data.
+     * @returns `register-currency` operation.
+     */
     registerCurrency(data: currencyPolicyData) {
         const keysToCheck: (keyof currencyPolicyData)[] = ['currency', 'genesisAddress', 'totalSupply', 'minBalance', 'feeType', 'feeReceiver'];
         keysToCheck.forEach((key) => {
@@ -73,7 +79,13 @@ export class Currency extends Generator {
             new RegisterCurrencyFact(TimeStamp.new().UTC(), design),
         ) 
     }
-
+    
+    /**
+     * Generate an `update-currency` operation for updating an existing Mitum currency.
+     * **Signature of nodes** is required, not a general account signature.
+     * @param {currencyPolicyData} [data] - The currency policy data.
+     * @returns `update-currency` operation.
+     */
     updateCurrency(data: currencyPolicyData) {
         const keysToCheck: (keyof currencyPolicyData)[] = ['currency', 'genesisAddress', 'totalSupply', 'minBalance', 'feeType', 'feeReceiver'];
         keysToCheck.forEach((key) => {
@@ -139,6 +151,14 @@ export class Currency extends Generator {
         }
     }
 
+    /**
+     * Generate a `transfer` operation for transferring currency between accounts.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Address} [receiver] - The receiver's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The amount to transfer.
+     * @returns `transfer` operation.
+     */
     transfer(
         sender: string | Address,
         receiver: string | Address,
@@ -157,13 +177,21 @@ export class Currency extends Generator {
         )
     }
 
+    /**
+     * Generate a `transfer` operation for transferring currency to multiple accounts at once.
+     * The length of receivers and amounts must be the same.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string[] | Address[]} [receivers] - An array of addresses of receivers.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string[] | number[] | Big[]} [amounts] - An array of amounts to transfer.
+     * @returns `transfer` operation.
+     */
     batchTransfer(
         sender: string | Address,
         receivers: string[] | Address[],
         currency: string | CurrencyID,
         amounts: string[] | number[] | Big[],
     ) {
-        console.log(receivers.length, amounts.length)
         Assert.check(
             receivers.length !== 0 && amounts.length !== 0, 
             MitumError.detail(ECODE.INVALID_LENGTH, "The array must not be empty."),
@@ -185,6 +213,15 @@ export class Currency extends Generator {
         )
     }
 
+    /**
+     * Generate a `withdraw`operation for withdrawing currency from an contract account.
+     * Only the owner account of the contract can execute the operation.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Address} [target] - The target contract account's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The withdrawal amount.
+     * @returns `withdraw`operation
+     */
     withdraw(
         sender: string | Address,
         target: string | Address,
@@ -203,6 +240,14 @@ export class Currency extends Generator {
         )
     }
 
+    /**
+     * Generate a `mint` operation for minting currency and allocating it to a receiver.
+     * **Signature of nodes** is required, not a general account signature.
+     * @param {string | Address} [receiver] - The receiver's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {number} [amount] - The amount to mint.
+     * @returns `mint` operation.
+     */
     mint(
         receiver: string | Address,
         currency: string | CurrencyID,
@@ -219,6 +264,11 @@ export class Currency extends Generator {
         )
     }
 
+    /**
+     * Get a list of all currency in the blockchain network.
+     * @async
+     * @returns `data` of `SuccessResponse` is a array with currency id.
+     */
     async getAllCurrencies(): Promise<any> {
         const response = await getAPIData(() => api.currency.getCurrencies(this.api, this.delegateIP), true);
 
@@ -232,6 +282,17 @@ export class Currency extends Generator {
         return response
     }
 
+    /**
+     * Get currency information abount given currency ID.
+     * @async
+     * @param {string | CurrencyID} [currencyID] - The currency ID.
+     * @returns `data` of `SuccessResponse` is currency information:
+     * - `_hint`: Hint for currency design
+     * - `amount`: [Amount]
+     * - `genesis_account`: Initial account for the currency.
+     * - `policy`: Currency policy information including `new_account_min_balance`, `feeer`
+     * - `aggregate`: Aggregate amount of the currency.
+     */
     async getCurrency(currencyID: string | CurrencyID) {
         return await getAPIData(() => api.currency.getCurrency(this.api, currencyID, this.delegateIP))
     }
@@ -246,6 +307,15 @@ export class Account extends KeyG {
         super(networkID, api, delegateIP)
     }
 
+    /**
+     * Generate a key pair and the corresponding `transfer` operation to create a single-sig account.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @param {string} [seed] - (Optional) The seed for deterministic key generation. If not provided, a random key pair will be generated.
+     * @param {string | number | Big} [weight] - (Optional) The weight for the public key. If not provided, the default value is 100.
+     * @returns An object containing the wallet(key pair) and the `transfer` operation.
+     */
     createWallet(
         sender: string | Address,
         currency: string | CurrencyID,
@@ -278,7 +348,6 @@ export class Account extends KeyG {
         }
     }
 
-    // Temporarily unavailable with touch function
     createEtherWallet(
         sender: string | Address,
         currency: string | CurrencyID,
@@ -312,6 +381,15 @@ export class Account extends KeyG {
         }
     }
 
+    /**
+     * Generate a Ethreum style key pair and the corresponding `transfer` operation to create a single-sig account.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @param {string} [seed] - (Optional) The seed for deterministic key generation. If not provided, a random key pair will be generated.
+     * @param {string | number | Big} [weight] - (Optional) The weight for the public key. If not provided, the default value is 100.
+     * @returns An object containing the wallet (key pair) and the `transfer` operation.
+     */
     // When Ethereum style singlesig is applied, it will be replaced with the function below
     // createEtherWallet(
     //     sender: string | Address,
@@ -345,6 +423,14 @@ export class Account extends KeyG {
     //     }
     // }
 
+    /**
+     * Generate `n` number of key pairs and the corresponding `transfer` operation to create single-sig accounts.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {number} [n] - The number of account to create.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @returns An object containing the wallet (key pairs) and the `transfer` operation.
+     */
     createBatchWallet(
         sender: string | Address,
         n: number,
@@ -367,6 +453,14 @@ export class Account extends KeyG {
         }
     }
 
+    /**
+     * Generate a `transfer` operation for the given public key.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Key | PubKey} [key] - The public key or key object.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @returns `transfer` operation.
+     */
     createAccount(
         sender: string | Address,
         key: string | Key | PubKey,
@@ -411,6 +505,14 @@ export class Account extends KeyG {
         )
     }
 
+    /**
+     * Generate a `transfer` operation for the given Ethereum style public key.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Key | PubKey} [key] - The Ethereum style public key or key object.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @returns `transfer` operation.
+     */
     // When Ethereum style singlesig is applied, it will be replaced with the function below
     // createEtherAccount(
     //     sender: string | Address,
@@ -434,6 +536,26 @@ export class Account extends KeyG {
     //     )
     // }
 
+    /**
+     * Generate a `create-account` operation for the multi-signature account.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {keysType} [keys] - An array of object {`key`: publickey, `weight`: weight for the key}
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @param {string | number | Big} [threshold] - The threshold for the multi-signature.
+     * @returns `create-account` operation.
+     * @example
+     * // Example of parameter keys
+     * const pubkey01 = {
+     *     key: "p8XReXNcaRkNobtBd61uxeFUeUXJ7vWJkAYk4RuqTFJ2mpu",
+     *     weight: 50
+     * };
+     * const pubkey02 = {
+     *     key: "pTmVEh4VaPPM8iLuZcPm1qJRvhJXq8QcsEX1c3xAh4cPmpu",
+     *     weight: 50
+     * };
+     * const keysArray = [pubkey01, pubkey02];
+     */
     createMultiSig(
         sender: string | Address,
         keys: keysType,
@@ -462,6 +584,26 @@ export class Account extends KeyG {
         )
     }
 
+    /**
+     * Generate a `create-account` operation for the multi-signature account in Ethereum style.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {keysType} [keys] - An array of object {`key`: publickey, `weight`: weight for the key}
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @param {string | number | Big} [threshold] - The threshold for the multi-signature.
+     * @returns `create-account` operation.
+     * @example
+     * // Example of parameter keys
+     * const pubkey01 = {
+     *     key: "02cb1d73c49d638d98092e35603414b575f3f5b5ce01162cdd80ab68ab77e50e14epu",
+     *     weight: 50
+     * };
+     * const pubkey02 = {
+     *     key: "0377241675aabafca6b1a49f3bc08a581beb0daa330a4ac2008464d63ed7635a22epu",
+     *     weight: 50
+     * };
+     * const keysArray = [pubkey01, pubkey02];
+     */
     createEtherMultiSig(
         sender: string | Address,
         keys: keysType,
@@ -521,6 +663,24 @@ export class Account extends KeyG {
         )
     }
 
+    /**
+     * Generate an `update-key` operation for replace the public keys involved in given address.
+     * @param {string | Address} [target] - The target account's address.
+     * @param {keysType} [newKeys] - An array of object {`key`: publickey, `weight`: weight for the key}
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `update-key` operation.
+     * @example
+     * // Example of parameter keys
+     * const pubkey01 = {
+     *     key: "p8XReXNcaRkNobtBd61uxeFUeUXJ7vWJkAYk4RuqTFJ2mpu",
+     *     weight: 50
+     * };
+     * const pubkey02 = {
+     *     key: "pTmVEh4VaPPM8iLuZcPm1qJRvhJXq8QcsEX1c3xAh4cPmpu",
+     *     weight: 50
+     * };
+     * const keysArray = [pubkey01, pubkey02];
+     */
     updateMultiSig(
         target: string | Address,
         newKeys: keysType,
@@ -560,6 +720,28 @@ export class Account extends KeyG {
         )
     }
 
+    /**
+     * Sign and send the `transfer` operation to blockchain network to create single-sig account.
+     * @async
+     * @param {string | Key} [privatekey] - The private key used for signing.
+     * @param {Object} [wallet] - The object with properties `wallet` and `operation`. (return value of `createWallet` or `createEtherWallet`)
+     * @returns A Promise resolving to a `OperationResponse`. `.wait()` can be used like `operation.send`.
+     * 
+     * Properties of `OperationResponse`:
+     * - response: <SuccessResponse | ErrorResponse>
+     * - _api: API URL
+     * - _delegateIP: IP address for delegation
+     * @example
+     * // Send operation and check response and receipt:
+     * const wallet = mitum.account.createWallet(...);
+     * const touchOperation = async () => {
+     *   const data = await mitum.account.touch(privatekey, wallet);
+     *   console.log(data.response);
+     *   const receipt = await data.wait();
+     *   console.log(receipt);
+     * };
+     * touchOperation();
+     */
     async touch(
         privatekey: string | Key,
         wallet: { wallet: AccountType, operation: Operation<TransferFact> }
@@ -570,6 +752,21 @@ export class Account extends KeyG {
         return await new OP(this.networkID, this.api, this.delegateIP).send(op);
     }
 
+    /**
+     * Get account information for the given address.
+     * @async
+     * @param {string | Address} [address] - The account address to retrieve.
+     * @returns `data` of `SuccessResponse` is *null* or account information:
+     * - `_hint`: Hint for the account
+     * - `hash`: Hash for the account state,
+     * - `address`: Address of the account,
+     * - `keys`: Object for keys,
+     * - `balance`: Array with balance information,
+     * - `height`: Latest block height associated with the account,
+     * - `contract_account_status`: Object to indicate contract account status and related details
+     * 
+     * **null means that the account has not yet been recorded in the block.**
+     */
     async getAccountInfo(address: string | Address) {
         const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
         if (isSuccessResponse(response)) {
@@ -578,6 +775,28 @@ export class Account extends KeyG {
         return response
     }
 
+    /**
+     * Get all operations corresponding the given account.
+     * @async
+     * @param {string | Address} [address] - The account address to retrieve.
+     * @param {number} [limit] - (Optional) The maximum number of items to retrieve.
+     * @param {number} [offset] - (Optional) The number of items skip before starting to return data.
+     * @param {boolean} [reverse] - (Optional) Whether to return the items in reverse newest order.
+     * @returns The `data` of `SuccessResponse` is *null* or an array of all operations corresponding the given account:
+     * - `_hint`: Indicates mitum engine version,
+     * - `_embedded`:
+     * - - `_hint`: Hint for the operation,
+     * - - `hash`: Hash for the fact,
+     * - - `operation`: Information of the operation includes `hash`, `fact`, `signs`, `_hint`,
+     * - - `height`: Block height containing the operation,
+     * - - `confirmed_at`: Timestamp when the block was confirmed,
+     * - - `reason`: Reason for operation failure,
+     * - - `in_state`: Boolean indicating whether the operation was successful or not,
+     * - - `index`: Index of the operation in the block
+     * - `_links`: Links to get additional information
+
+     * **null means that the account has not yet been recorded in the block.**
+     */
     async getOperations(
         address: string | Address, 
         limit?: number, offset?: [number, number], reverse?: true
@@ -589,10 +808,36 @@ export class Account extends KeyG {
         return response
     }
 
+    /**
+     * Get the account information for the given public key. Only accounts created through `create-account` operations can be retreived.
+     * @async
+     * @param {string | Key | PubKey} [publickey] - The public key to retrieve.
+     * @returns `data` of `SuccessResponse` is a array with account informations:
+     * - `_hint`: Indicates mitum engine version,
+     * - `_embedded`:
+     * - - `_hint`: Hint for the account
+     * - - `hash`: Hash for the account state,
+     * - - `address`: Address of the account,
+     * - - `keys`: Object for keys,
+     * - - `height`: Latest block height associated with the account,
+     * - - `contract_account_status`: Object to indicate contract account status and related details
+     * - `_links`: Links to get additional information
+     */
     async getByPublickey(publickey: string | Key | PubKey) {
         return await getAPIData(() => api.account.getAccountByPublicKey(this.api, publickey, this.delegateIP))
     }
 
+    /**
+     * Get the currency balance of account for the given address.
+     * @async
+     * @param {string | Address} [address] - The account address to retrieve.
+     * @returns `data` of `SuccessResponse` is *null* or a array with account informations:
+     *  - `amount`: String of balance amount,
+     *  - `currency`: Currency ID,
+     *  - `_hint`: Hint for amount,
+
+     * **null means that the account has not yet been recorded in the block.**
+     */
     async balance(address: string | Address) {
         const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
         if (isSuccessResponse(response)) {
@@ -611,6 +856,15 @@ export class Contract extends Generator {
         super(networkID, api, delegateIP)
     }
 
+    /**
+     * Generate a key pair and the corresponding `create-contract-account` operation.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @param {string} [seed] - (Optional) The seed for deterministic key generation. If not provided, a random key pair will be generated.
+     * @param {string | number | Big} [weight] - (Optional) The weight for the public key. If not provided, the default value is 100.
+     * @returns An object containing the wallet(key pair) and the `create-contract-account` operation.
+     */
     createWallet(
         sender: string | Address,
         currency: string | CurrencyID,
@@ -644,6 +898,15 @@ export class Contract extends Generator {
         }
     }
 
+    /**
+     * Generate a Ethreum style key pair and the corresponding `create-contract-account` operation.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @param {string} [seed] - (Optional) The seed for deterministic key generation. If not provided, a random key pair will be generated.
+     * @param {string | number | Big} [weight] - (Optional) The weight for the public key. If not provided, the default value is 100.
+     * @returns An object containing the wallet (key pair) and the `create-contract-account` operation.
+     */
     createEtherWallet(
         sender: string | Address,
         currency: string | CurrencyID,
@@ -677,6 +940,14 @@ export class Contract extends Generator {
         }
     }
 
+    /**
+     * Generate a `create-contract-account` operation for the given public key.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Key | PubKey} [key] - The public key or key object.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @returns `create-contract-account` operation.
+     */
     createAccount(
         sender: string | Address,
         key: string | Key | PubKey,
@@ -699,6 +970,14 @@ export class Contract extends Generator {
         )
     }
 
+    /**
+     * Generate a `create-contract-account` operation for the given Ethereum style public key.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Key | PubKey} [key] - The Ethereum style public key or key object.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @returns `create-contract-account` operation.
+     */
     createEtherAccount(
         sender: string | Address,
         key: string | Key | PubKey,
@@ -721,6 +1000,26 @@ export class Contract extends Generator {
         )
     }
 
+    /**
+     * Generate a `create-contract-account` operation for the multi-signature account.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {keysType} [keys] - An array of object {`key`: publickey, `weight`: weight for the key}
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @param {string | number | Big} [threshold] - The threshold for the multi-signature.
+     * @returns `create-contract-account` operation.
+     * @example
+     * // Example of parameter keys
+     * const pubkey01 = {
+     *     key: "p8XReXNcaRkNobtBd61uxeFUeUXJ7vWJkAYk4RuqTFJ2mpu",
+     *     weight: 50
+     * };
+     * const pubkey02 = {
+     *     key: "pTmVEh4VaPPM8iLuZcPm1qJRvhJXq8QcsEX1c3xAh4cPmpu",
+     *     weight: 50
+     * };
+     * const keysArray = [pubkey01, pubkey02];
+     */
     createMultiSig(
         sender: string | Address,
         keys: keysType,
@@ -749,6 +1048,26 @@ export class Contract extends Generator {
         )
     }
 
+    /**
+     * Generate a `create-contract-account` operation for the multi-signature account in Ethereum style.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {keysType} [keys] - An array of object {`key`: publickey, `weight`: weight for the key}
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @param {string | number | Big} [threshold] - The threshold for the multi-signature.
+     * @returns `create-contract-account` operation.
+     * @example
+     * // Example of parameter keys
+     * const pubkey01 = {
+     *     key: "02cb1d73c49d638d98092e35603414b575f3f5b5ce01162cdd80ab68ab77e50e14epu",
+     *     weight: 50
+     * };
+     * const pubkey02 = {
+     *     key: "0377241675aabafca6b1a49f3bc08a581beb0daa330a4ac2008464d63ed7635a22epu",
+     *     weight: 50
+     * };
+     * const keysArray = [pubkey01, pubkey02];
+     */
     createEtherMultiSig(
         sender: string | Address,
         keys: keysType,
@@ -777,10 +1096,33 @@ export class Contract extends Generator {
         )
     }
 
+    /**
+     * Get contract account information for the given address.
+     * @async
+     * @param {string | Address} [address] - The contract account address to retrieve.
+     * @returns `data` of `SuccessResponse` is *null* or account information:
+     * - `_hint`: Hint for the account
+     * - `hash`: Hash for the account state,
+     * - `address`: Address of the account,
+     * - `keys`: Object for keys,
+     * - `balance`: Array with balance information,
+     * - `height`: Latest block height associated with the account,
+     * - `contract_account_status`: Object to indicate contract account status and related details
+
+     * **null means that the contract account has not yet been recorded in the block.**
+     */
     async getContractInfo(address: string | Address) {
         return await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
     }
 
+    /**
+     * Generate an `update-operator` operation to update operator of contract to given operators.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Address} [contract] - The contract account address.
+     * @param {string | CurrencyID} [currency] - The currency ID. 
+     * @param {(string | Address)[]} [operators] - The array of addresses to be updated as operators.
+     * @returns `update-operator` operation.
+     */
     updateOperator(
         sender: string | Address,
         contract: string | Address,
@@ -799,6 +1141,29 @@ export class Contract extends Generator {
         );
     }
 
+    /**
+     * Sign and send the `create-contract-account` operation to blockchain network.
+     * @async
+     * @param {string | Key} [privatekey] - The private key used for signing.
+     * @param {Object} [wallet] - The object with properties `wallet` and `operation`. (return value of `createWallet` or `createEtherWallet`)
+     * @returns A Promise resolving to a `OperationResponse`. `.wait()` can be used like `operation.send`.
+     * 
+     * Properties of `OperationResponse`:
+     * - response: <SuccessResponse | ErrorResponse>
+     * - _api: API URL
+     * - _delegateIP: IP address for delegation
+     * @example
+     * // Send operation and check response and receipt:
+     * const wallet = mitum.contract.createWallet(...);
+
+     * const touchOperation = async () => {
+     *   const data = await mitum.contract.touch(privatekey, wallet);
+     *   console.log(data.response);
+     *   const receipt = await data.wait();
+     *   console.log(receipt);
+     * };
+     * touchOperation();
+     */
     async touch(
         privatekey: string | Key,
         wallet: { wallet: AccountType, operation: Operation<CreateContractAccountFact> }
