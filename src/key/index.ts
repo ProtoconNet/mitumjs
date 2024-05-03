@@ -25,6 +25,14 @@ export class KeyG extends Generator {
         super(networkID, api, delegateIP)
     }
 
+    /**
+     * Generate a key pair randomly or from the given seed phrase.
+	 * @param {string} [seed] - (Optional) The seed for deterministic key generation. If not provided, a random key pair will be generated.
+	 * @returns An `Account` object with following properties:
+	 * - `privatekey`: private key,
+	 * - `publickey`: public key,
+	 * - `address`: address
+     */
     key(seed?: string): Account {
         if (!seed) {
             const kp = KeyPair.random()
@@ -43,6 +51,15 @@ export class KeyG extends Generator {
         }
     }
 
+    /**
+     * Generate `n` length of array with randomly generated key pairs.
+	 * @param {number} [n] - The number of accounts to generate.
+	 * @returns An array of `Account` objects.
+	 * Properties of `Account`:
+	 * - `privatekey`: private key,
+	 * - `publickey`: public key,
+	 * - `address`: address
+     */
     keys(n: number): Array<Account> {
         return randomN(n).keypairs.map((kp) => {
             return {
@@ -53,6 +70,14 @@ export class KeyG extends Generator {
         })
     }
 
+    /**
+     * Generate a key pair from the given private key.
+	 * @param {string | Key} [key] - The private key.
+	 * @returns An `Account` object with following properties:
+	 * - `privatekey`: private key,
+	 * - `publickey`: public key,
+	 * - `address`: address
+     */
     fromPrivateKey(key: string | Key): Account {
         const kp = KeyPair.fromPrivateKey(key)
 
@@ -71,6 +96,14 @@ export class KeyG extends Generator {
         }
     }
 
+    /**
+     * Generate a Ethereum style key pair randomly or from the given seed phrase.
+	 * @param {string} [seed] - (Optional) The seed for deterministic key generation. If not provided, a random key pair will be generated.
+	 * @returns An `Account` object with following properties:
+	 * - `privatekey`: private key,
+	 * - `publickey`: public key,
+	 * - `address`: address
+     */
     etherKey(seed?: string): Account {
         if (!seed) {
             const kp = KeyPair.random("ether")
@@ -89,6 +122,15 @@ export class KeyG extends Generator {
         }
     }
 
+    /**
+     * Generate `n` length of array with randomly generated Ethereum style key pairs.
+	 * @param {number} [n] - The number of accounts to generate.
+	 * @returns An array of `Account` objects.
+	 * Properties of `Account`:
+	 * - `privatekey`: private key,
+	 * - `publickey`: public key,
+	 * - `address`: address
+     */
     etherKeys(n: number): Array<Account> {
         return randomN(n, "ether").keypairs.map(kp => {
             return <Account>{
@@ -99,6 +141,11 @@ export class KeyG extends Generator {
         })
     }
 
+    /**
+     * Generate an address from the given public key.
+	 * @param {string | Key} [key] - The public key.
+	 * @returns The address.
+	 */
     address(key: string | Key): string {
         const suffix = key.toString().slice(-3);
         Assert.check(
@@ -108,6 +155,11 @@ export class KeyG extends Generator {
         return new Keys([new PubKey(key, 100)], 100).address.toString()
     }
 
+	/**
+	 * Generate an Ethereum style address from the public key.
+	 * @param {string | Key} [key] - The Ethereum style public key.
+	 * @returns The Ethereum style address.
+     */
     etherAddress(key: string | Key): string {
         const suffix = key.toString().slice(-3);
         Assert.check(
@@ -117,6 +169,22 @@ export class KeyG extends Generator {
         return new EtherKeys([new PubKey(key, 100)], 100).etherAddress.toString()
     }
 
+    /**
+     * Generate a multi-signature address from the given keys.
+	 * @param {keysType} [keys] - An array of object {`key`: publickey, `weight`: weight for the key}
+	 * @param {string | number | Big} [threshold] - The threshold for the multi-signature.
+	 * @returns The multi-signature address.
+	 * @example
+	 * const pubkey01 = {
+	 *     key: "p8XReXNcaRkNobtBd61uxeFUeUXJ7vWJkAYk4RuqTFJ2mpu",
+	 *     weight: 50
+	 * };
+	 * const pubkey02 = {
+	 *     key: "pTmVEh4VaPPM8iLuZcPm1qJRvhJXq8QcsEX1c3xAh4cPmpu",
+	 *     weight: 50
+	 * };
+	 * const mutiSigAddress = mitum.account.etherAddressForMultiSig([pubkey01, pubkey02], 100);
+     */
     addressForMultiSig(
         keys: keysType,
         threshold: string | number | Big,
@@ -124,6 +192,22 @@ export class KeyG extends Generator {
         return new Keys(keys.map(k => k instanceof PubKey ? k : new PubKey(k.key, k.weight)), threshold).address.toString()
     }
 
+    /**
+     * Generate a multi-signature Ethereum style address from the given keys.
+	 * @param {keysType} [keys] - An array of object {`key`: publickey, `weight`: weight for the key}
+	 * @param {string | number | Big} [threshold] - The threshold for the multi-signature.
+	 * @returns The multi-signature Ethereum style address.
+	 * @example
+	 * const pubkey01 = {
+	 *     key: "02cb1d73c49d638d98092e35603414b575f3f5b5ce01162cdd80ab68ab77e50e14epu",
+	 *     weight: 50
+	 * };
+	 * const pubkey02 = {
+	 *     key: "0377241675aabafca6b1a49f3bc08a581beb0daa330a4ac2008464d63ed7635a22epu",
+	 *     weight: 50
+	 * };
+	 * const mutiSigAddress = mitum.account.etherAddressForMultiSig([pubkey01, pubkey02], 100);
+     */
     etherAddressForMultiSig(
         keys: keysType,
         threshold: string | number | Big,
