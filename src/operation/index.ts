@@ -31,10 +31,50 @@ export class Operation extends Generator {
 		super(networkID, api, delegateIP)
 	}
 
+	/**
+	 * Get all operations of the network.
+	 * @async
+	 * @param {number} [limit] - (Optional) The maximum number of items to retrieve.
+	 * @param {number} [offset] - (Optional) The number of items skip before starting to return data.
+	 * @param {boolean} [reverse] - (Optional) Whether to return the items in reverse newest order.
+	 * @returns The `data` of `SuccessResponse` represents an array of all operations in the network:
+	 * - `_hint`: Indicates mitum engine version,
+	 * - `_embedded`:
+	 * - - `_hint`: Hint for the operation,
+	 * - - `hash`: Hash for the fact,
+	 * - - `operation`: Information of the operation includes `hash`, `fact`, `signs`, `_hint`,
+	 * - - `height`: Block height containing the operation,
+	 * - - `confirmed_at`: Timestamp when the block was confirmed,
+	 * - - `reason`: Reason for operation failure,
+	 * - - `in_state`: Boolean indicating whether the operation was successful or not,
+	 * - - `index`: Index of the operation in the block
+	 * - `_links`: Links to get additional information
+	 */
 	async getAllOperations(limit?: number, offset?: [number, number], reverse?: true) {
 		return await getAPIData(() => api.getOperations(this.api, this.delegateIP, limit, offset, reverse))
 	}
 
+
+	/**
+	 * Get a operation by fact hash.
+	 * @async
+	 * @param {string} [hash] - The hash value of the fact included in the operation to retrieve
+	 * @returns The `data` of `SuccessResponse` is *null* or infomation of the operation:
+	 * - `_hint`: Hint for the operation,
+	 * - `hash`: Hash for the fact,
+	 * - `operation`: 
+	 * - - `hash`: Hash fot the operation,
+	 * - - `fact`: Object for fact, 
+	 * - - `signs`: Array for sign, 
+	 * - - `_hint`: Hint for operation type,
+	 * - `height`: Block height containing the operation,
+	 * - `confirmed_at`: Timestamp when the block was confirmed,
+	 * - `reason`: Reason for operation failure,
+	 * - `in_state`: Boolean indicating whether the operation was successful or not,
+	 * - `index`: Index of the operation in the block
+     * 
+	 * ***null* means that the account has not yet been recorded in the block.**
+	 */
 	async getOperation(hash: string) {
 		const response = await getAPIData(() => api.getOperation(this.api, hash, this.delegateIP));
 		if (isSuccessResponse(response)) {
@@ -43,6 +83,14 @@ export class Operation extends Generator {
 		return response
 	}
 
+
+	/**
+	 * Sign the given operation using the provided private key or key pair.
+	 * @param {string | Key | KeyPair} [privatekey] - The private key or key pair for signing.
+	 * @param {OP<Fact>} [operation] - The operation to sign.
+	 * @param {SignOption} [option] - (Optional) Option for node sign.
+	 * @returns The signed operation.
+	 */
 	sign(
 		privatekey: string | Key | KeyPair,
 		operation: OP<Fact>,
@@ -53,6 +101,26 @@ export class Operation extends Generator {
 		return op
 	}
 
+
+	/**
+	 * Send the given singed operation to blockchain network.
+	 * @async
+	 * @param {string | Operation<Fact> | HintedObject} [operation] - The operation to send.
+	 * @param {{[i: string]: any} | undefined} [headers] - (Optional) Additional headers for the request.
+	 * @returns Properties of `OperationResponse`:
+	 * - response: <SuccessResponse | ErrorResponse>
+	 * - _api: API URL
+	 * - _delegateIP: IP address for delegation
+	 * @example
+	 * // Send operation and check response and receipt:
+	 * const sendOperation = async () => {
+	 *   const data = await mitum.operation.send(signedOperation);
+	 *   console.log(data.response);
+	 *   const receipt = await data.wait();
+	 *   console.log(receipt);
+	 * };
+	 * sendOperation();
+	 */
 	async send(
 		operation: string | HintedObject | OP<Fact>,
 		headers?: { [i: string]: any }
@@ -83,8 +151,29 @@ export class OperationResponse {
         this._delegateIP = delegateIP;
     }
 
-    async wait(timeout?: number, interval?: number) : Promise<any> {
-		if (this.response.status !== 200) { throw new Error("Failed to send operation") }
+    /**
+	 * Get receipt when a sent operation is recorded in a block by polling the blockchain network for a certain time.
+	 * @async
+	 * @param {number | undefined} [timeout=10000] - (Optional) Timeout for polling in milliseconds. Default is 10000ms.
+	 * @param {number | undefined} [interval=1000] - (Optional) Interval for polling in milliseconds. Default is 1000ms. (interval < timeout)
+	 * @returns The `data` property of `SuccessResponse` contains information about the operation:
+	 * - `_hint`: Hint for the operation,
+	 * - `hash`: Hash for the fact,
+	 * - `operation`: 
+	 * - - `hash`: Hash fot the operation,
+	 * - - `fact`: Object for fact, 
+	 * - - `signs`: Array for sign, 
+	 * - - `_hint`: Hint for operation type,
+	 * - `height`: Block height containing the operation,
+	 * - `confirmed_at`: Timestamp when the block was confirmed,
+	 * - `reason`: Reason for operation failure,
+	 * - `in_state`: Boolean indicating whether the operation was successful or not,
+	 * - `index`: Index of the operation in the block
+	 * 
+	 * **If `in_state` is `false`, the operation failed, and the `reason` property provides the failure reason.**
+	 */
+	async wait(timeout?: number, interval?: number) : Promise<any> {
+		Assert.check(this.response.status === 200, MitumError.detail(ECODE.TRANSACTION_REVERTED, `transaction reverted by the network, check error message`))
 
         let elapsedTime = 0;
 		const maxTimeout = timeout ?? 10000;
