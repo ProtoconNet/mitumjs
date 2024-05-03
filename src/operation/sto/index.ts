@@ -29,6 +29,15 @@ export class STO extends ContractGenerator {
         super(networkID, api, delegateIP)
     }
 
+    /**
+     * Generate `authorize-operator` operation to authorize an operator for the security token in specific partition.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Address} [operator] - The operator's address to be authorized.
+     * @param {string | Partition} [partition] - The partition ID.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `authorize-operator` operation.
+     */
     authorizeOperator(
         contractAddr: string | Address,
         sender: string | Address,
@@ -53,6 +62,16 @@ export class STO extends ContractGenerator {
         )
     }
 
+    /**
+     * Generate `create-security-token` operation to create new security token.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {createServiceData} [data] - Data required to create the security token. The properties of `createServiceData` include:
+     * - {string | number | Big} `granularity` - The basic unit of the token.
+     * - {string | Partition} `defaultPartition` - Capital letters with length between 3 and 10 (can include numbers)
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `create-security-token` operation
+     */
     createService(
         contractAddr: string | Address,
         sender: string | Address,
@@ -81,6 +100,16 @@ export class STO extends ContractGenerator {
         )
     }
 
+    /**
+     * Generate `issue` operation to issue new security token in specific partition to a specified receiver.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Address} [receiver] - The receiver's address.
+     * @param {string | Partition} [partition] - The partition ID.
+     * @param {string | number | Big} [amount] - The amount of tokens to issue.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `issue` operation.
+     */
     issue(
         contractAddr: string | Address,
         sender: string | Address,
@@ -106,7 +135,17 @@ export class STO extends ContractGenerator {
             )
         )
     }
-
+    
+    /**
+     * Generate `redeem` operation to redeem(burn) a specified amount of security token in a specific partition.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Address} [tokenHolder] - The token holder's address.
+     * @param {string | Partition} [partition] - The partition ID.
+     * @param {string | number | Big} [amount] - The amount of tokens to redeem.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `redeem` operation.
+     */
     redeem(
         contractAddr: string | Address,
         sender: string | Address,
@@ -132,7 +171,16 @@ export class STO extends ContractGenerator {
             )
         )
     }
-
+    
+    /**
+     * Generate `revoke` operation to revoke operator's authorization for the security token in specific partition.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Address} [operator] - The operator's address.
+     * @param {string | Partition} [partition] - The partition ID.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `revoke` operation.
+     */
     revokeOperator(
         contractAddr: string | Address,
         sender: string | Address,
@@ -156,7 +204,17 @@ export class STO extends ContractGenerator {
             )
         )
     }
-
+    
+    /**
+     * Generate `setDocumnet` operation to set document for the security token on the contract.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string} [title] - The title of the document.
+     * @param {string} [uri] - The URI of the document.
+     * @param {string} [documentHash] - The hash value of the document.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `setDocumnet` operation.
+     */
     setDocument(
         contractAddr: string | Address,
         sender: string | Address,
@@ -178,7 +236,18 @@ export class STO extends ContractGenerator {
             )
         )
     }
-
+    
+    /**
+     * Generate `transfer-by-partition` operation to transfer security token in specific partitions.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Address} [holder] - The token holder's address.
+     * @param {string | Address} [receiver] - The receiver's address.
+     * @param {string | Partition} [partition] - The partition ID.
+     * @param {string | number | Big} [amount] - The amount of tokens to transfer.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `transfer-by-partition` operation
+     */
     transferByPartition(
         contractAddr: string | Address,
         sender: string | Address,
@@ -206,27 +275,79 @@ export class STO extends ContractGenerator {
             )
         )
     }
-
+    
+    /**
+     * Get information about the security token on the contract.
+     * @async
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @returns `data` of `SuccessResponse` is information of the security token:
+     * - `_hint`: Hint for STO design,
+     * - `granularity`: Basic unit for the token,
+     * - `policy`: {
+     *     _hint: Hint for the STO policy,
+     *     partitions: Array of name of partition,
+     *     aggregate: Total supply amount,
+     *     documents: Array of information about documents with `_hint`, `title`, `hash`, `uri`
+     * }
+     */
     async getServiceInfo(contractAddr: string | Address) {
         return await getAPIData(() => contract.sto.getService(this.api, contractAddr, this.delegateIP))
     }
-
+    
+    /**
+     * Get partitions of given holder.
+     * @async
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [holder] - The token holder's address.
+     * @returns `data` of `SuccessResponse` is an array of token partition names owned by the holder.
+     */
     async getPartitionsInfo(contractAddr: string | Address, holder: string | Address) {
         return await getAPIData(() => contract.sto.getPartitions(this.api, contractAddr, holder, this.delegateIP))
     }
-    
+        
+    /**
+     * Get balance of holder for the partition.
+     * @async
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [holder] - The token holder's address.
+     * @param {string} [partition] - The partition ID.
+     * @returns `data` of `SuccessResponse` is the balance of holder for the partition
+     */
     async getBalanceByHolder(contractAddr: string | Address, holder: string | Address, partition: string) {
         return await getAPIData(() => contract.sto.getBalanceByHolder(this.api, contractAddr, holder, partition, this.delegateIP))
     }
-
+    
+    /**
+     * Get operators of the partition who granted by the holder.
+     * @async
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [holder] - The token holder's address.
+     * @param {string} [partition] - The partition ID.
+     * @returns `data` of `SuccessResponse` is information of the operators:
+     * - `operators`: Array of the address of operators.
+     */
     async getOperatorsByHolder(contractAddr: string | Address, holder: string | Address, partition: string) {
         return await getAPIData(() => contract.sto.getOperatorsByHolder(this.api, contractAddr, holder, partition, this.delegateIP))
     }
-
+    
+    /**
+     * Get balance for a specific partition.
+     * @async
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string} [partition] - The partition ID.
+     * @returns `data` of `SuccessResponse` is the partition balance amount.
+     */
     async getPartitionBalanceInfo(contractAddr: string | Address, partition: string) {
         return await getAPIData(() => contract.sto.getPartitionBalance(this.api, contractAddr, partition, this.delegateIP))
     }
-    
+        
+    /**
+     * Get information about the holder who granted to the operator.
+     * @param {string | Address} [contractAddr] - The contract's address.
+     * @param {string | Address} [operator] - The operator's address.
+     * @returns `data` of `SuccessResponse` is information of holder:
+     * - `holders`: Array of the address of holders.
+     */
     async getAuthorizedInfo(contractAddr: string | Address, operator: string | Address) {
         return await getAPIData(() => contract.sto.getAuthorized(this.api, contractAddr, operator, this.delegateIP))
     }
