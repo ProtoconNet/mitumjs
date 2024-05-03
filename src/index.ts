@@ -130,29 +130,51 @@ export class Mitum extends Generator {
         return this._point
     }
 
+    /**
+     * Set the API URL to interact with Mitum network.
+     * @param {string | IP} [api] - The API URL to set
+     */
     setAPI(api: string | IP) {
         super.setAPI(api)
         this.refresh()
     }
 
+    /**
+     * Set the delegate IP address.
+     * @param {string | IP} [delegateIP] - The delegate IP address to set.
+     */
     setDelegate(delegateIP: string | IP) {
         super.setDelegate(delegateIP)
         this.refresh()
     }
 
+    /**
+     * Set the blockchain network ID (chain). The default value is configured to 'mitum'.
+     * @param {string} [networkID] - The network ID to set.
+     */
     setNetworkID(networkID: string) {
         super.setNetworkID(networkID)
         this.refresh()
     }
-
+    
+    /**Get the API URL in use.
+     * @returns {string} The API URL. 
+    */
     getAPI(): string {
         return this.api.toString()
     }
 
+    /**
+     * Get the delegate IP in use.
+     * @returns {string} The delegate IP address.
+     */
     getDelegate(): string {
         return this.delegateIP.toString()
     }
-
+    
+    /**Get the network ID in use.
+     * @returns {string} The network ID (chain).
+    */
     getNetworkID(): string {
         return this.networkID
     }
