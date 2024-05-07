@@ -201,7 +201,7 @@ export class OperationResponse {
         while (!stop && elapsedTime < maxTimeout) {
             try {
                 const receipt = await getAPIData(() => api.getOperation(this._api, this.response.data.fact.hash, this._delegateIP));
-                if (isSuccessResponse(receipt)) {
+                if (isSuccessResponse(receipt) && receipt.data !== undefined) {
 					if (receipt.data.in_state) {
 						console.log('\x1b[34m%s\x1b[0m', `operation in_state is true`)
 						return receipt;
