@@ -158,7 +158,7 @@ export class KeyG extends Generator {
 	/**
 	 * Generate an Ethereum style address from the public key.
 	 * @param {string | Key} [key] - The Ethereum style public key.
-	 * @returns The Ethereum style address.
+	 * @returns The checksumed Ethereum style address.
      */
     etherAddress(key: string | Key): string {
         const suffix = key.toString().slice(-3);
@@ -166,7 +166,7 @@ export class KeyG extends Generator {
             suffix === "epu",
             MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid pubkey format"),
         )
-        return new EtherKeys([new PubKey(key, 100)], 100).etherAddress.toString()
+        return new EtherKeys([new PubKey(key, 100)], 100).checkSum.toString()
     }
 
     /**
@@ -212,6 +212,6 @@ export class KeyG extends Generator {
         keys: keysType,
         threshold: string | number | Big,
     ): string {
-        return new EtherKeys(keys.map(k => k instanceof PubKey ? k : new PubKey(k.key, k.weight)), threshold).etherAddress.toString()
+        return new EtherKeys(keys.map(k => k instanceof PubKey ? k : new PubKey(k.key, k.weight)), threshold).checkSum.toString()
     }
 }
