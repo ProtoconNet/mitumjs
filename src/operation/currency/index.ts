@@ -348,13 +348,22 @@ export class Account extends KeyG {
         }
     }
 
+    /**
+     * Generate a Ethreum style key pair and the corresponding `transfer` operation to create a single-sig account.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @param {string} [seed] - (Optional) The seed for deterministic key generation. If not provided, a random key pair will be generated.
+     * @param {string | number | Big} [weight] - (Optional) The weight for the public key. If not provided, the default value is 100.
+     * @returns An object containing the wallet (key pair) and the `transfer` operation.
+     */
     createEtherWallet(
         sender: string | Address,
         currency: string | CurrencyID,
         amount: string | number | Big,
         seed?: string,
         weight?: string | number | Big,
-    ): { wallet: AccountType, operation: Operation<CreateAccountFact> } {
+    ): { wallet: AccountType, operation: Operation<TransferFact> } {
         const kp = seed ? KeyPair.fromSeed(seed, "ether") : KeyPair.random("ether")
         const ks = new EtherKeys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
 
@@ -366,62 +375,19 @@ export class Account extends KeyG {
             },
             operation: new Operation(
                 this.networkID,
-                new CreateAccountFact(
+                new TransferFact(
                     TimeStamp.new().UTC(),
                     sender,
                     [
-                        new CreateAccountItem(
-                            ks,
+                        new TransferItem(
+                            ks.etherAddress,
                             [new Amount(currency, amount)],
-                            "ether",
                         )
                     ],
                 ),
             ),
         }
     }
-
-    /**
-     * Generate a Ethreum style key pair and the corresponding `transfer` operation to create a single-sig account.
-     * @param {string | Address} [sender] - The sender's address.
-     * @param {string | CurrencyID} [currency] - The currency ID.
-     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
-     * @param {string} [seed] - (Optional) The seed for deterministic key generation. If not provided, a random key pair will be generated.
-     * @param {string | number | Big} [weight] - (Optional) The weight for the public key. If not provided, the default value is 100.
-     * @returns An object containing the wallet (key pair) and the `transfer` operation.
-     */
-    // When Ethereum style singlesig is applied, it will be replaced with the function below
-    // createEtherWallet(
-    //     sender: string | Address,
-    //     currency: string | CurrencyID,
-    //     amount: string | number | Big,
-    //     seed?: string,
-    //     weight?: string | number | Big,
-    // ): { wallet: AccountType, operation: Operation<TransferFact> } {
-    //     const kp = seed ? KeyPair.fromSeed(seed, "ether") : KeyPair.random("ether")
-    //     const ks = new EtherKeys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
-
-    //     return {
-    //         wallet: {
-    //             privatekey: kp.privateKey.toString(),
-    //             publickey: kp.publicKey.toString(),
-    //             address: ks.etherAddress.toString()
-    //         },
-    //         operation: new Operation(
-    //             this.networkID,
-    //             new TransferFact(
-    //                 TimeStamp.new().UTC(),
-    //                 sender,
-    //                 [
-    //                     new TransferItem(
-    //                         ks.etherAddress,
-    //                         [new Amount(currency, amount)],
-    //                     )
-    //                 ],
-    //             ),
-    //         ),
-    //     }
-    // }
 
     /**
      * Generate `n` number of key pairs and the corresponding `transfer` operation to create single-sig accounts.
@@ -483,28 +449,6 @@ export class Account extends KeyG {
         )
     }
 
-    createEtherAccount(
-        sender: string | Address,
-        key: string | Key | PubKey,
-        currency: string | CurrencyID,
-        amount: string | number | Big,
-    ) {
-        return new Operation(
-            this.networkID,
-            new CreateAccountFact(
-                TimeStamp.new().UTC(),
-                sender,
-                [
-                    new CreateAccountItem(
-                        new EtherKeys([new PubKey(key, 100)], 100),
-                        [new Amount(currency, amount)],
-                        "ether",
-                    )
-                ],
-            )
-        )
-    }
-
     /**
      * Generate a `transfer` operation for the given Ethereum style public key.
      * @param {string | Address} [sender] - The sender's address.
@@ -513,28 +457,27 @@ export class Account extends KeyG {
      * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
      * @returns `transfer` operation.
      */
-    // When Ethereum style singlesig is applied, it will be replaced with the function below
-    // createEtherAccount(
-    //     sender: string | Address,
-    //     key: string | Key | PubKey,
-    //     currency: string | CurrencyID,
-    //     amount: string | number | Big,
-    // ) {
-    //     const ks = new EtherKeys([new PubKey(key, 100)], 100);
-    //     return new Operation(
-    //         this.networkID,
-    //         new TransferFact(
-    //             TimeStamp.new().UTC(),
-    //             sender,
-    //             [
-    //                 new TransferItem(
-    //                     ks.etherAddress,
-    //                     [new Amount(currency, amount)],
-    //                 )
-    //             ],
-    //         )
-    //     )
-    // }
+    createEtherAccount(
+        sender: string | Address,
+        key: string | Key | PubKey,
+        currency: string | CurrencyID,
+        amount: string | number | Big,
+    ) {
+        const ks = new EtherKeys([new PubKey(key, 100)], 100);
+        return new Operation(
+            this.networkID,
+            new TransferFact(
+                TimeStamp.new().UTC(),
+                sender,
+                [
+                    new TransferItem(
+                        ks.etherAddress,
+                        [new Amount(currency, amount)],
+                    )
+                ],
+            )
+        )
+    }
 
     /**
      * Generate a `create-account` operation for the multi-signature account.
