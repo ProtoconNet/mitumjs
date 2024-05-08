@@ -3,7 +3,8 @@ import { SUFFIX } from "../alias"
 import { Config } from "../node"
 import { CurrencyID } from "../common"
 import { IBuffer, IString } from "../types"
-import { ECODE, MitumError, StringAssert } from "../error"
+import { ECODE, MitumError, StringAssert, Assert } from "../error"
+import { getChecksum } from "../utils";
 
 abstract class BaseAddress implements IBuffer, IString {
     private s: string
@@ -36,13 +37,27 @@ abstract class BaseAddress implements IBuffer, IString {
     }
 }
 
+// temporarily only allow address with '0x' + checksumed 40 digit hex + 'mca'
 export class Address extends BaseAddress {
     constructor(s: string) {
         super(s)
-        StringAssert.with(s, MitumError.detail(ECODE.INVALID_ADDRESS, "invalid address"))
+        StringAssert.with(s, MitumError.detail(ECODE.INVALID_ADDRESS, "The address must be a 45-character string"))
             .empty().not()
-            .endsWith(SUFFIX.ADDRESS.MITUM, SUFFIX.ADDRESS.ETHER)
             .satisfyConfig(Config.ADDRESS.DEFAULT)
+            .excute()
+
+        StringAssert.with(s, MitumError.detail(ECODE.INVALID_ADDRESS_TYPE, "The address must be starting with '0x' and ending with 'mca'"))
+            .startsWith('0x')
+            .endsWith(SUFFIX.ADDRESS.MITUM)
+            .excute()
+
+        Assert.check(
+            /^[0-9a-fA-F]+$/.test(s.slice(2, 42)),
+            MitumError.detail(ECODE.INVALID_ADDRESS, `${s.slice(2, 42)} is not a hexadecimal number`),
+        )
+
+        StringAssert.with(s, MitumError.detail(ECODE.INVALID_ADDRESS_CHECKSUM, "bad address checksum"))
+            .equal('0x' + getChecksum(s.slice(2, 42)) + SUFFIX.ADDRESS.MITUM)
             .excute()
     }
 
