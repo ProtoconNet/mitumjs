@@ -709,7 +709,7 @@ export class Account extends KeyG {
      * **null means that the account has not yet been recorded in the block.**
      */
     async getAccountInfo(address: string | Address) {
-        typeof (address) === 'string' ? new Address(address) : address;
+        Address.from(address);
         const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
         if (isSuccessResponse(response)) {
             response.data = response.data? response.data : null;
@@ -743,6 +743,7 @@ export class Account extends KeyG {
         address: string | Address, 
         limit?: number, offset?: [number, number], reverse?: true
     ) {
+        Address.from(address);
         const response = await getAPIData(() => api.operation.getAccountOperations(this.api, address, this.delegateIP, limit, offset, reverse));
         if (isSuccessResponse(response)) {
             response.data = response.data? response.data : null;
@@ -781,6 +782,7 @@ export class Account extends KeyG {
      * **null means that the account has not yet been recorded in the block.**
      */
     async balance(address: string | Address) {
+        Address.from(address);
         const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
         if (isSuccessResponse(response)) {
             response.data = response.data.balance ? response.data.balance : null;
@@ -1048,7 +1050,12 @@ export class Contract extends Generator {
      * **null means that the contract account has not yet been recorded in the block.**
      */
     async getContractInfo(address: string | Address) {
-        return await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP))
+       Address.from(address);
+        const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
+        if (isSuccessResponse(response)) {
+            response.data = response.data? response.data : null;
+        }
+        return response
     }
 
     /**

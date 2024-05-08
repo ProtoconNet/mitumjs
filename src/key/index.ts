@@ -7,6 +7,8 @@ import { Address, ZeroAddress, NodeAddress } from "./address"
 
 import { Big, Generator, IP } from "../types"
 import { Assert, ECODE, MitumError } from "../error"
+import { getChecksum } from "../utils"
+import { SUFFIX } from "../alias"
 
 export {
     KeyPairType, AddressType, Account,
@@ -167,6 +169,19 @@ export class KeyG extends Generator {
             MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid pubkey format"),
         )
         return new EtherKeys([new PubKey(key, 100)], 100).checksum.toString()
+    }
+
+    checksumedAddress(address: string) {
+        try {
+            const valid_address = new Address(address);
+            return valid_address.toString();
+        } catch(error: any) {
+            if (error.code === 'EC_INVALID_ADDRESS_CHECKSUM') {
+                return '0x' + getChecksum(address.slice(2, 42)) + SUFFIX.ADDRESS.MITUM
+            } else {
+                throw error
+            }
+        }
     }
 
     /**
