@@ -191,7 +191,7 @@ export class EtherKeys implements IBuffer, IHintedObject {
     get checkSum(): Address {
         const address = keccak256(this.toBuffer()).subarray(12).toString('hex');
         const hash = keccak256(Buffer.from(address, 'ascii')).toString('hex');
-        let checksumAddress = '';
+        let checksumAddress = '0x';
         for (let i = 0; i < address.length; i++) {
             if (parseInt(hash[i], 16) > 7) {
                 checksumAddress += address[i].toUpperCase();
@@ -199,7 +199,8 @@ export class EtherKeys implements IBuffer, IHintedObject {
                 checksumAddress += address[i];
             }
         }
-        return new Address(checksumAddress + SUFFIX.ADDRESS.ETHER)
+        // use mitum SUFFIX temporarily
+        return new Address(checksumAddress + SUFFIX.ADDRESS.MITUM)
     }
 
     toBuffer(): Buffer {

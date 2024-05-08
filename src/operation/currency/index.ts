@@ -380,7 +380,7 @@ export class Account extends KeyG {
                     sender,
                     [
                         new TransferItem(
-                            ks.etherAddress,
+                            ks.checkSum,
                             [new Amount(currency, amount)],
                         )
                     ],
@@ -471,7 +471,7 @@ export class Account extends KeyG {
                 sender,
                 [
                     new TransferItem(
-                        ks.etherAddress,
+                        ks.checkSum,
                         [new Amount(currency, amount)],
                     )
                 ],
