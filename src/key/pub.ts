@@ -188,7 +188,7 @@ export class EtherKeys implements IBuffer, IHintedObject {
         return new Address(keccak256(this.toBuffer()).subarray(12).toString('hex') + SUFFIX.ADDRESS.ETHER)
     }
 
-    get checkSum(): Address {
+    get checksum(): Address {
         const address = keccak256(this.toBuffer()).subarray(12).toString('hex');
         const hash = keccak256(Buffer.from(address, 'ascii')).toString('hex');
         let checksumAddress = '0x';

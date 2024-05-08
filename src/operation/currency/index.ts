@@ -371,7 +371,7 @@ export class Account extends KeyG {
             wallet: {
                 privatekey: kp.privateKey.toString(),
                 publickey: kp.publicKey.toString(),
-                address: ks.checkSum.toString()
+                address: ks.checksum.toString()
             },
             operation: new Operation(
                 this.networkID,
@@ -380,7 +380,7 @@ export class Account extends KeyG {
                     sender,
                     [
                         new TransferItem(
-                            ks.checkSum,
+                            ks.checksum,
                             [new Amount(currency, amount)],
                         )
                     ],
@@ -471,7 +471,7 @@ export class Account extends KeyG {
                 sender,
                 [
                     new TransferItem(
-                        ks.checkSum,
+                        ks.checksum,
                         [new Amount(currency, amount)],
                     )
                 ],
@@ -709,6 +709,7 @@ export class Account extends KeyG {
      * **null means that the account has not yet been recorded in the block.**
      */
     async getAccountInfo(address: string | Address) {
+        typeof (address) === 'string' ? new Address(address) : address;
         const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
         if (isSuccessResponse(response)) {
             response.data = response.data? response.data : null;
@@ -861,7 +862,7 @@ export class Contract extends Generator {
             wallet: {
                 privatekey: kp.privateKey.toString(),
                 publickey: kp.publicKey.toString(),
-                address: ks.checkSum.toString()
+                address: ks.checksum.toString()
             },
             operation: new Operation(
                 this.networkID,

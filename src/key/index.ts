@@ -166,7 +166,7 @@ export class KeyG extends Generator {
             suffix === "epu",
             MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid pubkey format"),
         )
-        return new EtherKeys([new PubKey(key, 100)], 100).checkSum.toString()
+        return new EtherKeys([new PubKey(key, 100)], 100).checksum.toString()
     }
 
     /**
@@ -212,6 +212,6 @@ export class KeyG extends Generator {
         keys: keysType,
         threshold: string | number | Big,
     ): string {
-        return new EtherKeys(keys.map(k => k instanceof PubKey ? k : new PubKey(k.key, k.weight)), threshold).checkSum.toString()
+        return new EtherKeys(keys.map(k => k instanceof PubKey ? k : new PubKey(k.key, k.weight)), threshold).checksum.toString()
     }
 }
