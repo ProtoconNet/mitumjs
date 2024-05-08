@@ -52,7 +52,7 @@ export const Config = {
 	THRESHOLD: getRangeConfig(1, 100),
 	WEIGHT: getRangeConfig(1, 100),
 	ADDRESS: {
-		DEFAULT: getRangeConfig(45, 45),
+		DEFAULT: getRangeConfig(45),
 		ZERO: getRangeConfig(8, 15),
 		NODE: getRangeConfig(4, Number.MAX_SAFE_INTEGER),
 	},
