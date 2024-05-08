@@ -29,6 +29,7 @@ export class Key implements IBuffer, IString {
                 s.endsWith(SUFFIX.KEY.MITUM.PUBLIC) && Config.KEY.MITUM.PUBLIC.satisfy(s.length),
                 s.endsWith(SUFFIX.KEY.ETHER.PUBLIC) && Config.KEY.ETHER.PUBLIC.satisfy(s.length),
             )
+            .chainAnd(/^[0-9a-f]+$/.test(s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)))
             .excute()
 
         this.key = s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)

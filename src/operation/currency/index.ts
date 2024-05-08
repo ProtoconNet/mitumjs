@@ -17,8 +17,10 @@ import api, { getAPIData } from "../../api"
 import { Amount, CurrencyID } from "../../common"
 import { Big, Generator, IP, TimeStamp } from "../../types"
 import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG, EtherKeys } from "../../key"
-import { Assert, ECODE, MitumError } from "../../error"
+import { StringAssert, Assert, ECODE, MitumError } from "../../error"
 import { isSuccessResponse  } from "../../utils"
+import { Config } from "../../node"
+import { SUFFIX } from "../../alias"
 
 type currencyPolicyData = {
     currency: string | CurrencyID
@@ -767,6 +769,14 @@ export class Account extends KeyG {
      * - `_links`: Links to get additional information
      */
     async getByPublickey(publickey: string | Key | PubKey) {
+        const s = typeof (publickey) === 'string' ? publickey : publickey.toString();
+        StringAssert.with(s, MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid public key"))
+            .empty().not()
+            .chainAnd(
+                s.endsWith(SUFFIX.KEY.ETHER.PUBLIC) && Config.KEY.ETHER.PUBLIC.satisfy(s.length),
+                /^[0-9a-f]+$/.test(s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)),
+            )
+            .excute()
         return await getAPIData(() => api.account.getAccountByPublicKey(this.api, publickey, this.delegateIP))
     }
 
