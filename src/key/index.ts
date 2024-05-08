@@ -171,6 +171,11 @@ export class KeyG extends Generator {
         return new EtherKeys([new PubKey(key, 100)], 100).checksum.toString()
     }
 
+	/**
+	 * Returns a checksumed address for given address string. For invalid address, an error is returned.
+	 * @param {string} [address] - The Ethereum style address.
+	 * @returns The checksumed Ethereum style address.
+     */
     checksumedAddress(address: string) {
         try {
             const valid_address = new Address(address);
