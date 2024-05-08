@@ -5,30 +5,22 @@ import { OperationFact } from "../base"
 
 import { Amount } from "../../common"
 import { SortFunc } from "../../utils"
-import { HINT, SUFFIX } from "../../alias"
+import { HINT } from "../../alias"
 import { HintedObject } from "../../types"
-import { Keys, AddressType, Address, EtherKeys } from "../../key"
+import { Keys, Address, EtherKeys } from "../../key"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export class CreateContractAccountItem extends CurrencyItem {
     readonly keys: Keys | EtherKeys
-    private addressSuffix: string
     
-    constructor(keys: Keys | EtherKeys, amounts: Amount[], addressType: AddressType) {
-        super(HINT.CURRENCY.CREATE_CONTRACT_ACCOUNT.ITEM, amounts, addressType)
+    constructor(keys: Keys | EtherKeys, amounts: Amount[]) {
+        super(HINT.CURRENCY.CREATE_CONTRACT_ACCOUNT.ITEM, amounts)
         this.keys = keys
-
-        if (addressType === "mitum") {
-            this.addressSuffix = SUFFIX.ADDRESS.MITUM
-        } else {
-            this.addressSuffix = SUFFIX.ADDRESS.ETHER
-        }
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
             this.keys.toBuffer(),
-            Buffer.from(this.addressSuffix),
             Buffer.concat(this.amounts.sort(SortFunc).map(am => am.toBuffer())),
         ])
     }
@@ -37,7 +29,6 @@ export class CreateContractAccountItem extends CurrencyItem {
         return {
             ...super.toHintedObject(),
             keys: this.keys.toHintedObject(),
-            addrtype: this.addressSuffix
         }
     }
 

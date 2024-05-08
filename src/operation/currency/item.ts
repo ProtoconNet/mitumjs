@@ -3,15 +3,13 @@ import { Item } from "../base"
 import { Config } from "../../node"
 import { Amount } from "../../common"
 import { SortFunc } from "../../utils"
-import { AddressType } from "../../key"
 import { HintedObject } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export abstract class CurrencyItem extends Item {
     readonly amounts: Amount[]
-    readonly addressType: AddressType | ""
 
-    protected constructor(hint: string, amounts: Amount[], addressType?: AddressType) {
+    protected constructor(hint: string, amounts: Amount[]) {
         super(hint)
 
         Assert.check(
@@ -24,7 +22,6 @@ export abstract class CurrencyItem extends Item {
         )
 
         this.amounts = amounts
-        this.addressType = addressType ?? ""
     }
 
     toHintedObject(): HintedObject {

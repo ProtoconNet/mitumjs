@@ -520,7 +520,6 @@ export class Account extends KeyG {
                             threshold,
                         ),
                         [new Amount(currency, amount)],
-                        "mitum",
                     )
                 ]
             ),
@@ -568,7 +567,6 @@ export class Account extends KeyG {
                             threshold,
                         ),
                         [new Amount(currency, amount)],
-                        "ether",
                     )
                 ]
             ),
@@ -833,7 +831,6 @@ export class Contract extends Generator {
                         new CreateContractAccountItem(
                             ks,
                             [new Amount(currency, amount)],
-                            "mitum",
                         )
                     ],
                 ),
@@ -875,7 +872,6 @@ export class Contract extends Generator {
                         new CreateContractAccountItem(
                             ks,
                             [new Amount(currency, amount)],
-                            "ether",
                         )
                     ],
                 ),
@@ -905,8 +901,7 @@ export class Contract extends Generator {
                 [
                     new CreateContractAccountItem(
                         new Keys([new PubKey(key, 100)], 100),
-                        [new Amount(currency, amount)],
-                        "mitum",
+                        [new Amount(currency, amount)]
                     )
                 ],
             )
@@ -936,7 +931,6 @@ export class Contract extends Generator {
                     new CreateContractAccountItem(
                         new EtherKeys([new PubKey(key, 100)], 100),
                         [new Amount(currency, amount)],
-                        "ether",
                     )
                 ],
             )
@@ -984,7 +978,6 @@ export class Contract extends Generator {
                             threshold,
                         ),
                         [new Amount(currency, amount)],
-                        "mitum",
                     )
                 ]
             ),
@@ -1032,7 +1025,6 @@ export class Contract extends Generator {
                             threshold,
                         ),
                         [new Amount(currency, amount)],
-                        "ether",
                     )
                 ]
             ),
