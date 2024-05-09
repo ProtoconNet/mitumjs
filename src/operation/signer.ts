@@ -28,6 +28,7 @@ export class Signer extends Generator {
         operation: HintedObject,
         option?: SignOption
     ) {
+        Key.from(privatekey);
         const keypair = KeyPair.fromPrivateKey(privatekey)
         return option ? this.nodeSign(keypair as KeyPair, operation as OperationJson, option.node ?? "") : this.accSign(keypair as KeyPair, operation as OperationJson)
     }
