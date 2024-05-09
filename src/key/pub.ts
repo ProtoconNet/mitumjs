@@ -22,15 +22,32 @@ export class Key implements IBuffer, IString {
 
     constructor(s: string) {
         StringAssert.with(s, MitumError.detail(ECODE.INVALID_KEY, "invalid key"))
-            .empty().not()
+        .empty().not()
+        .chainOr(
+            s.endsWith(SUFFIX.KEY.MITUM.PRIVATE),
+            s.endsWith(SUFFIX.KEY.ETHER.PRIVATE),
+            s.endsWith(SUFFIX.KEY.MITUM.PUBLIC),
+            s.endsWith(SUFFIX.KEY.ETHER.PUBLIC),
+        )
+        .excute()
+
+        if (s.endsWith(SUFFIX.KEY.MITUM.PRIVATE) || s.endsWith(SUFFIX.KEY.ETHER.PRIVATE)) {
+            StringAssert.with(s, MitumError.detail(ECODE.INVALID_PRIVATE_KEY, "invalid private key"))
             .chainOr(
                 s.endsWith(SUFFIX.KEY.MITUM.PRIVATE) && Config.KEY.MITUM.PRIVATE.satisfy(s.length),
                 s.endsWith(SUFFIX.KEY.ETHER.PRIVATE) && Config.KEY.ETHER.PRIVATE.satisfy(s.length),
+            )
+            .chainAnd(/^[0-9a-f]+$/.test(s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)))
+            .excute()
+        } else {
+            StringAssert.with(s, MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid public key"))
+            .chainOr(
                 s.endsWith(SUFFIX.KEY.MITUM.PUBLIC) && Config.KEY.MITUM.PUBLIC.satisfy(s.length),
                 s.endsWith(SUFFIX.KEY.ETHER.PUBLIC) && Config.KEY.ETHER.PUBLIC.satisfy(s.length),
             )
             .chainAnd(/^[0-9a-f]+$/.test(s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)))
             .excute()
+        }
 
         this.key = s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)
         this.suffix = s.substring(s.length - Config.SUFFIX.DEFAULT.value!)
