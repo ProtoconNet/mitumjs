@@ -16,7 +16,7 @@ import { Key, KeyPair } from "../key"
 import { Generator, HintedObject, IP, SuccessResponse, ErrorResponse } from "../types"
 import { Assert, ECODE, MitumError } from "../error"
 import { getAPIData } from "../api"
-import { isOpFact } from "../utils/typeGuard"
+import { isOpFact, isHintedObject } from "../utils/typeGuard"
 
 import { delegateUri, isSuccessResponse } from "../utils"
 
@@ -105,7 +105,7 @@ export class Operation extends Generator {
 	/**
 	 * Send the given singed operation to blockchain network.
 	 * @async
-	 * @param {string | Operation<Fact> | HintedObject} [operation] - The operation to send.
+	 * @param { Operation<Fact> | HintedObject} [operation] - The operation to send.
 	 * @param {{[i: string]: any} | undefined} [headers] - (Optional) Additional headers for the request.
 	 * @returns Properties of `OperationResponse`:
 	 * - response: <SuccessResponse | ErrorResponse>
@@ -122,15 +122,23 @@ export class Operation extends Generator {
 	 * sendOperation();
 	 */
 	async send(
-		operation: string | HintedObject | OP<Fact>,
+		operation: HintedObject | OP<Fact>,
 		headers?: { [i: string]: any }
 	): Promise<OperationResponse> {
+		Assert.check(
+			isOpFact(operation) || isHintedObject(operation), 
+			MitumError.detail(ECODE.INVALID_OPERATION, `input is neither in OP<Fact> nor HintedObject format`)
+		)
+		operation = isOpFact(operation) ? operation.toHintedObject() : operation;
+		Assert.check(
+			operation.signs.length !== 0, 
+			MitumError.detail(ECODE.EMPTY_SIGN, `signature is required before sending the operation`)
+		)
+
 		const sendResponse = await getAPIData(() => 
 		api.send(
 			this.api,
-			isOpFact(operation) 
-			  ? operation.toHintedObject() 
-			  : operation, 
+			operation, 
 			this.delegateIP, 
 			headers
 		  )

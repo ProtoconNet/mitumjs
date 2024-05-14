@@ -13,6 +13,7 @@ export const ECODE = {
     NO_API: "EC_NO_API",    
     UNKNOWN: "EC_UNKNOWN",
     EMPTY_STRING: "EC_EMPTY_STRING",
+    EMPTY_SIGN: "EC_EMPTY_SIGN",
     INVALID_DATE: "EC_INVALID_DATE",
     INVALID_IP: "EC_INVALID_IP",
     INVALID_LENGTH: "EC_INVALID_LENGTH",
@@ -176,7 +177,7 @@ export const DCODE = {
     EMPTY: {
         code: "D101",
         keyword: ["Operation has empty token"],
-        description: "EMPTY or NULL",
+        description: "EMPTY or NULL data",
         subject: ""
     },
     IV_LENGTH: {
@@ -335,7 +336,7 @@ export const DCODE = {
     },
     STATE_EXIST: {
         code: "D503",
-        keyword: ["Account exists", "Contract account exist", "Currency exist", "State exist"],
+        keyword: ["Account exist", "Contract account exist", "Currency exist", "State exist"],
         description: "",
         subject: ""
     },

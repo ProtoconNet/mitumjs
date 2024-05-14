@@ -1,11 +1,10 @@
 import base58 from "bs58"
-import { OperationJson, GeneralFactSign, NodeFactSign } from "./base"
-
+import { OperationJson, GeneralFactSign, NodeFactSign, SignOption, Operation as OP, Fact } from "./base"
 import { sha3 } from "../utils"
 import { Key, KeyPair, NodeAddress } from "../key"
 import { Generator, HintedObject, FullTimeStamp, TimeStamp, IP } from "../types"
-import { SignOption } from "./base/types"
 import { Assert, ECODE, MitumError } from "../error"
+import { isOpFact, isHintedObject } from "../utils/typeGuard"
 
 export class Signer extends Generator {
 
@@ -19,15 +18,20 @@ export class Signer extends Generator {
     /**
      * Sign the given operation in JSON format using given private key.
 	 * @param {string | Key} [privatekey] - The private key used for signing.
-	 * @param {HintedObject} [operation] - The operation in JSON object (HintedObject) to be signed.
+	 * @param {Operation<Fact> | HintedObject} [operation] - The operation to be signed.
 	 * @param {SignOption} [option] - (Optional) Option for node sign.
 	 * @returns The signed operation in JSON object (HintedObject).
      */
     sign(
         privatekey: string | Key,
-        operation: HintedObject,
+        operation: OP<Fact> | HintedObject,
         option?: SignOption
     ) {
+        Assert.check(
+			isOpFact(operation) || isHintedObject(operation), 
+			MitumError.detail(ECODE.INVALID_OPERATION, `input is neither in OP<Fact> nor HintedObject format`)
+		)
+		operation = isOpFact(operation) ? operation.toHintedObject() : operation;
         Key.from(privatekey);
         const keypair = KeyPair.fromPrivateKey(privatekey)
         return option ? this.nodeSign(keypair as KeyPair, operation as OperationJson, option.node ?? "") : this.accSign(keypair as KeyPair, operation as OperationJson)
