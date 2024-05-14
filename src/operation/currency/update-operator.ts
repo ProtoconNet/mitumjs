@@ -2,8 +2,9 @@ import { Fact, FactJson } from "../base"
 
 import { HINT } from "../../alias"
 import { Address } from "../../key"
-import { SortFunc } from "../../utils"
+import { SortFunc, hasOverlappingAddress } from "../../utils"
 import { CurrencyID } from "../../common"
+import { Assert, ECODE, MitumError } from "../../error"
 
 export class UpdateOperatorFact extends Fact {
     readonly sender: Address
@@ -24,6 +25,11 @@ export class UpdateOperatorFact extends Fact {
         this.currency = CurrencyID.from(currency)
         this.operators = operators.map(a => Address.from(a))
         this._hash = this.hashing()
+
+        Assert.check(
+            hasOverlappingAddress(this.operators),
+            MitumError.detail(ECODE.INVALID_FACT, "duplicate address found in operators"),
+        )
     }
 
     toBuffer(): Buffer {
