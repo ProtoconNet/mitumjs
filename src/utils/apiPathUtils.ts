@@ -37,7 +37,7 @@ export const apiPathWithHashParams = (apiPath: string, factHash?:string, limit?:
         if (typeof(factHash) !== "string") {
             {throw new Error("factHash must be a string")}
         }
-        hash = `fathash=${factHash}`;
+        hash = `facthash=${factHash}`;
     }
     if (limit !== undefined) {
         validatePositiveInteger(limit, "limit");
