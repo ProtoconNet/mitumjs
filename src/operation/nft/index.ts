@@ -391,8 +391,8 @@ export class NFT extends ContractGenerator {
             this.delegateIP
         ));
 
-        if (isSuccessResponse(response)) {
-            response.data = response.data.owner;
+        if (isSuccessResponse(response) && response.data) {
+            response.data = response.data.owner ? response.data.owner : null;
         }
         return response
     }
@@ -412,8 +412,8 @@ export class NFT extends ContractGenerator {
             this.delegateIP
         ));
 
-        if (isSuccessResponse(response)) {
-            response.data = response.data.approved;
+        if (isSuccessResponse(response) && response.data) {
+            response.data = response.data.approved ? response.data.approved : null;
         }
         return response
     }
@@ -431,7 +431,7 @@ export class NFT extends ContractGenerator {
             this.delegateIP,
         ));
 
-        if (isSuccessResponse(response)) {
+        if (isSuccessResponse(response) && response.data) {
             response.data = response.data.nft_count? Number(response.data.nft_count) : 0;
         }
         return response
@@ -452,8 +452,8 @@ export class NFT extends ContractGenerator {
             this.delegateIP
         ));
 
-        if (isSuccessResponse(response)) {
-            response.data = response.data.uri;
+        if (isSuccessResponse(response) && response.data) {
+            response.data = response.data.uri ? response.data.uri : null;
         }
         return response
     }
