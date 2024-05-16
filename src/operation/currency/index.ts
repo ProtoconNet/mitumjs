@@ -405,9 +405,8 @@ export class Account extends KeyG {
         currency: string | CurrencyID,
         amount: string | number | Big,
     ): { wallet: AccountType[], operation: Operation<TransferFact> } {
-        const keyArray = this.keys(n);
-        const ksArray = keyArray.map((key) => new Keys([new PubKey(key.publickey, 100)], 100));
-        const items = ksArray.map((ks) => new TransferItem(ks.address,[new Amount(currency, amount)]));
+        const keyArray = this.etherKeys(n);
+        const items = keyArray.map((ks) => new TransferItem(ks.address,[new Amount(currency, amount)]));
         return {
             wallet: keyArray,
             operation: new Operation(
