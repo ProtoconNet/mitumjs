@@ -629,23 +629,6 @@ export class Account extends KeyG {
         currency: string | CurrencyID,
         threshold: string | number | Big,
     ) {
-        const suffix = target.toString().slice(-3)
-        if (suffix === "mca") {
-            return new Operation(
-                this.networkID,
-                new UpdateKeyFact(
-                    TimeStamp.new().UTC(),
-                    target,
-                    new Keys(
-                        newKeys.map(k =>
-                            k instanceof PubKey ? k : new PubKey(k.key, k.weight)
-                        ),
-                        threshold,
-                    ),
-                    currency,
-                ),
-            )
-        } 
         return new Operation(
             this.networkID,
             new UpdateKeyFact(
