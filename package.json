@@ -62,7 +62,6 @@
     "big-integer": "^1.6.51",
     "bs58": "^5.0.0",
     "bs58check": "^3.0.1",
-    "eccrypto-js": "^5.4.0",
     "elliptic": "^6.5.4",
     "ethers": "^6.7.0",
     "int64-buffer": "^1.0.1",

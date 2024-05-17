@@ -97,7 +97,6 @@ import pkg2 from 'js-sha3';
 const { sha3_256, keccak256: keccak256$1 } = pkg2;
 import { Wallet } from 'ethers';
 import secureRandom from 'secure-random';
-import { getPublicCompressed } from 'eccrypto-js';
 import { hmac } from '@noble/hashes/hmac';
 import { sha256 as sha256$1 } from '@noble/hashes/sha256';
 import * as secp256k1 from '@noble/secp256k1';
@@ -105,7 +104,6 @@ import { getPublicKey } from '@noble/secp256k1';
 import * as crypto from 'crypto';
 import pkg from 'elliptic';
 const { ec } = pkg;
-import { writeFile } from 'fs';
 ```
 
 <br>

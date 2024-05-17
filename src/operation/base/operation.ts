@@ -1,5 +1,5 @@
 import base58 from "bs58"
-import { writeFile } from "fs"
+// import { writeFile } from "fs"
 
 import { Fact } from "./fact"
 import { SignOption } from "./types"
@@ -178,11 +178,11 @@ export class Operation<T extends Fact> implements IBuffer, IHintedObject {
         }
     }
 
-    export(filePath: string) {
-        writeFile(filePath, JSON.stringify(this.toHintedObject(), null, 4), (e) => {
-            if (e) {
-                throw MitumError.detail(ECODE.FAIL_FILE_CREATION, "fs write-file failed")
-            }
-        })
-    }
+    // export(filePath: string) {
+    //     writeFile(filePath, JSON.stringify(this.toHintedObject(), null, 4), (e) => {
+    //         if (e) {
+    //             throw MitumError.detail(ECODE.FAIL_FILE_CREATION, "fs write-file failed")
+    //         }
+    //     })
+    // }
 }

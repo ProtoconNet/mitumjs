@@ -3,7 +3,6 @@ import base58 from "bs58"
 // import ethWallet from "ethereumjs-wallet"
 import { Wallet } from "ethers"
 import secureRandom from "secure-random"
-import { getPublicCompressed } from "eccrypto-js"
 
 import { hmac } from "@noble/hashes/hmac"
 import { sha256 as nobleSha256 } from "@noble/hashes/sha256"
@@ -196,7 +195,7 @@ export class KeyPair extends BaseKeyPair {
     protected getPub(): Key {
         if (this.privateKey.type === "btc") {
             return new Key(
-                base58.encode(getPublicCompressed(Buffer.from(this.signer as Uint8Array))) + SUFFIX.KEY.MITUM.PUBLIC
+                base58.encode(Buffer.from(secp256k1.getPublicKey(Buffer.from(this.signer as Uint8Array), true))) + SUFFIX.KEY.MITUM.PUBLIC
             )
         }
 
