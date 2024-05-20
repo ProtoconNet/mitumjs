@@ -269,6 +269,7 @@ export class DAO extends ContractGenerator {
         proposal: CryptoProposal | BizProposal,
         currency: string | CurrencyID,
     ) {
+
         new URIString(proposalID, 'proposalID');
         return new Operation(
             this.networkID,
@@ -455,6 +456,7 @@ export class DAO extends ContractGenerator {
      * - `policy`: [Policy]
      */
     async getServiceInfo(contractAddr: string | Address) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.dao.getService(this.api, contractAddr, this.delegateIP))
     }
     
@@ -470,6 +472,7 @@ export class DAO extends ContractGenerator {
      * - `policy`: [Policy]
      */
     async getProposalInfo(contractAddr: string | Address, proposalID: string) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.dao.getProposal(this.api, contractAddr, proposalID,this.delegateIP))
     }
     
@@ -485,6 +488,7 @@ export class DAO extends ContractGenerator {
      * - `delegatee`: Address of delegatee account,
      */
     async getDelegatorInfo(contractAddr: string | Address, proposalID: string, delegator: string | Address) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.dao.getDelegator(this.api, contractAddr, proposalID, delegator, this.delegateIP))
     }
     
@@ -499,6 +503,7 @@ export class DAO extends ContractGenerator {
      * - `delegators`: [ Address of delegatee, Address of delegator ]
      */
     async getVoterInfo(contractAddr: string | Address, proposalID: string) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.dao.getVoter(this.api, contractAddr, proposalID, this.delegateIP))
     }
     
@@ -514,6 +519,7 @@ export class DAO extends ContractGenerator {
      * - `result`: Object consisting of the selected option and the number of votes.
      */
     async getVotingResult(contractAddr: string | Address, proposalID: string) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.dao.getVotingResult(this.api, contractAddr, proposalID, this.delegateIP))
     }
 }

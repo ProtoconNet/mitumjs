@@ -373,6 +373,7 @@ export class NFT extends ContractGenerator {
      * - - `whitelist`: Array of the addresses of accounts who have permissions to mint
      */
     async getCollectionInfo(contractAddr: string | Address) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.nft.getCollection(this.api, contractAddr, this.delegateIP))
     }
     
@@ -384,6 +385,7 @@ export class NFT extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is the address of the NFT owner.
      */
     async ownerOf(contractAddr: string | Address, nftID: string | number | Big) {
+        Address.from(contractAddr);
         const response = await getAPIData(() => contract.nft.getNFT(
             this.api,
             contractAddr,
@@ -405,6 +407,7 @@ export class NFT extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is an address of the approved account to manage the NFT.
      */
     async getApproved(contractAddr: string | Address, nftID: number) {
+        Address.from(contractAddr);
         const response = await getAPIData(() => contract.nft.getNFT(
             this.api,
             contractAddr,
@@ -425,6 +428,7 @@ export class NFT extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is the total supply of NFTs in the collection.
      */
     async totalSupply(contractAddr: string | Address) {
+        Address.from(contractAddr);
         const response = await getAPIData(() => contract.nft.getNFTCount(
             this.api,
             contractAddr,
@@ -445,6 +449,7 @@ export class NFT extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is the URI of the NFT.
      */
     async tokenURI(contractAddr: string | Address, nftID: number) {
+        Address.from(contractAddr);
         const response = await getAPIData(() => contract.nft.getNFT(
             this.api,
             contractAddr,
@@ -468,6 +473,8 @@ export class NFT extends ContractGenerator {
      * - `operators`: Array of the addresses of accounts that have been delegated authority over all of the owner’s NFTs
      */
     async isApprovedForAll(contractAddr: string | Address, owner: string) {
+        Address.from(contractAddr);
+        Address.from(owner);
         return await getAPIData(() => contract.nft.getAccountOperators(
             this.api,
             contractAddr,
@@ -492,6 +499,7 @@ export class NFT extends ContractGenerator {
      * - `creators`: Creator object,
      */
     async getNFTInfo(contractAddr: string | Address, nftID: number) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.nft.getNFT(
             this.api,
             contractAddr,
@@ -522,6 +530,7 @@ export class NFT extends ContractGenerator {
      * - `_links`: Links for additional information
      */
     async getNFTs(contractAddr: string | Address, factHash?: string, limit?: number, offset?: number, reverse?: true) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.nft.getNFTs(
             this.api,
             contractAddr,

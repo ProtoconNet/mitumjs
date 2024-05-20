@@ -214,6 +214,7 @@ export class Token extends ContractGenerator {
      * - `policy`: Token policy object including `_hint`, `total_supply`, `approve_list`
      */
     async getTokenInfo(contractAddr: string | Address) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.token.getToken(this.api, contractAddr, this.delegateIP))
     }
 
@@ -227,6 +228,9 @@ export class Token extends ContractGenerator {
      * - `amount`: String of allowance amount
      */
     async getAllowance(contractAddr: string | Address, owner: string | Address, approved: string | Address) {
+        Address.from(contractAddr);
+        Address.from(owner);
+        Address.from(approved);
         const response = await getAPIData(() => contract.token.getToken(this.api, contractAddr, this.delegateIP));
         if (isSuccessResponse(response) && response.data) {
             response.data = calculateAllowance(response, owner, approved);
@@ -243,6 +247,8 @@ export class Token extends ContractGenerator {
      * - `amount`: String of amount
      */
     async getTokenBalance(contractAddr: string | Address, owner: string | Address) {
+        Address.from(contractAddr);
+        Address.from(owner);
         return await getAPIData(() => contract.token.getTokenBalance(this.api, contractAddr, owner, this.delegateIP))
     }
 }

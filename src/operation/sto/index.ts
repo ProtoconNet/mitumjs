@@ -291,6 +291,7 @@ export class STO extends ContractGenerator {
      * }
      */
     async getServiceInfo(contractAddr: string | Address) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.sto.getService(this.api, contractAddr, this.delegateIP))
     }
     
@@ -302,6 +303,8 @@ export class STO extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is an array of token partition names owned by the holder.
      */
     async getPartitionsInfo(contractAddr: string | Address, holder: string | Address) {
+        Address.from(contractAddr);
+        Address.from(holder);
         return await getAPIData(() => contract.sto.getPartitions(this.api, contractAddr, holder, this.delegateIP))
     }
         
@@ -314,6 +317,8 @@ export class STO extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is the balance of holder for the partition
      */
     async getBalanceByHolder(contractAddr: string | Address, holder: string | Address, partition: string) {
+        Address.from(contractAddr);
+        Address.from(holder);
         return await getAPIData(() => contract.sto.getBalanceByHolder(this.api, contractAddr, holder, partition, this.delegateIP))
     }
     
@@ -327,6 +332,8 @@ export class STO extends ContractGenerator {
      * - `operators`: Array of the address of operators.
      */
     async getOperatorsByHolder(contractAddr: string | Address, holder: string | Address, partition: string) {
+        Address.from(contractAddr);
+        Address.from(holder);
         return await getAPIData(() => contract.sto.getOperatorsByHolder(this.api, contractAddr, holder, partition, this.delegateIP))
     }
     
@@ -338,6 +345,7 @@ export class STO extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is the partition balance amount.
      */
     async getPartitionBalanceInfo(contractAddr: string | Address, partition: string) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.sto.getPartitionBalance(this.api, contractAddr, partition, this.delegateIP))
     }
         
@@ -349,6 +357,8 @@ export class STO extends ContractGenerator {
      * - `holders`: Array of the address of holders.
      */
     async getAuthorizedInfo(contractAddr: string | Address, operator: string | Address) {
+        Address.from(contractAddr);
+        Address.from(operator);
         return await getAPIData(() => contract.sto.getAuthorized(this.api, contractAddr, operator, this.delegateIP))
     }
 }

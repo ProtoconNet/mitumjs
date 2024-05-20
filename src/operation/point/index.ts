@@ -214,6 +214,7 @@ export class Point extends ContractGenerator {
      * - `policy`: Point policy object including `_hint`, `total_supply`, `approve_list`
      */
     async getPointInfo(contractAddr: string | Address) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.point.getPoint(this.api, contractAddr, this.delegateIP))
     }
 
@@ -227,6 +228,9 @@ export class Point extends ContractGenerator {
      * - `amount`: String of allowance amount
      */
     async getAllowance(contractAddr: string | Address, owner: string | Address, approved: string | Address) {
+        Address.from(contractAddr);
+        Address.from(owner);
+        Address.from(approved);
         const response = await getAPIData(() => contract.point.getPoint(this.api, contractAddr, this.delegateIP));
         if (isSuccessResponse(response) && response.data) {
             response.data = calculateAllowance(response, owner, approved);
@@ -243,6 +247,8 @@ export class Point extends ContractGenerator {
      * - `amount`: String of amount
      */
     async getPointBalance(contractAddr: string | Address, owner: string | Address) {
+        Address.from(contractAddr);
+        Address.from(owner);
         return await getAPIData(() => contract.point.getPointBalance(this.api, contractAddr, owner, this.delegateIP))
     }
 }

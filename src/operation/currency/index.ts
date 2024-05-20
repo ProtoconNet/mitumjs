@@ -16,7 +16,7 @@ import { Operation as OP } from "../"
 import api, { getAPIData } from "../../api"
 import { Amount, CurrencyID } from "../../common"
 import { Big, Generator, IP, TimeStamp } from "../../types"
-import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG, EtherKeys } from "../../key"
+import { Address, Key, KeyPair, PubKey, Account as AccountType, KeyG, EtherKeys } from "../../key"
 import { StringAssert, Assert, ECODE, MitumError } from "../../error"
 import { isSuccessResponse  } from "../../utils"
 import { Config } from "../../node"
@@ -325,47 +325,6 @@ export class Account extends KeyG {
         seed?: string,
         weight?: string | number | Big,
     ): { wallet: AccountType, operation: Operation<TransferFact> } {
-        const kp = seed ? KeyPair.fromSeed(seed) : KeyPair.random()
-        const ks = new Keys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
-
-        return {
-            wallet: {
-                privatekey: kp.privateKey.toString(),
-                publickey: kp.publicKey.toString(),
-                address: ks.address.toString(),
-            },
-            operation: new Operation(
-                this.networkID,
-                new TransferFact(
-                    TimeStamp.new().UTC(),
-                    sender,
-                    [
-                        new TransferItem(
-                            ks.address,
-                            [new Amount(currency, amount)]
-                        )
-                    ],
-                ),
-            ),
-        }
-    }
-
-    /**
-     * Generate a Ethreum style key pair and the corresponding `transfer` operation to create a single-sig account.
-     * @param {string | Address} [sender] - The sender's address.
-     * @param {string | CurrencyID} [currency] - The currency ID.
-     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
-     * @param {string} [seed] - (Optional) The seed for deterministic key generation. If not provided, a random key pair will be generated.
-     * @param {string | number | Big} [weight] - (Optional) The weight for the public key. If not provided, the default value is 100.
-     * @returns An object containing the wallet (key pair) and the `transfer` operation.
-     */
-    createEtherWallet(
-        sender: string | Address,
-        currency: string | CurrencyID,
-        amount: string | number | Big,
-        seed?: string,
-        weight?: string | number | Big,
-    ): { wallet: AccountType, operation: Operation<TransferFact> } {
         const kp = seed ? KeyPair.fromSeed(seed, "ether") : KeyPair.random("ether")
         const ks = new EtherKeys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
 
@@ -405,7 +364,7 @@ export class Account extends KeyG {
         currency: string | CurrencyID,
         amount: string | number | Big,
     ): { wallet: AccountType[], operation: Operation<TransferFact> } {
-        const keyArray = this.etherKeys(n);
+        const keyArray = this.keys(n);
         const items = keyArray.map((ks) => new TransferItem(ks.address,[new Amount(currency, amount)]));
         return {
             wallet: keyArray,
@@ -429,36 +388,6 @@ export class Account extends KeyG {
      * @returns `transfer` operation.
      */
     createAccount(
-        sender: string | Address,
-        key: string | Key | PubKey,
-        currency: string | CurrencyID,
-        amount: string | number | Big,
-    ) {
-        const ks = new Keys([new PubKey(key, 100)], 100);
-        return new Operation(
-            this.networkID,
-            new TransferFact(
-                TimeStamp.new().UTC(),
-                sender,
-                [
-                    new TransferItem(
-                        ks.address,
-                        [new Amount(currency, amount)]
-                    )
-                ],
-            )
-        )
-    }
-
-    /**
-     * Generate a `transfer` operation for the given Ethereum style public key.
-     * @param {string | Address} [sender] - The sender's address.
-     * @param {string | Key | PubKey} [key] - The Ethereum style public key or key object.
-     * @param {string | CurrencyID} [currency] - The currency ID.
-     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
-     * @returns `transfer` operation.
-     */
-    createEtherAccount(
         sender: string | Address,
         key: string | Key | PubKey,
         currency: string | CurrencyID,
@@ -491,53 +420,6 @@ export class Account extends KeyG {
      * @example
      * // Example of parameter keys
      * const pubkey01 = {
-     *     key: "p8XReXNcaRkNobtBd61uxeFUeUXJ7vWJkAYk4RuqTFJ2mpu",
-     *     weight: 50
-     * };
-     * const pubkey02 = {
-     *     key: "pTmVEh4VaPPM8iLuZcPm1qJRvhJXq8QcsEX1c3xAh4cPmpu",
-     *     weight: 50
-     * };
-     * const keysArray = [pubkey01, pubkey02];
-     */
-    createMultiSig(
-        sender: string | Address,
-        keys: keysType,
-        currency: string | CurrencyID,
-        amount: string | number | Big,
-        threshold: string | number | Big,
-    ) {
-        return new Operation(
-            this.networkID,
-            new CreateAccountFact(
-                TimeStamp.new().UTC(),
-                sender,
-                [
-                    new CreateAccountItem(
-                        new Keys(
-                            keys.map(k =>
-                                k instanceof PubKey ? k : new PubKey(k.key, k.weight)
-                            ),
-                            threshold,
-                        ),
-                        [new Amount(currency, amount)],
-                    )
-                ]
-            ),
-        )
-    }
-
-    /**
-     * Generate a `create-account` operation for the multi-signature account in Ethereum style.
-     * @param {string | Address} [sender] - The sender's address.
-     * @param {keysType} [keys] - An array of object {`key`: publickey, `weight`: weight for the key}
-     * @param {string | CurrencyID} [currency] - The currency ID.
-     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
-     * @param {string | number | Big} [threshold] - The threshold for the multi-signature.
-     * @returns `create-account` operation.
-     * @example
-     * // Example of parameter keys
-     * const pubkey01 = {
      *     key: "02cb1d73c49d638d98092e35603414b575f3f5b5ce01162cdd80ab68ab77e50e14epu",
      *     weight: 50
      * };
@@ -547,7 +429,7 @@ export class Account extends KeyG {
      * };
      * const keysArray = [pubkey01, pubkey02];
      */
-    createEtherMultiSig(
+    createMultiSig(
         sender: string | Address,
         keys: keysType,
         currency: string | CurrencyID,
@@ -582,18 +464,6 @@ export class Account extends KeyG {
         newKey: string | Key | PubKey,
         currency: string | CurrencyID,
     ) {
-        const suffix = target.toString().slice(-3)
-        if (suffix === "mca") {
-            return new Operation(
-                this.networkID,
-                new UpdateKeyFact(
-                    TimeStamp.new().UTC(),
-                    target,
-                    new Keys([new PubKey(newKey, 100)], 100),
-                    currency,
-                ),
-            )
-        }
         return new Operation(
             this.networkID,
             new UpdateKeyFact(
@@ -808,47 +678,6 @@ export class Contract extends Generator {
         seed?: string,
         weight?: string | number | Big,
     ): { wallet: AccountType, operation: Operation<CreateContractAccountFact> } {
-        const kp = seed ? KeyPair.fromSeed(seed) : KeyPair.random()
-        const ks = new Keys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
-
-        return {
-            wallet: {
-                privatekey: kp.privateKey.toString(),
-                publickey: kp.publicKey.toString(),
-                address: ks.address.toString(),
-            },
-            operation: new Operation(
-                this.networkID,
-                new CreateContractAccountFact(
-                    TimeStamp.new().UTC(),
-                    sender,
-                    [
-                        new CreateContractAccountItem(
-                            ks,
-                            [new Amount(currency, amount)],
-                        )
-                    ],
-                ),
-            ),
-        }
-    }
-
-    /**
-     * Generate a Ethreum style key pair and the corresponding `create-contract-account` operation.
-     * @param {string | Address} [sender] - The sender's address.
-     * @param {string | CurrencyID} [currency] - The currency ID.
-     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
-     * @param {string} [seed] - (Optional) The seed for deterministic key generation. If not provided, a random key pair will be generated.
-     * @param {string | number | Big} [weight] - (Optional) The weight for the public key. If not provided, the default value is 100.
-     * @returns An object containing the wallet (key pair) and the `create-contract-account` operation.
-     */
-    createEtherWallet(
-        sender: string | Address,
-        currency: string | CurrencyID,
-        amount: string | number | Big,
-        seed?: string,
-        weight?: string | number | Big,
-    ): { wallet: AccountType, operation: Operation<CreateContractAccountFact> } {
         const kp = seed ? KeyPair.fromSeed(seed, "ether") : KeyPair.random("ether")
         const ks = new EtherKeys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
 
@@ -895,35 +724,6 @@ export class Contract extends Generator {
                 sender,
                 [
                     new CreateContractAccountItem(
-                        new Keys([new PubKey(key, 100)], 100),
-                        [new Amount(currency, amount)]
-                    )
-                ],
-            )
-        )
-    }
-
-    /**
-     * Generate a `create-contract-account` operation for the given Ethereum style public key.
-     * @param {string | Address} [sender] - The sender's address.
-     * @param {string | Key | PubKey} [key] - The Ethereum style public key or key object.
-     * @param {string | CurrencyID} [currency] - The currency ID.
-     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
-     * @returns `create-contract-account` operation.
-     */
-    createEtherAccount(
-        sender: string | Address,
-        key: string | Key | PubKey,
-        currency: string | CurrencyID,
-        amount: string | number | Big,
-    ) {
-        return new Operation(
-            this.networkID,
-            new CreateContractAccountFact(
-                TimeStamp.new().UTC(),
-                sender,
-                [
-                    new CreateContractAccountItem(
                         new EtherKeys([new PubKey(key, 100)], 100),
                         [new Amount(currency, amount)],
                     )
@@ -943,53 +743,6 @@ export class Contract extends Generator {
      * @example
      * // Example of parameter keys
      * const pubkey01 = {
-     *     key: "p8XReXNcaRkNobtBd61uxeFUeUXJ7vWJkAYk4RuqTFJ2mpu",
-     *     weight: 50
-     * };
-     * const pubkey02 = {
-     *     key: "pTmVEh4VaPPM8iLuZcPm1qJRvhJXq8QcsEX1c3xAh4cPmpu",
-     *     weight: 50
-     * };
-     * const keysArray = [pubkey01, pubkey02];
-     */
-    createMultiSig(
-        sender: string | Address,
-        keys: keysType,
-        currency: string | CurrencyID,
-        amount: string | number | Big,
-        threshold: string | number | Big,
-    ) {
-        return new Operation(
-            this.networkID,
-            new CreateContractAccountFact(
-                TimeStamp.new().UTC(),
-                sender,
-                [
-                    new CreateContractAccountItem(
-                        new Keys(
-                            keys.map(k =>
-                                k instanceof PubKey ? k : new PubKey(k.key, k.weight)
-                            ),
-                            threshold,
-                        ),
-                        [new Amount(currency, amount)],
-                    )
-                ]
-            ),
-        )
-    }
-
-    /**
-     * Generate a `create-contract-account` operation for the multi-signature account in Ethereum style.
-     * @param {string | Address} [sender] - The sender's address.
-     * @param {keysType} [keys] - An array of object {`key`: publickey, `weight`: weight for the key}
-     * @param {string | CurrencyID} [currency] - The currency ID.
-     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
-     * @param {string | number | Big} [threshold] - The threshold for the multi-signature.
-     * @returns `create-contract-account` operation.
-     * @example
-     * // Example of parameter keys
-     * const pubkey01 = {
      *     key: "02cb1d73c49d638d98092e35603414b575f3f5b5ce01162cdd80ab68ab77e50e14epu",
      *     weight: 50
      * };
@@ -999,7 +752,7 @@ export class Contract extends Generator {
      * };
      * const keysArray = [pubkey01, pubkey02];
      */
-    createEtherMultiSig(
+    createMultiSig(
         sender: string | Address,
         keys: keysType,
         currency: string | CurrencyID,

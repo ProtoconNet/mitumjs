@@ -96,7 +96,7 @@ export class Operation extends Generator {
 		operation: OP<Fact>,
 		option?: SignOption,
 	) {
-		const op = operation
+		const op = operation;
 		op.sign(privatekey instanceof KeyPair ? privatekey.privateKey : privatekey, option)
 		return op
 	}

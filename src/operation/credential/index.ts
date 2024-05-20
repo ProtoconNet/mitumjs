@@ -219,6 +219,7 @@ export class Credential extends ContractGenerator {
      * - - `credential_count`: The total number of credential
      */
     async getServiceInfo(contractAddr: string | Address) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.credential.getService(this.api, contractAddr, this.delegateIP))
     }
     
@@ -245,6 +246,7 @@ export class Credential extends ContractGenerator {
         templateID: string,
         credentialID: string,
     ) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.credential.getCredential(this.api, contractAddr, templateID, credentialID, this.delegateIP))
     }
     
@@ -269,6 +271,7 @@ export class Credential extends ContractGenerator {
         contractAddr: string | Address,
         templateID: string,
     ) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.credential.getTemplate(this.api, contractAddr, templateID, this.delegateIP))
     }
     
@@ -296,6 +299,7 @@ export class Credential extends ContractGenerator {
         contractAddr: string | Address,
         templateID: string,
     ) {
+        Address.from(contractAddr);
         return await getAPIData(() => contract.credential.getCredentials(this.api, contractAddr, templateID, this.delegateIP))
     }
     
@@ -325,6 +329,8 @@ export class Credential extends ContractGenerator {
         contractAddr: string | Address,
         holder: string | Address,
     ) {
+        Address.from(contractAddr);
+        Address.from(holder);
         return await getAPIData(() => contract.credential.getCredentialByHolder(this.api, contractAddr, holder, this.delegateIP))
     }
 }
