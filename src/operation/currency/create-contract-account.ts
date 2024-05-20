@@ -7,13 +7,13 @@ import { Amount } from "../../common"
 import { SortFunc } from "../../utils"
 import { HINT } from "../../alias"
 import { HintedObject } from "../../types"
-import { Keys, Address, EtherKeys } from "../../key"
+import { Keys, Address } from "../../key"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export class CreateContractAccountItem extends CurrencyItem {
-    readonly keys: Keys | EtherKeys
+    readonly keys: Keys
     
-    constructor(keys: Keys | EtherKeys, amounts: Amount[]) {
+    constructor(keys: Keys, amounts: Amount[]) {
         super(HINT.CURRENCY.CREATE_CONTRACT_ACCOUNT.ITEM, amounts)
         this.keys = keys
     }

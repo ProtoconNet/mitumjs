@@ -1,4 +1,3 @@
-import base58 from "bs58"
 import { keccak256 as keccak256js } from "js-sha3";
 
 import { Address } from "./address"
@@ -7,7 +6,7 @@ import { KeyPairType } from "./types"
 import { Hint } from "../common"
 import { Config } from "../node"
 import { HINT, SUFFIX } from "../alias"
-import { keccak256, sha3 } from "../utils"
+import { keccak256 } from "../utils"
 import { Assert, ECODE, MitumError, StringAssert } from "../error"
 import { Big, HintedObject, IBuffer, IHintedObject, IString } from "../types"
 
@@ -24,36 +23,31 @@ export class Key implements IBuffer, IString {
         StringAssert.with(s, MitumError.detail(ECODE.INVALID_KEY, "invalid key"))
         .empty().not()
         .chainOr(
-            s.endsWith(SUFFIX.KEY.MITUM.PRIVATE),
             s.endsWith(SUFFIX.KEY.ETHER.PRIVATE),
-            s.endsWith(SUFFIX.KEY.MITUM.PUBLIC),
             s.endsWith(SUFFIX.KEY.ETHER.PUBLIC),
         )
         .excute()
 
-        if (s.endsWith(SUFFIX.KEY.MITUM.PRIVATE) || s.endsWith(SUFFIX.KEY.ETHER.PRIVATE)) {
+        if (s.endsWith(SUFFIX.KEY.ETHER.PRIVATE)) {
             StringAssert.with(s, MitumError.detail(ECODE.INVALID_PRIVATE_KEY, "invalid private key"))
-            .chainOr(
-                s.endsWith(SUFFIX.KEY.MITUM.PRIVATE) && Config.KEY.MITUM.PRIVATE.satisfy(s.length),
+            .chainAnd(
                 s.endsWith(SUFFIX.KEY.ETHER.PRIVATE) && Config.KEY.ETHER.PRIVATE.satisfy(s.length),
-            )
-            .chainAnd(/^[0-9a-f]+$/.test(s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)))
+                /^[0-9a-f]+$/.test(s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)))
             .excute()
         } else {
             StringAssert.with(s, MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid public key"))
-            .chainOr(
-                s.endsWith(SUFFIX.KEY.MITUM.PUBLIC) && Config.KEY.MITUM.PUBLIC.satisfy(s.length),
+            .chainAnd(
                 s.endsWith(SUFFIX.KEY.ETHER.PUBLIC) && Config.KEY.ETHER.PUBLIC.satisfy(s.length),
+                /^[0-9a-f]+$/.test(s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!))
             )
-            .chainAnd(/^[0-9a-f]+$/.test(s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)))
             .excute()
         }
 
         this.key = s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)
         this.suffix = s.substring(s.length - Config.SUFFIX.DEFAULT.value!)
 
-        this.type = s.endsWith(SUFFIX.KEY.ETHER.PRIVATE) || s.endsWith(SUFFIX.KEY.ETHER.PUBLIC) ? "ether" : "btc"
-        this.isPriv = s.endsWith(SUFFIX.KEY.MITUM.PRIVATE) || s.endsWith(SUFFIX.KEY.ETHER.PRIVATE)
+        this.type = "ether"
+        this.isPriv = s.endsWith(SUFFIX.KEY.ETHER.PRIVATE)
     }
 
     static from(s: string | Key) {
@@ -104,68 +98,6 @@ export class PubKey extends Key implements IHintedObject {
 }
 
 export class Keys implements IBuffer, IHintedObject {
-    private static hint = new Hint(HINT.CURRENCY.KEYS)
-    private readonly _keys: PubKey[]
-    readonly threshold: Big
-
-    constructor(keys: Pub[], threshold: BigArg) {
-        Assert.check(
-            Config.KEYS_IN_ACCOUNT.satisfy(keys.length),
-            MitumError.detail(ECODE.INVALID_KEYS, "keys length out of range")
-        )
-
-        this._keys = keys.map(
-            k => {
-                if (k instanceof PubKey) {
-                    return k
-                }
-
-                const [key, weight] = k
-                return new PubKey(key instanceof Key ? key.toString() : key, weight)
-            }
-        )
-        this.threshold = threshold instanceof Big ? threshold : new Big(threshold)
-
-        Assert.check(
-            Config.THRESHOLD.satisfy(this.threshold.v),
-            MitumError.detail(ECODE.INVALID_KEYS, "threshold out of range")
-        )
-        Assert.check(
-            new Set(this._keys.map(k => k.toString())).size === this._keys.length,
-            MitumError.detail(ECODE.INVALID_KEYS, "duplicate keys found in keys")
-        )
-    }
-
-    get keys(): PubKey[] {
-        return this._keys
-    }
-
-    get address(): Address {
-        return new Address(base58.encode(sha3(this.toBuffer())) + SUFFIX.ADDRESS.MITUM)
-    }
-
-    toBuffer(): Buffer {
-        return Buffer.concat([
-            Buffer.concat(this._keys.sort(
-                (a, b) => Buffer.compare(Buffer.from(a.toString()), Buffer.from(b.toBuffer()))
-            ).map(k => k.toBuffer())),
-            this.threshold.toBuffer("fill")
-        ])
-    }
-
-    toHintedObject(): HintedObject {
-        return {
-            _hint: Keys.hint.toString(),
-            hash: base58.encode(sha3(this.toBuffer())),
-            keys: this._keys.sort(
-                (a, b) => Buffer.compare(Buffer.from(a.toString()), Buffer.from(b.toBuffer()))
-            ).map(k => k.toHintedObject()),
-            threshold: this.threshold.v,
-        }
-    }
-}
-
-export class EtherKeys implements IBuffer, IHintedObject {
     private static hint = new Hint(HINT.CURRENCY.ETH_KEYS)
     private readonly _keys: PubKey[]
     readonly threshold: Big
@@ -233,7 +165,7 @@ export class EtherKeys implements IBuffer, IHintedObject {
     toHintedObject(): HintedObject {
         const eHash = keccak256js(this.toBuffer());
         return {
-            _hint: EtherKeys.hint.toString(),
+            _hint: Keys.hint.toString(),
             hash: eHash.slice(24),
             keys: this._keys
             .sort((a, b) =>

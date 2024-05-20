@@ -1,7 +1,7 @@
 import { KeyPairType, AddressType, Account } from "./types"
 
 import { randomN } from "./random"
-import { Keys, Key, PubKey, EtherKeys } from "./pub"
+import { Keys, Key, PubKey } from "./pub"
 import { BaseKeyPair, KeyPair } from "./keypair"
 import { Address, ZeroAddress, NodeAddress } from "./address"
 
@@ -13,7 +13,7 @@ import { SUFFIX } from "../alias"
 export {
     KeyPairType, AddressType, Account,
     Address, ZeroAddress, NodeAddress,
-    Key, Keys, PubKey, EtherKeys,
+    Key, Keys, PubKey,
     BaseKeyPair, KeyPair,
     randomN,
 }
@@ -101,13 +101,13 @@ export class KeyG extends Generator {
             suffix === "epu",
             MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid pubkey format"),
         )
-        return new EtherKeys([new PubKey(key, 100)], 100).checksum.toString()
+        return new Keys([new PubKey(key, 100)], 100).checksum.toString()
     }
 
 	/**
 	 * Returns a checksumed address for given address string. For invalid address, an error is returned.
-	 * @param {string} [address] - The Ethereum style address.
-	 * @returns The checksumed Ethereum style address.
+	 * @param {string} [address] - An address.
+	 * @returns A checksumed address.
      */
     checksumedAddress(address: string) {
         try {
@@ -136,12 +136,12 @@ export class KeyG extends Generator {
 	 *     key: "0377241675aabafca6b1a49f3bc08a581beb0daa330a4ac2008464d63ed7635a22epu",
 	 *     weight: 50
 	 * };
-	 * const mutiSigAddress = mitum.account.etherAddressForMultiSig([pubkey01, pubkey02], 100);
+	 * const mutiSigAddress = mitum.account.addressForMultiSig([pubkey01, pubkey02], 100);
      */
     addressForMultiSig(
         keys: keysType,
         threshold: string | number | Big,
     ): string {
-        return new EtherKeys(keys.map(k => k instanceof PubKey ? k : new PubKey(k.key, k.weight)), threshold).checksum.toString()
+        return new Keys(keys.map(k => k instanceof PubKey ? k : new PubKey(k.key, k.weight)), threshold).checksum.toString()
     }
 }

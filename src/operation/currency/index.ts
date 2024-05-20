@@ -16,7 +16,7 @@ import { Operation as OP } from "../"
 import api, { getAPIData } from "../../api"
 import { Amount, CurrencyID } from "../../common"
 import { Big, Generator, IP, TimeStamp } from "../../types"
-import { Address, Key, KeyPair, PubKey, Account as AccountType, KeyG, EtherKeys } from "../../key"
+import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG } from "../../key"
 import { StringAssert, Assert, ECODE, MitumError } from "../../error"
 import { isSuccessResponse  } from "../../utils"
 import { Config } from "../../node"
@@ -326,7 +326,7 @@ export class Account extends KeyG {
         weight?: string | number | Big,
     ): { wallet: AccountType, operation: Operation<TransferFact> } {
         const kp = seed ? KeyPair.fromSeed(seed, "ether") : KeyPair.random("ether")
-        const ks = new EtherKeys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
+        const ks = new Keys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
 
         return {
             wallet: {
@@ -393,7 +393,7 @@ export class Account extends KeyG {
         currency: string | CurrencyID,
         amount: string | number | Big,
     ) {
-        const ks = new EtherKeys([new PubKey(key, 100)], 100);
+        const ks = new Keys([new PubKey(key, 100)], 100);
         return new Operation(
             this.networkID,
             new TransferFact(
@@ -443,7 +443,7 @@ export class Account extends KeyG {
                 sender,
                 [
                     new CreateAccountItem(
-                        new EtherKeys(
+                        new Keys(
                             keys.map(k =>
                                 k instanceof PubKey ? k : new PubKey(k.key, k.weight)
                             ),
@@ -469,7 +469,7 @@ export class Account extends KeyG {
             new UpdateKeyFact(
                 TimeStamp.new().UTC(),
                 target,
-                new EtherKeys([new PubKey(newKey, 100)], 100),
+                new Keys([new PubKey(newKey, 100)], 100),
                 currency,
             ),
         )
@@ -484,11 +484,11 @@ export class Account extends KeyG {
      * @example
      * // Example of parameter keys
      * const pubkey01 = {
-     *     key: "p8XReXNcaRkNobtBd61uxeFUeUXJ7vWJkAYk4RuqTFJ2mpu",
+     *     key: "02a2e69d8b819e25ac4931523b62995bf3361304093dc24f15658d88e72644d853epu",
      *     weight: 50
      * };
      * const pubkey02 = {
-     *     key: "pTmVEh4VaPPM8iLuZcPm1qJRvhJXq8QcsEX1c3xAh4cPmpu",
+     *     key: "03410a28d1d44974f3af2b12f6d23733a17ea30e2ecfbc413055a4543b28f16f45epu",
      *     weight: 50
      * };
      * const keysArray = [pubkey01, pubkey02];
@@ -504,7 +504,7 @@ export class Account extends KeyG {
             new UpdateKeyFact(
                 TimeStamp.new().UTC(),
                 target,
-                new EtherKeys(
+                new Keys(
                     newKeys.map(k =>
                         k instanceof PubKey ? k : new PubKey(k.key, k.weight)
                     ),
@@ -519,7 +519,7 @@ export class Account extends KeyG {
      * Sign and send the `transfer` operation to blockchain network to create single-sig account.
      * @async
      * @param {string | Key} [privatekey] - The private key used for signing.
-     * @param {Object} [wallet] - The object with properties `wallet` and `operation`. (return value of `createWallet` or `createEtherWallet`)
+     * @param {Object} [wallet] - The object with properties `wallet` and `operation`. (return value of `createWallet`)
      * @returns A Promise resolving to a `OperationResponse`. `.wait()` can be used like `operation.send`.
      * 
      * Properties of `OperationResponse`:
@@ -679,7 +679,7 @@ export class Contract extends Generator {
         weight?: string | number | Big,
     ): { wallet: AccountType, operation: Operation<CreateContractAccountFact> } {
         const kp = seed ? KeyPair.fromSeed(seed, "ether") : KeyPair.random("ether")
-        const ks = new EtherKeys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
+        const ks = new Keys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
 
         return {
             wallet: {
@@ -724,7 +724,7 @@ export class Contract extends Generator {
                 sender,
                 [
                     new CreateContractAccountItem(
-                        new EtherKeys([new PubKey(key, 100)], 100),
+                        new Keys([new PubKey(key, 100)], 100),
                         [new Amount(currency, amount)],
                     )
                 ],
@@ -766,7 +766,7 @@ export class Contract extends Generator {
                 sender,
                 [
                     new CreateContractAccountItem(
-                        new EtherKeys(
+                        new Keys(
                             keys.map(k =>
                                 k instanceof PubKey ? k : new PubKey(k.key, k.weight)
                             ),
@@ -833,7 +833,7 @@ export class Contract extends Generator {
      * Sign and send the `create-contract-account` operation to blockchain network.
      * @async
      * @param {string | Key} [privatekey] - The private key used for signing.
-     * @param {Object} [wallet] - The object with properties `wallet` and `operation`. (return value of `createWallet` or `createEtherWallet`)
+     * @param {Object} [wallet] - The object with properties `wallet` and `operation`. (return value of `createWallet`)
      * @returns A Promise resolving to a `OperationResponse`. `.wait()` can be used like `operation.send`.
      * 
      * Properties of `OperationResponse`:

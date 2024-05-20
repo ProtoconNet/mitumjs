@@ -41,16 +41,14 @@ abstract class BaseAddress implements IBuffer, IString {
 export class Address extends BaseAddress {
     constructor(s: string) {
         super(s)
-        StringAssert.with(s, MitumError.detail(ECODE.INVALID_ADDRESS, "The address must be a 45-character string"))
-            .empty().not()
-            .satisfyConfig(Config.ADDRESS.DEFAULT)
-            .excute()
-
         StringAssert.with(s, MitumError.detail(ECODE.INVALID_ADDRESS_TYPE, "The address must be starting with '0x' and ending with 'mca'"))
             .startsWith('0x')
             .endsWith(SUFFIX.ADDRESS.MITUM)
             .excute()
-
+        StringAssert.with(s, MitumError.detail(ECODE.INVALID_ADDRESS, "The address must be a 45-character string"))
+            .empty().not()
+            .satisfyConfig(Config.ADDRESS.DEFAULT)
+            .excute()
         Assert.check(
             /^[0-9a-fA-F]+$/.test(s.slice(2, 42)),
             MitumError.detail(ECODE.INVALID_ADDRESS, `${s.slice(2, 42)} is not a hexadecimal number`),

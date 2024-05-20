@@ -2,7 +2,6 @@ import base58 from "bs58"
 
 // import ethWallet from "ethereumjs-wallet"
 import { Wallet } from "ethers"
-import secureRandom from "secure-random"
 
 import { hmac } from "@noble/hashes/hmac"
 import { sha256 as nobleSha256 } from "@noble/hashes/sha256"
@@ -61,10 +60,6 @@ export abstract class BaseKeyPair {
         return this.generator.fromSeed(seed, option) as  T
     }
 
-    protected btcSign(msg: string | Buffer): Buffer {
-        return Buffer.from(secp256k1.signSync(sha256(sha256(msg)), this.signer as Uint8Array))
-    }
-
     protected ethSign(msg: string | Buffer): Buffer {
         const ec = new EC("secp256k1");
         const key = ec.keyFromPrivate(this.privateKey.noSuffix, "hex");
@@ -83,14 +78,6 @@ export abstract class BaseKeyPair {
         sigBuffer.set(s, 4 + r.length);
     
         return sigBuffer;
-    }
-
-    protected btcVerify(sig: string | Buffer, msg: string | Buffer): boolean {
-        if (typeof sig === "string") {
-            sig = Buffer.from(base58.decode(sig))
-        }
-
-        return secp256k1.verify(sig, sha256(sha256(msg)), secp256k1.getPublicKey(this.signer as Uint8Array))
     }
 
     protected ethVerify(sig: string | Buffer, msg: string | Buffer): boolean {
@@ -140,42 +127,16 @@ export abstract class BaseKeyPair {
 
 export class KeyPair extends BaseKeyPair {
     static generator = {
-        random(option?: KeyPairType): KeyPair {
-            option = option ?? "btc"
-    
-            if (option === "btc") {
-                const safeRandomArray = () => {
-                    while (true) {
-                        const randomArray = secureRandom(32, { type: "Uint8Array" }); 
-                        if (randomArray[0] !== 0) {
-                            return randomArray
-                        }
-                    }
-                }
-                return new KeyPair(
-                    base58.encode(Buffer.from(safeRandomArray())) + SUFFIX.KEY.MITUM.PRIVATE
-                )
-            }
-    
-            //return new KeyPair(ethWallet.generate().getPrivateKeyString().substring(2) + SUFFIX.KEY.ETHER.PRIVATE)
+        random(): KeyPair {
             return new KeyPair(Wallet.createRandom().privateKey.substring(2) + SUFFIX.KEY.ETHER.PRIVATE)
         },
         fromPrivateKey(key: string | Key): KeyPair {
             return new KeyPair(key)
         },
-        fromSeed(seed: string, option?: KeyPairType): KeyPair {
-            option = option ?? "btc"
-    
+        fromSeed(seed: string): KeyPair {
             StringAssert.with(seed, MitumError.detail(ECODE.INVALID_SEED, "seed length out of range"))
                 .satisfyConfig(Config.SEED)
                 .excute()
-    
-            if (option === "btc") {
-                return new KeyPair(
-                    base58.encode(secp256k1.utils.hexToBytes(BaseKeyPair.K(seed).toString(16))) + SUFFIX.KEY.MITUM.PRIVATE
-                )
-            }
-    
             return new KeyPair(BaseKeyPair.K(seed).toString(16) + SUFFIX.KEY.ETHER.PRIVATE)
         }
     }
@@ -185,38 +146,21 @@ export class KeyPair extends BaseKeyPair {
     }
 
     protected getSigner(): Uint8Array {
-        if (this.privateKey.type === "btc") {
-            return Buffer.from(base58.decode(this.privateKey.noSuffix))
-        }
-
         return Buffer.from(this.privateKey.noSuffix, "hex");
     }
 
     protected getPub(): Key {
-        if (this.privateKey.type === "btc") {
-            return new Key(
-                base58.encode(Buffer.from(secp256k1.getPublicKey(Buffer.from(this.signer as Uint8Array), true))) + SUFFIX.KEY.MITUM.PUBLIC
-            )
-        }
-
         const publickeyBuffer = privateKeyToPublicKey(
             "0x" + this.privateKey.noSuffix
         );
-
         return new Key(compress(publickeyBuffer) + SUFFIX.KEY.ETHER.PUBLIC);
     }
 
     sign(msg: string | Buffer): Buffer {
-        if (this.privateKey.type === "btc") {
-            return this.btcSign(msg)
-        }
         return this.ethSign(msg)
     }
 
     verify(sig: string | Buffer, msg: string | Buffer): boolean {
-        if (this.privateKey.type === "btc") {
-            return this.btcVerify(sig, msg)
-        }
         return this.ethVerify(sig, msg)
     }
 }
