@@ -325,7 +325,7 @@ export class Account extends KeyG {
         seed?: string,
         weight?: string | number | Big,
     ): { wallet: AccountType, operation: Operation<TransferFact> } {
-        const kp = seed ? KeyPair.fromSeed(seed, "ether") : KeyPair.random("ether")
+        const kp = seed ? KeyPair.fromSeed(seed, "mitum") : KeyPair.random("mitum")
         const ks = new Keys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
 
         return {
@@ -420,11 +420,11 @@ export class Account extends KeyG {
      * @example
      * // Example of parameter keys
      * const pubkey01 = {
-     *     key: "02cb1d73c49d638d98092e35603414b575f3f5b5ce01162cdd80ab68ab77e50e14epu",
+     *     key: "02cb1d73c49d638d98092e35603414b575f3f5b5ce01162cdd80ab68ab77e50e14fpu",
      *     weight: 50
      * };
      * const pubkey02 = {
-     *     key: "0377241675aabafca6b1a49f3bc08a581beb0daa330a4ac2008464d63ed7635a22epu",
+     *     key: "0377241675aabafca6b1a49f3bc08a581beb0daa330a4ac2008464d63ed7635a22fpu",
      *     weight: 50
      * };
      * const keysArray = [pubkey01, pubkey02];
@@ -484,11 +484,11 @@ export class Account extends KeyG {
      * @example
      * // Example of parameter keys
      * const pubkey01 = {
-     *     key: "02a2e69d8b819e25ac4931523b62995bf3361304093dc24f15658d88e72644d853epu",
+     *     key: "02a2e69d8b819e25ac4931523b62995bf3361304093dc24f15658d88e72644d853fpu",
      *     weight: 50
      * };
      * const pubkey02 = {
-     *     key: "03410a28d1d44974f3af2b12f6d23733a17ea30e2ecfbc413055a4543b28f16f45epu",
+     *     key: "03410a28d1d44974f3af2b12f6d23733a17ea30e2ecfbc413055a4543b28f16f45fpu",
      *     weight: 50
      * };
      * const keysArray = [pubkey01, pubkey02];
@@ -625,7 +625,7 @@ export class Account extends KeyG {
         StringAssert.with(s, MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid public key"))
             .empty().not()
             .chainAnd(
-                s.endsWith(SUFFIX.KEY.ETHER.PUBLIC) && Config.KEY.ETHER.PUBLIC.satisfy(s.length),
+                s.endsWith(SUFFIX.KEY.MITUM.PUBLIC) && Config.KEY.MITUM.PUBLIC.satisfy(s.length),
                 /^[0-9a-f]+$/.test(s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)),
             )
             .excute()
@@ -678,7 +678,7 @@ export class Contract extends Generator {
         seed?: string,
         weight?: string | number | Big,
     ): { wallet: AccountType, operation: Operation<CreateContractAccountFact> } {
-        const kp = seed ? KeyPair.fromSeed(seed, "ether") : KeyPair.random("ether")
+        const kp = seed ? KeyPair.fromSeed(seed, "mitum") : KeyPair.random("mitum")
         const ks = new Keys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
 
         return {
@@ -743,11 +743,11 @@ export class Contract extends Generator {
      * @example
      * // Example of parameter keys
      * const pubkey01 = {
-     *     key: "02cb1d73c49d638d98092e35603414b575f3f5b5ce01162cdd80ab68ab77e50e14epu",
+     *     key: "02cb1d73c49d638d98092e35603414b575f3f5b5ce01162cdd80ab68ab77e50e14fpu",
      *     weight: 50
      * };
      * const pubkey02 = {
-     *     key: "0377241675aabafca6b1a49f3bc08a581beb0daa330a4ac2008464d63ed7635a22epu",
+     *     key: "0377241675aabafca6b1a49f3bc08a581beb0daa330a4ac2008464d63ed7635a22fpu",
      *     weight: 50
      * };
      * const keysArray = [pubkey01, pubkey02];

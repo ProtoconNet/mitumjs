@@ -1,7 +1,6 @@
 export default {
     KEY: "mitum-currency-key",
     KEYS: "mitum-currency-keys",
-    ETH_KEYS: "mitum-currency-keys",
     AMOUNT: "mitum-currency-amount",
     DESIGN: "mitum-currency-currency-design",
     POLICY: "mitum-currency-currency-policy",

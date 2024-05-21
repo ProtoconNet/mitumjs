@@ -23,21 +23,21 @@ export class Key implements IBuffer, IString {
         StringAssert.with(s, MitumError.detail(ECODE.INVALID_KEY, "invalid key"))
         .empty().not()
         .chainOr(
-            s.endsWith(SUFFIX.KEY.ETHER.PRIVATE),
-            s.endsWith(SUFFIX.KEY.ETHER.PUBLIC),
+            s.endsWith(SUFFIX.KEY.MITUM.PRIVATE),
+            s.endsWith(SUFFIX.KEY.MITUM.PUBLIC),
         )
         .excute()
 
-        if (s.endsWith(SUFFIX.KEY.ETHER.PRIVATE)) {
+        if (s.endsWith(SUFFIX.KEY.MITUM.PRIVATE)) {
             StringAssert.with(s, MitumError.detail(ECODE.INVALID_PRIVATE_KEY, "invalid private key"))
             .chainAnd(
-                s.endsWith(SUFFIX.KEY.ETHER.PRIVATE) && Config.KEY.ETHER.PRIVATE.satisfy(s.length),
+                s.endsWith(SUFFIX.KEY.MITUM.PRIVATE) && Config.KEY.MITUM.PRIVATE.satisfy(s.length),
                 /^[0-9a-f]+$/.test(s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)))
             .excute()
         } else {
             StringAssert.with(s, MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid public key"))
             .chainAnd(
-                s.endsWith(SUFFIX.KEY.ETHER.PUBLIC) && Config.KEY.ETHER.PUBLIC.satisfy(s.length),
+                s.endsWith(SUFFIX.KEY.MITUM.PUBLIC) && Config.KEY.MITUM.PUBLIC.satisfy(s.length),
                 /^[0-9a-f]+$/.test(s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!))
             )
             .excute()
@@ -46,8 +46,8 @@ export class Key implements IBuffer, IString {
         this.key = s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)
         this.suffix = s.substring(s.length - Config.SUFFIX.DEFAULT.value!)
 
-        this.type = "ether"
-        this.isPriv = s.endsWith(SUFFIX.KEY.ETHER.PRIVATE)
+        this.type = "mitum"
+        this.isPriv = s.endsWith(SUFFIX.KEY.MITUM.PRIVATE)
     }
 
     static from(s: string | Key) {
@@ -98,7 +98,7 @@ export class PubKey extends Key implements IHintedObject {
 }
 
 export class Keys implements IBuffer, IHintedObject {
-    private static hint = new Hint(HINT.CURRENCY.ETH_KEYS)
+    private static hint = new Hint(HINT.CURRENCY.KEYS)
     private readonly _keys: PubKey[]
     readonly threshold: Big
 
@@ -132,10 +132,6 @@ export class Keys implements IBuffer, IHintedObject {
 
     get keys(): PubKey[] {
         return this._keys
-    }
-
-    get etherAddress(): Address {
-        return new Address(keccak256(this.toBuffer()).subarray(12).toString('hex') + SUFFIX.ADDRESS.ETHER)
     }
 
     get checksum(): Address {

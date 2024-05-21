@@ -1,17 +1,12 @@
 const KEY = {
     MITUM: {
-        PRIVATE: "mpr",
-        PUBLIC: "mpu",
+        PRIVATE: "fpr",
+        PUBLIC: "fpu",
     },
-    ETHER: {
-        PRIVATE: "epr",
-        PUBLIC: "epu",
-    }
 }
 
 const ADDRESS = {
-    MITUM: "mca",
-    ETHER: "eca",
+    MITUM: "fca",
     NODE: "sas",
     ZERO: "-Xmca",
 }

@@ -128,7 +128,7 @@ export abstract class BaseKeyPair {
 export class KeyPair extends BaseKeyPair {
     static generator = {
         random(): KeyPair {
-            return new KeyPair(Wallet.createRandom().privateKey.substring(2) + SUFFIX.KEY.ETHER.PRIVATE)
+            return new KeyPair(Wallet.createRandom().privateKey.substring(2) + SUFFIX.KEY.MITUM.PRIVATE)
         },
         fromPrivateKey(key: string | Key): KeyPair {
             return new KeyPair(key)
@@ -137,7 +137,7 @@ export class KeyPair extends BaseKeyPair {
             StringAssert.with(seed, MitumError.detail(ECODE.INVALID_SEED, "seed length out of range"))
                 .satisfyConfig(Config.SEED)
                 .excute()
-            return new KeyPair(BaseKeyPair.K(seed).toString(16) + SUFFIX.KEY.ETHER.PRIVATE)
+            return new KeyPair(BaseKeyPair.K(seed).toString(16) + SUFFIX.KEY.MITUM.PRIVATE)
         }
     }
 
@@ -153,7 +153,7 @@ export class KeyPair extends BaseKeyPair {
         const publickeyBuffer = privateKeyToPublicKey(
             "0x" + this.privateKey.noSuffix
         );
-        return new Key(compress(publickeyBuffer) + SUFFIX.KEY.ETHER.PUBLIC);
+        return new Key(compress(publickeyBuffer) + SUFFIX.KEY.MITUM.PUBLIC);
     }
 
     sign(msg: string | Buffer): Buffer {

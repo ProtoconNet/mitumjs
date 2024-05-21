@@ -37,7 +37,7 @@ export class KeyG extends Generator {
      */
     key(seed?: string): Account {
         if (!seed) {
-            const kp = KeyPair.random("ether")
+            const kp = KeyPair.random("mitum")
             return {
                 privatekey: kp.privateKey.toString(),
                 publickey: kp.publicKey.toString(),
@@ -45,7 +45,7 @@ export class KeyG extends Generator {
             }
         }
 
-        const kp = KeyPair.fromSeed(seed, "ether")
+        const kp = KeyPair.fromSeed(seed, "mitum")
         return {
             privatekey: kp.privateKey.toString(),
             publickey: kp.publicKey.toString(),
@@ -64,7 +64,7 @@ export class KeyG extends Generator {
 	 * - `address`: address
      */
     keys(n: number): Array<Account> {
-        return randomN(n, "ether").keypairs.map(kp => {
+        return randomN(n, "mitum").keypairs.map(kp => {
             return <Account>{
                 privatekey: kp.privateKey.toString(),
                 publickey: kp.publicKey.toString(),
@@ -98,18 +98,18 @@ export class KeyG extends Generator {
     address(key: string | Key): string {
         const suffix = key.toString().slice(-3);
         Assert.check(
-            suffix === "epu",
+            suffix === "fpu",
             MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid pubkey format"),
         )
         return new Keys([new PubKey(key, 100)], 100).checksum.toString()
     }
 
 	/**
-	 * Returns a checksumed address for given address string. For invalid address, an error is returned.
+	 * Returns a checksummed address for given address string. For invalid address, an error is returned.
 	 * @param {string} [address] - An address.
-	 * @returns A checksumed address.
+	 * @returns A checksummed address.
      */
-    checksumedAddress(address: string) {
+    checksummedAddress(address: string) {
         try {
             const valid_address = new Address(address);
             return valid_address.toString();
@@ -129,11 +129,11 @@ export class KeyG extends Generator {
 	 * @returns The multi-signature address.
 	 * @example
 	 * const pubkey01 = {
-	 *     key: "02cb1d73c49d638d98092e35603414b575f3f5b5ce01162cdd80ab68ab77e50e14epu",
+	 *     key: "02cb1d73c49d638d98092e35603414b575f3f5b5ce01162cdd80ab68ab77e50e14fpu",
 	 *     weight: 50
 	 * };
 	 * const pubkey02 = {
-	 *     key: "0377241675aabafca6b1a49f3bc08a581beb0daa330a4ac2008464d63ed7635a22epu",
+	 *     key: "0377241675aabafca6b1a49f3bc08a581beb0daa330a4ac2008464d63ed7635a22fpu",
 	 *     weight: 50
 	 * };
 	 * const mutiSigAddress = mitum.account.addressForMultiSig([pubkey01, pubkey02], 100);

@@ -62,10 +62,6 @@ export const Config = {
 	OPERATIONS_IN_SEAL: getRangeConfig(1, 10),
 	KEY: {
 		MITUM: {
-			PRIVATE: getRangeConfig(46, 48),
-			PUBLIC: getRangeConfig(46, 48),
-		},
-		ETHER: {
 			PRIVATE: getRangeConfig(67),
 			PUBLIC: getRangeConfig(69),
 		}

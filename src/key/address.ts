@@ -17,8 +17,6 @@ abstract class BaseAddress implements IBuffer, IString {
             this.type = type
         } else if (this.s.endsWith(SUFFIX.ADDRESS.MITUM)) {
             this.type = "mitum"
-        } else if (this.s.endsWith(SUFFIX.ADDRESS.ETHER)) {
-            this.type = "ether"
         } else if (this.s.endsWith(SUFFIX.ADDRESS.NODE)) {
             this.type = "node"
         } else if (this.s.endsWith(SUFFIX.ADDRESS.ZERO)) {
@@ -37,7 +35,6 @@ abstract class BaseAddress implements IBuffer, IString {
     }
 }
 
-// temporarily only allow address with '0x' + checksumed 40 digit hex + 'mca'
 export class Address extends BaseAddress {
     constructor(s: string) {
         super(s)
