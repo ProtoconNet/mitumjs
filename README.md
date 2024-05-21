@@ -8,6 +8,16 @@
     
     The exception is when there are more than one method with the same function and the return value is singular and plural.
     
+
+Unless there is a special purpose, it is more convenient to use the [npm package](https://www.npmjs.com/package/@mitumjs/mitumjs) rather than using the source code directly.
+
+```bash
+# Both ESM and CJS are available.
+$ npm i @mitumjs/mitumjs
+$ npm i
+```
+
+
 </br> 
 
 ## **Install**
