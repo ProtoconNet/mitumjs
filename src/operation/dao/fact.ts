@@ -3,6 +3,7 @@ import { ContractFact, FactJson } from "../base"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
+import { URIString } from "../../types"
 
 export abstract class DAOFact extends ContractFact {
     readonly proposalID: string
@@ -17,6 +18,7 @@ export abstract class DAOFact extends ContractFact {
     ) {
         super(hint, token, sender, contract, currency)
         
+        new URIString(proposalID, 'proposalID');
         this.proposalID = proposalID
 
         Assert.check(

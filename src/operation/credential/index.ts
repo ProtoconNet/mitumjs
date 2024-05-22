@@ -93,9 +93,12 @@ export class Credential extends ContractGenerator {
         const keysToCheck: (keyof templateData)[] = ['templateID', 'templateName', 'serviceDate', 'expirationDate', 'templateShare', 'multiAudit', 'displayName', 'subjectKey', 'description', 'creator'];
         keysToCheck.forEach((key) => {
             const s = data[key];
-            Assert.check(s !== undefined, MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the templateData structure`))
-            s === 'templateID' ? new URIString(s, 'templateID') : null;
+            Assert.check(
+                s !== undefined, 
+                MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the templateData structure`)
+            )
         });
+        new URIString(data['templateID'], 'templateID');
 
         return new Operation(
             this.networkID,
@@ -142,9 +145,14 @@ export class Credential extends ContractGenerator {
         const keysToCheck: (keyof issueData)[] = ['holder', 'templateID', 'id', 'value', 'validFrom', 'validUntil', 'did'];
         keysToCheck.forEach((key) => {
             const s = data[key];
-            Assert.check(s !== undefined, MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the templateData structure`))
-            s === 'id' ? new URIString(s, 'id') : null;
+            Assert.check(
+                s !== undefined, 
+                MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the templateData structure`)
+            )
         });
+        new URIString(data['templateID'], 'templateID');
+        new URIString(data['id'], 'id');
+
         return new Operation(
             this.networkID,
             new AssignFact(
@@ -185,6 +193,9 @@ export class Credential extends ContractGenerator {
         id: string,
         currency: string | CurrencyID,
     ) {
+        new URIString(templateID, 'templateID');
+        new URIString(id, 'id');
+
         return new Operation(
             this.networkID,
             new RevokeFact(
@@ -247,6 +258,8 @@ export class Credential extends ContractGenerator {
         credentialID: string,
     ) {
         Address.from(contractAddr);
+        new URIString(templateID, 'templateID');
+        new URIString(credentialID, 'credentialID');
         return await getAPIData(() => contract.credential.getCredential(this.api, contractAddr, templateID, credentialID, this.delegateIP))
     }
     
@@ -272,6 +285,7 @@ export class Credential extends ContractGenerator {
         templateID: string,
     ) {
         Address.from(contractAddr);
+        new URIString(templateID, 'templateID');
         return await getAPIData(() => contract.credential.getTemplate(this.api, contractAddr, templateID, this.delegateIP))
     }
     
@@ -300,6 +314,7 @@ export class Credential extends ContractGenerator {
         templateID: string,
     ) {
         Address.from(contractAddr);
+        new URIString(templateID, 'templateID');
         return await getAPIData(() => contract.credential.getCredentials(this.api, contractAddr, templateID, this.delegateIP))
     }
     

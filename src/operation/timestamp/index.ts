@@ -105,6 +105,7 @@ export class TimeStamp extends ContractGenerator {
         tid: string | number | Big,
     ) {
         Address.from(contractAddr);
+        new URIString(projectID, 'projectID');
         return await getAPIData(() => contract.timestamp.getTimeStamp(this.api, contractAddr, projectID, tid, this.delegateIP))
     }
 }

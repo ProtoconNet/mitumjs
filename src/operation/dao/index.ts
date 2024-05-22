@@ -269,8 +269,6 @@ export class DAO extends ContractGenerator {
         proposal: CryptoProposal | BizProposal,
         currency: string | CurrencyID,
     ) {
-
-        new URIString(proposalID, 'proposalID');
         return new Operation(
             this.networkID,
             new ProposeFact(
@@ -473,6 +471,7 @@ export class DAO extends ContractGenerator {
      */
     async getProposalInfo(contractAddr: string | Address, proposalID: string) {
         Address.from(contractAddr);
+        new URIString(proposalID, 'proposalID');
         return await getAPIData(() => contract.dao.getProposal(this.api, contractAddr, proposalID,this.delegateIP))
     }
     
@@ -489,6 +488,7 @@ export class DAO extends ContractGenerator {
      */
     async getDelegatorInfo(contractAddr: string | Address, proposalID: string, delegator: string | Address) {
         Address.from(contractAddr);
+        new URIString(proposalID, 'proposalID');
         return await getAPIData(() => contract.dao.getDelegator(this.api, contractAddr, proposalID, delegator, this.delegateIP))
     }
     
@@ -504,6 +504,7 @@ export class DAO extends ContractGenerator {
      */
     async getVoterInfo(contractAddr: string | Address, proposalID: string) {
         Address.from(contractAddr);
+        new URIString(proposalID, 'proposalID');
         return await getAPIData(() => contract.dao.getVoter(this.api, contractAddr, proposalID, this.delegateIP))
     }
     
@@ -520,6 +521,7 @@ export class DAO extends ContractGenerator {
      */
     async getVotingResult(contractAddr: string | Address, proposalID: string) {
         Address.from(contractAddr);
+        new URIString(proposalID, 'proposalID');
         return await getAPIData(() => contract.dao.getVotingResult(this.api, contractAddr, proposalID, this.delegateIP))
     }
 }
