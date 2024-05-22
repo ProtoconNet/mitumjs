@@ -119,7 +119,12 @@ export class Keys implements IBuffer, IHintedObject {
             }
         )
         this.threshold = threshold instanceof Big ? threshold : new Big(threshold)
-
+        
+        const _sum = this._keys.reduce((total, key) => total + key.weight.v, 0);
+        Assert.check(
+            this.threshold.v <= _sum,
+            MitumError.detail(ECODE.INVALID_KEYS, `sum of weights under threshold, ${_sum} < ${this.threshold.v}`)
+        )
         Assert.check(
             Config.THRESHOLD.satisfy(this.threshold.v),
             MitumError.detail(ECODE.INVALID_KEYS, "threshold out of range")
