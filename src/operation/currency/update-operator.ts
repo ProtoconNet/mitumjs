@@ -25,7 +25,11 @@ export class UpdateOperatorFact extends Fact {
         this.currency = CurrencyID.from(currency)
         this.operators = operators.map(a => Address.from(a))
         this._hash = this.hashing()
-
+        
+        Assert.check(
+            (this.operators.length !== 0),
+            MitumError.detail(ECODE.INVALID_FACT, "empty operators"),
+        )
         Assert.check(
             hasOverlappingAddress(this.operators),
             MitumError.detail(ECODE.INVALID_FACT, "duplicate address found in operators"),
