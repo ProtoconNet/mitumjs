@@ -46,7 +46,7 @@ export class NFT extends ContractGenerator {
      * - {string | LongString} `name` - The name of the NFT collection.
      * - {string | LongString} `uri` - The uri of the NFT collection.
      * - {string | number | Big} `royalty` - The royalty of the NFT collection.
-     * - {(string | Address)[]} `whitelist` - Accounts who have permissions to mint.
+     * - {(string | Address)[]} `whitelist` - Accounts who have permissions to mint. If it's empty, anyone can mint.
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `create-collection` operation
      */

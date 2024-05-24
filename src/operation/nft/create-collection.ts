@@ -13,7 +13,7 @@ export class CreateCollectionFact extends ContractFact {
     readonly name: LongString
     readonly royalty: Big
     readonly uri: LongString
-    readonly whitelist: Address[]
+    readonly whitelist: Address[] 
 
     constructor(
         token: string, 
@@ -22,7 +22,7 @@ export class CreateCollectionFact extends ContractFact {
         name: string | LongString,
         royalty: string | number | Big,
         uri: string | LongString,
-        whitelist: (string | Address)[] | null,
+        whitelist: (string | Address)[],
         currency: string | CurrencyID,
     ) {
         super(HINT.NFT.CREATE_COLLECTION.FACT, token, sender, contract, currency)
