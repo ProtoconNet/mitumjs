@@ -166,6 +166,10 @@ export class NFT extends ContractGenerator {
         currency: string | CurrencyID,
         creator: string | Address,
     ) {
+        Assert.check(
+            n !== 0,
+            MitumError.detail(ECODE.INVALID_ITEMS, "n should over 0"),
+        )
         const items = Array.from({ length: n }).map(() => new MintItem(
             contractAddr,
             receiver,

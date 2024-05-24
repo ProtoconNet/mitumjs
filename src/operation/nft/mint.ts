@@ -57,10 +57,24 @@ export class MintFact extends OperationFact<MintItem> {
         super(HINT.NFT.MINT.FACT, token, sender, items)
 
         this.items.forEach(
-            it => Assert.check(
-                this.sender.toString() != it.contract.toString(),
-                MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address"),
-            )
+            it => {
+                Assert.check(
+                    this.sender.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address"),
+                )
+                Assert.check(
+                    it.receiver.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "receiver is same with contract address"),
+                )
+                it.creators.signers.forEach(
+                    signer => {
+                        Assert.check(
+                            signer.account.toString() != it.contract.toString(),
+                            MitumError.detail(ECODE.INVALID_ITEMS, "creator is same with contract address"),
+                        )
+                    }
+                )
+            }
         )
     }
 

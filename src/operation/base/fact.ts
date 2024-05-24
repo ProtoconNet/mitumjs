@@ -53,7 +53,10 @@ export abstract class OperationFact<T extends Item> extends Fact {
         super(hint, token)
         this.sender = Address.from(sender)
 
-        Assert.check(Config.ITEMS_IN_FACT.satisfy(items.length))
+        Assert.check(
+            Config.ITEMS_IN_FACT.satisfy(items.length),
+            MitumError.detail(ECODE.INVALID_ITEMS, "length of items is out of range")
+        )
   
         hint !== "mitum-nft-mint-operation-fact" ? Assert.check(
             new Set(items.map(i => i.toString())).size === items.length,
