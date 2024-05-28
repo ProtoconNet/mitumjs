@@ -55,10 +55,16 @@ export class ApproveFact extends OperationFact<ApproveItem> {
         )
 
         this.items.forEach(
-            it => Assert.check(
-                this.sender.toString() != it.contract.toString(),
-                MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address"),
-            )
+            it => {
+                Assert.check(
+                    this.sender.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address"),
+                )
+                Assert.check(
+                    it.approved.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "operator is same with contract address"),
+                )
+            }
         )
     }
 

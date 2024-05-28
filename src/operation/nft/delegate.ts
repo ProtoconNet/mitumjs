@@ -55,10 +55,20 @@ export class DelegateFact extends OperationFact<DelegateItem> {
         )
 
         this.items.forEach(
-            it => Assert.check(
-                this.sender.toString() != it.contract.toString(),
-                MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address"),
-            )
+            it => {
+                Assert.check(
+                    this.sender.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address"),
+                )
+                Assert.check(
+                    it.operator.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "operator is same with contract address"),
+                )
+                Assert.check(
+                    this.sender.toString() != it.operator.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with operator address"),
+                )
+            }
         )
     }
 
