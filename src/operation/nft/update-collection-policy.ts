@@ -3,7 +3,7 @@ import { ContractFact, FactJson } from "../base"
 import { HINT } from "../../alias"
 import { Config } from "../../node"
 import { Address } from "../../key"
-import { SortFunc } from "../../utils"
+import { SortFunc, hasOverlappingAddress } from "../../utils"
 import { CurrencyID } from "../../common"
 import { Big, LongString } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
@@ -30,6 +30,7 @@ export class UpdateCollectionPolicyFact extends ContractFact {
         this.uri = LongString.from(uri)
         this.whitelist = whitelist ? whitelist.map(w => Address.from(w)) : []
 
+
         Assert.check(
             Config.NFT.ROYALTY.satisfy(this.royalty.v), 
             MitumError.detail(ECODE.INVALID_FACT, "royalty out of range"),
@@ -40,6 +41,18 @@ export class UpdateCollectionPolicyFact extends ContractFact {
             MitumError.detail(ECODE.INVALID_FACT, "whitelist length out of range"),
         )
 
+        Assert.check(
+            hasOverlappingAddress(this.whitelist),
+            MitumError.detail(ECODE.INVALID_FACT, "duplicate address found in whitelist"),
+        )
+
+        this.whitelist.forEach(
+            account => Assert.check(
+                this.contract.toString() !== account.toString(),
+                MitumError.detail(ECODE.INVALID_FACT, "contract is same with whitelist address")
+            )
+        )
+        
         this._hash = this.hashing()
     }
 

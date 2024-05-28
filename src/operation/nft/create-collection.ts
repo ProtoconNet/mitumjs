@@ -47,8 +47,8 @@ export class CreateCollectionFact extends ContractFact {
         )
 
         this.whitelist.forEach(
-            a => Assert.check(
-                this.contract.toString() !== a.toString(),
+            account => Assert.check(
+                this.contract.toString() !== account.toString(),
                 MitumError.detail(ECODE.INVALID_FACT, "contract is same with whitelist address")
             )
         )
