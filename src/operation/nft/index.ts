@@ -139,7 +139,7 @@ export class NFT extends ContractGenerator {
             receiver,
             hash,
             uri,
-            new Signers(100, [new Signer(creator, 100, false)]),
+            new Signers([new Signer(creator, 100, false)]),
             currency,
         )]))
     }
@@ -175,7 +175,7 @@ export class NFT extends ContractGenerator {
             receiver,
             hash,
             uri,
-            new Signers(100, [new Signer(creator, 100, false)]),
+            new Signers([new Signer(creator, 100, false)]),
             currency,
         ));
         return new Operation(this.networkID, new MintFact(TimeStamp.new().UTC(), sender, items))
@@ -222,7 +222,6 @@ export class NFT extends ContractGenerator {
                         hash,
                         uri,
                         new Signers(
-                            creators.reduce((prev, next) => prev + Big.from(next.share).v, 0),
                             creators.map(a => new Signer(a.account, a.share, false)),
                         ),
                         currency,

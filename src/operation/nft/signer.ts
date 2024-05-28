@@ -45,14 +45,18 @@ export class Signer implements IBuffer, IHintedObject {
 
 export class Signers implements IBuffer, IHintedObject {
     readonly hint: Hint
-    readonly total: Big
     readonly signers: Signer[]
 
-    constructor(total: string | number | Big, signers: Signer[]) {
+    constructor(signers: Signer[]) {
         this.hint = new Hint(HINT.NFT.SIGNERS)
-        
-        this.total = Big.from(total)
         this.signers = signers
+
+        const total = this.signers.reduce((prev, next) => prev + Big.from(next.share).v, 0);
+
+        Assert.check(
+            total <= 100,
+            MitumError.detail(ECODE.NFT.INVALID_NFT_SIGNERS, `total share over max, ${total} > 100`),
+        )
 
         Assert.check(
             Config.NFT.SIGNERS_IN_SIGNERS.satisfy(this.signers.length),
@@ -62,7 +66,6 @@ export class Signers implements IBuffer, IHintedObject {
 
     toBuffer(): Buffer {
         return Buffer.concat([
-            this.total.toBuffer("fill"),
             Buffer.concat(this.signers.sort(SortFunc).map(s => s.toBuffer())),
         ])
     }
@@ -70,7 +73,6 @@ export class Signers implements IBuffer, IHintedObject {
     toHintedObject(): HintedObject {
         return {
             _hint: this.hint.toString(),
-            total: this.total.v,
             signers: this.signers.sort(SortFunc).map(s => s.toHintedObject()),
         }
     }
