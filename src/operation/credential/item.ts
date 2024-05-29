@@ -41,7 +41,7 @@ export abstract class CredentialItem extends Item {
 
         Assert.check(
             this.contract.toString() !== this.holder.toString(),
-            MitumError.detail(ECODE.INVALID_ITEM, "contract is same with holder address")
+            MitumError.detail(ECODE.INVALID_ITEM, "holder is same with contract address")
         )
     }
 

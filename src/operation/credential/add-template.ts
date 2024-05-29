@@ -49,6 +49,16 @@ export class AddTemplateFact extends ContractFact {
         this.creator = Address.from(creator)
 
         Assert.check(
+            contract.toString() !== sender.toString(),
+            MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address")
+        )
+
+        Assert.check(
+            contract.toString() !== creator.toString(),
+            MitumError.detail(ECODE.INVALID_ITEMS, "creator is same with contract address")
+        )
+
+        Assert.check(
             Config.CREDENTIAL.TEMPLATE_ID.satisfy(templateID.length),
             MitumError.detail(ECODE.INVALID_FACT, "template id length out of range"),
         )
