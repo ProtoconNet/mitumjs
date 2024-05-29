@@ -85,11 +85,10 @@ export class Point extends ContractGenerator {
     }
 
     /**
-     * Generate a `burn` operation for burning points from a target account.
+     * Generate a `burn` operation for burning points from sender account.
      * @param {string | Address} [contractAddr] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @param {string | Address} [target] - The target account's address.
      * @param {string | number | Big} [amount] - The amount to burn.
      * @returns `burn` operation
      */
@@ -97,7 +96,6 @@ export class Point extends ContractGenerator {
         contractAddr: string | Address,
         sender: string | Address,
         currency: string | CurrencyID,
-        target: string | Address,
         amount: string | number | Big,
     ) {
         return new Operation(
@@ -107,7 +105,6 @@ export class Point extends ContractGenerator {
                 sender,
                 contractAddr,
                 currency,
-                target,
                 amount,
             )
         )

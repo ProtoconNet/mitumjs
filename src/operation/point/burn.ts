@@ -16,18 +16,17 @@ export class BurnFact extends PointFact {
         sender: string | Address,
         contract: string | Address,
         currency: string | CurrencyID,
-        target: string | Address,
         amount: string | number | Big,
     ) {
         super(HINT.POINT.BURN.FACT, token, sender, contract, currency)
 
-        this.target = Address.from(target)
+        this.target = Address.from(sender)
         this.amount = Big.from(amount)
 
-        Assert.check(
-            Address.from(contract).toString() !== this.target.toString(),
-            MitumError.detail(ECODE.INVALID_FACT, "target is same with contract address")
-        )
+        // Assert.check(
+        //     Address.from(contract).toString() !== this.target.toString(),
+        //     MitumError.detail(ECODE.INVALID_FACT, "target is same with contract address")
+        // )
 
         Assert.check(
             this.amount.compare(0) > 0,
