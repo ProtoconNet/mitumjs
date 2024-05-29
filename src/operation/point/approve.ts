@@ -26,7 +26,7 @@ export class ApproveFact extends PointFact {
 
         Assert.check(
             this.contract.toString() !== this.approved.toString(),
-            MitumError.detail(ECODE.INVALID_FACT, "contract is same with approved address")
+            MitumError.detail(ECODE.INVALID_FACT, "approved is same with contract address")
         )
 
         Assert.check(

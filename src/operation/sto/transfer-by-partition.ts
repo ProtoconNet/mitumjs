@@ -36,7 +36,7 @@ export class TransferByPartitionItem extends STOItem {
 
         Assert.check(
             this.contract.toString() !== this.receiver.toString(),
-            MitumError.detail(ECODE.INVALID_ITEM, "contract is same with receiver address")
+            MitumError.detail(ECODE.INVALID_ITEM, "receiver is same with contract address")
         )
 
         Assert.check(

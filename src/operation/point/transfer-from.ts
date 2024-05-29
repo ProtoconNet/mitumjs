@@ -29,14 +29,19 @@ export class TransferFromFact extends PointFact {
 
         Assert.check(
             this.contract.toString() !== this.receiver.toString(),
-            MitumError.detail(ECODE.INVALID_FACT, "contract is same with receiver address")
+            MitumError.detail(ECODE.INVALID_FACT, "receiver is same with contract address")
         )
 
         Assert.check(
             this.contract.toString() !== this.target.toString(),
-            MitumError.detail(ECODE.INVALID_FACT, "contract is same with target address")
+            MitumError.detail(ECODE.INVALID_FACT, "target is same with contract address")
         )
 
+        Assert.check(
+            this.target.toString() !== this.receiver.toString(),
+            MitumError.detail(ECODE.INVALID_FACT, "receiver is same with target address")
+        )
+        
         Assert.check(
             this.amount.compare(0) > 0,
             MitumError.detail(ECODE.INVALID_FACT, "zero amount"),

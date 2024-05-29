@@ -26,7 +26,7 @@ export class BurnFact extends PointFact {
 
         Assert.check(
             Address.from(contract).toString() !== this.target.toString(),
-            MitumError.detail(ECODE.INVALID_FACT, "contract is same with target address")
+            MitumError.detail(ECODE.INVALID_FACT, "target is same with contract address")
         )
 
         Assert.check(
