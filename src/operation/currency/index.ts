@@ -23,9 +23,6 @@ import { Config } from "../../node"
 import { SUFFIX } from "../../alias"
 
 type currencyPolicyData = {
-    currency: string | CurrencyID
-    genesisAddress: string | Address
-    totalSupply: string | number | Big
     minBalance: string | number | Big
     feeType: "nil" | "fixed" | "ratio"
     feeReceiver: string | Address
@@ -51,20 +48,29 @@ export class Currency extends Generator {
     /**
      * Generate a `register-currency` operation for registering a new currency.
      * **Signature of nodes** is required, not a general account signature.
+     * @param {string | Address} [genesisAddress] - genesis account's address.
+     * @param {string | number | Big} [totalSupply] - total supply amount.
+     * @param {string | CurrencyID} [currency] - currency ID to resgister.
      * @param {currencyPolicyData} [data] - The currency policy data.
      * @returns `register-currency` operation.
      */
-    registerCurrency(data: currencyPolicyData) {
-        const keysToCheck: (keyof currencyPolicyData)[] = ['currency', 'genesisAddress', 'totalSupply', 'minBalance', 'feeType', 'feeReceiver'];
+    registerCurrency(
+        genesisAddress: string | Address, 
+        totalSupply: string | number | Big,
+        currency: string | CurrencyID,
+        data: currencyPolicyData
+    ) {
+        Address.from(genesisAddress);
+        const keysToCheck: (keyof currencyPolicyData)[] = ['minBalance', 'feeType', 'feeReceiver'];
         keysToCheck.forEach((key) => {
             Assert.check(data[key] !== undefined, 
-            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the createData structure`))
+            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the currencyPolicyData structure`))
         });
 
-        const amount = new Amount(data.currency, data.totalSupply)
+        const amount = new Amount(currency, totalSupply)
         const design = new CurrencyDesign(
             amount,
-            data.genesisAddress,
+            genesisAddress,
             this.buildPolicy(
                 data.feeType,
                 data.minBalance,
@@ -85,21 +91,22 @@ export class Currency extends Generator {
     /**
      * Generate an `update-currency` operation for updating an existing Mitum currency.
      * **Signature of nodes** is required, not a general account signature.
+     * @param {string | CurrencyID} [currency] - The currency ID to want to updated.
      * @param {currencyPolicyData} [data] - The currency policy data.
      * @returns `update-currency` operation.
      */
-    updateCurrency(data: currencyPolicyData) {
-        const keysToCheck: (keyof currencyPolicyData)[] = ['currency', 'genesisAddress', 'totalSupply', 'minBalance', 'feeType', 'feeReceiver'];
+    updateCurrency(currency: string | CurrencyID, data: currencyPolicyData) {
+        const keysToCheck: (keyof currencyPolicyData)[] = ['minBalance', 'feeType', 'feeReceiver'];
         keysToCheck.forEach((key) => {
             Assert.check(data[key] !== undefined, 
-            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the createData structure`))
+            MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the currencyPolicyData structure`))
         });
 
         return new Operation(
             this.networkID,
             new UpdateCurrencyFact(
                 TimeStamp.new().UTC(),
-                data.currency,
+                currency,
                 this.buildPolicy(
                     data.feeType,
                     data.minBalance,
@@ -122,6 +129,7 @@ export class Currency extends Generator {
         min?: string | number | Big,
         max?: string | number | Big,
     ): CurrencyPolicy {
+        Address.from(receiver);
         switch (feeType) {
             case "nil":
                 return new CurrencyPolicy(minBalance, new NilFeeer())
