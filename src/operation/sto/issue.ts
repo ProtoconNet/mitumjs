@@ -65,6 +65,15 @@ export class IssueFact extends OperationFact<IssueItem> {
             new Set(items.map(it => it.toString())).size === items.length,
             MitumError.detail(ECODE.INVALID_ITEMS, "duplicate contract found in items")
         )
+
+        items.forEach(
+            item => {
+                Assert.check(
+                    item.contract.toString() !== sender.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address")
+                )
+            }
+        )
     }
 
     get operationHint() {

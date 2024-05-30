@@ -31,7 +31,7 @@ export class TransferByPartitionItem extends STOItem {
 
         Assert.check(
             this.contract.toString() !== this.tokenHolder.toString(),
-            MitumError.detail(ECODE.INVALID_ITEM, "contract is same with token holder address")
+            MitumError.detail(ECODE.INVALID_ITEM, "tokenHolder is same with contract address")
         )
 
         Assert.check(
@@ -41,7 +41,7 @@ export class TransferByPartitionItem extends STOItem {
 
         Assert.check(
             this.tokenHolder.toString() !== this.receiver.toString(),
-            MitumError.detail(ECODE.INVALID_ITEM, "token holder is same with receiver address")
+            MitumError.detail(ECODE.INVALID_ITEM, "tokenHolder is same with receiver address")
         )
 
         Assert.check(
@@ -83,6 +83,15 @@ export class TransferByPartitionFact extends OperationFact<TransferByPartitionIt
         Assert.check(
             new Set(items.map(it => it.toString())).size === items.length,
             MitumError.detail(ECODE.INVALID_ITEMS, "duplicate token holder-receiver-partition found in items")
+        )
+        
+        items.forEach(
+            item => {
+                Assert.check(
+                    item.contract.toString() !== sender.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address")
+                )
+            }
         )
     }
 
