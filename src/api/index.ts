@@ -9,16 +9,16 @@ import models from "./models"
 import { SuccessResponse, ErrorResponse } from "../types"
 import { assignCodeFromErrorMessage } from "../error"
 
-const currency = models.currency
-const contract = models.contract
+const currencyApi = models.currency
+const contractApi = models.contract
 
 export {
     account,
     block,
     node,
     operation,
-    currency,
-    contract,
+    currencyApi,
+    contractApi,
 }
 
 export default {
@@ -26,8 +26,8 @@ export default {
     block,
     node,
     operation,
-    currency,
-    contract,
+    currencyApi,
+    contractApi,
 }
 
 export async function getAPIData(f: () => Promise<AxiosResponse>, _links? : boolean): Promise<SuccessResponse | ErrorResponse> {
