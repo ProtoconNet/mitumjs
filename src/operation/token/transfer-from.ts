@@ -43,6 +43,11 @@ export class TransferFromFact extends TokenFact {
         )
 
         Assert.check(
+            this.target.toString() !== this.sender.toString(),
+            MitumError.detail(ECODE.INVALID_FACT, "target is same with sender address, use 'transfer' instead")
+        )
+
+        Assert.check(
             this.amount.compare(0) > 0,
             MitumError.detail(ECODE.INVALID_FACT, "zero amount"),
         )
