@@ -9,7 +9,7 @@ import models from "./models"
 import { SuccessResponse, ErrorResponse } from "../types"
 import { assignCodeFromErrorMessage } from "../error"
 
-const currencyApi = models.currency
+const currency = models.currency
 const contractApi = models.contract
 
 export {
@@ -17,7 +17,7 @@ export {
     block,
     node,
     operation,
-    currencyApi,
+    currency,
     contractApi,
 }
 
@@ -26,7 +26,7 @@ export default {
     block,
     node,
     operation,
-    currencyApi,
+    currency,
     contractApi,
 }
 
