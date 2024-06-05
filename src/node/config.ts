@@ -90,7 +90,7 @@ export const Config = {
 	},
 	DAO: {
 		ADDRESS_IN_WHITELIST: getRangeConfig(0, 10),
-		QUORUM: getRangeConfig(0, 100),
+		QUORUM: getRangeConfig(1, 100),
 		VOTE: getRangeConfig(0, 255),
 	}
 }
