@@ -59,6 +59,11 @@ export class CreateDAOFact extends ContractFact {
         this.turnout = Big.from(turnout)
         this.quorum = Big.from(quorum)
 
+        Assert.check(0 < this.proposalReviewPeriod.big && 0 < this.registrationPeriod.big && 0 < this.preSnapshotPeriod.big 
+            && 0 < this.votingPeriod.big && 0 < this.postSnapshotPeriod.big && 0 < this.executionDelayPeriod.big, 
+            MitumError.detail(ECODE.INVALID_FACT, "period must not be set to 0 or below")
+        )
+
         Assert.check(
             Config.DAO.QUORUM.satisfy(this.turnout.v),
             MitumError.detail(ECODE.INVALID_FACT, "turnout out of range"),

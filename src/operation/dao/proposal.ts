@@ -4,6 +4,8 @@ import { HINT } from "../../alias"
 import { Address } from "../../key"
 import { Amount, Hint } from "../../common"
 import { Big, HintedObject, IBuffer, IHintedObject, LongString } from "../../types"
+import { Config } from "../../node"
+import { Assert, ECODE, MitumError } from "../../error"
 
 abstract class Calldata implements IBuffer, IHintedObject {
     private hint: Hint
@@ -144,6 +146,11 @@ export class BizProposal extends Proposal {
         this.url = LongString.from(url)
         this.hash = LongString.from(hash)
         this.options = Big.from(options)
+
+        Assert.check(
+            Config.DAO.VOTE.satisfy(Number(this.options)),
+            MitumError.detail(ECODE.INVALID_FACT, "vote option out of range"),    
+        )
     }
 
     toBuffer(): Buffer {
