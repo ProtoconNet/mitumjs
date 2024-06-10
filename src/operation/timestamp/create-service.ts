@@ -9,17 +9,16 @@ export class CreateServiceFact extends TimeStampFact {
     constructor(
         token: string, 
         sender: string | Address, 
-        target: string | Address, 
+        contract: string | Address, 
         currency: string | CurrencyID,
     ) {
-        super(HINT.TIMESTAMP.CREATE_SERVICE.FACT, token, sender, target, currency)
+        super(HINT.TIMESTAMP.CREATE_SERVICE.FACT, token, sender, contract, currency)
         this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
-            this.currency.toBuffer(),
         ])
     }
 

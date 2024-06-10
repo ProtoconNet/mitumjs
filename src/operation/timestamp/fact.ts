@@ -8,20 +8,23 @@ export abstract class TimeStampFact extends ContractFact {
         hint: string,
         token: string,
         sender: string | Address,
-        target: string | Address,
+        contract: string | Address,
         currency: string | CurrencyID,
     ) {
-        super(hint, token, sender, target, currency)
+        super(hint, token, sender, contract, currency)
         // this._hash = this.hashing()
     }
 
-    toHintedObject(): FactJson {
-        const fact = super.toHintedObject()
-        delete fact['contract']
+    toBuffer(): Buffer {
+        return Buffer.concat([
+            super.toBuffer(),
+            this.currency.toBuffer(),
+        ])
+    }
 
+    toHintedObject(): FactJson {
         return {
-            ...fact,
-            target: this.contract.toString(),
+            ...super.toHintedObject(),
         }
     }
 }
