@@ -32,8 +32,8 @@ export class RedeemItem extends STOItem {
         )
 
         Assert.check(
-            !this.amount.isZero(),
-            MitumError.detail(ECODE.INVALID_ITEM, "zero amount"),    
+            this.amount.overZero(),
+            MitumError.detail(ECODE.INVALID_ITEM, "amount must be over zero"),  
         )
     }
 

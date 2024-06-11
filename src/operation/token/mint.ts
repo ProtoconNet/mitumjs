@@ -30,8 +30,8 @@ export class MintFact extends TokenFact {
         )
 
         Assert.check(
-            this.amount.compare(0) > 0,
-            MitumError.detail(ECODE.INVALID_FACT, "zero amount"),
+            this.amount.overZero(),
+            MitumError.detail(ECODE.INVALID_FACT, "amount must be over zero"),
         )
         this._hash = this.hashing()
     }

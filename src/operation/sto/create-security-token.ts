@@ -24,8 +24,8 @@ export class CreateSecurityTokenItem extends STOItem {
         this.defaultPartition = Partition.from(defaultPartition)
 
         Assert.check(
-            !this.granularity.isZero(),
-            MitumError.detail(ECODE.INVALID_ITEM, "zero granularity"),    
+            this.granularity.overZero(),
+            MitumError.detail(ECODE.INVALID_ITEM, "granularity must be over zero"),    
         )
     }
 

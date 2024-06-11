@@ -14,7 +14,7 @@ export class Amount implements IBuffer, IHintedObject {
         this.hint = new Hint(HINT.CURRENCY.AMOUNT)
         this.currency = CurrencyID.from(currency)
         this.big = Big.from(big)
-        Assert.check(0 < this.big.big, MitumError.detail(ECODE.INVALID_AMOUNT, "zero big"))
+        Assert.check(this.big.big > 0, MitumError.detail(ECODE.INVALID_AMOUNT, "amount must be over zero"))
     }
 
     toBuffer(): Buffer {

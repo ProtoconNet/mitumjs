@@ -31,7 +31,7 @@ export class ApproveFact extends PointFact {
 
         Assert.check(
             this.amount.compare(0) >= 0,
-            MitumError.detail(ECODE.INVALID_FACT, "under zero amount"),
+            MitumError.detail(ECODE.INVALID_FACT, "amount must not be under zero"),
         )
         this._hash = this.hashing()
     }

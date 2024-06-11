@@ -86,8 +86,8 @@ export class Big implements IBuffer, IString {
 		return this.big.toString()
 	}
 
-	isZero(): boolean {
-		return this.big < 1
+	overZero(): boolean {
+		return this.big > 0
 	}
 
 	compare(n: string | number | Big) {
