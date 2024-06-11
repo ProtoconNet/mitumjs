@@ -1,14 +1,16 @@
 import { Whitelist } from "./whitelist"
 
 import { HINT } from "../../alias"
-import { CurrencyID, Hint, Amount } from "../../common"
+import { CurrencyID, Hint, Fee } from "../../common"
 import { Big, HintedObject, IBuffer, IHintedObject } from "../../types"
+import { Assert, ECODE, MitumError } from "../../error"
+import { Config } from "../../node"
 
 export class DAOPolicy implements IBuffer, IHintedObject {
     private hint: Hint
-    readonly token: CurrencyID
+    readonly votingPowerToken: CurrencyID
     readonly threshold: Big
-    readonly fee: Amount
+    readonly fee: Fee
     readonly whitelist: Whitelist
     readonly proposalReviewPeriod: Big
     readonly registrationPeriod: Big
@@ -20,9 +22,9 @@ export class DAOPolicy implements IBuffer, IHintedObject {
     readonly quorum: Big
 
     constructor(
-        token: string | CurrencyID,
+        votingPowerToken: string | CurrencyID,
         threshold: string | number | Big,
-        fee: Amount,
+        fee: Fee,
         whitelist: Whitelist,
         proposalReviewPeriod: string | number | Big,
         registrationPeriod: string | number | Big,
@@ -34,7 +36,7 @@ export class DAOPolicy implements IBuffer, IHintedObject {
         quorum: string | number | Big,
     ) {
         this.hint = new Hint(HINT.DAO.POLICY)
-        this.token = CurrencyID.from(token)
+        this.votingPowerToken = CurrencyID.from(votingPowerToken)
         this.threshold = Big.from(threshold)
         this.fee = fee,
         this.whitelist = whitelist
@@ -46,11 +48,30 @@ export class DAOPolicy implements IBuffer, IHintedObject {
         this.executionDelayPeriod = Big.from(executionDelayPeriod)
         this.turnout = Big.from(turnout)
         this.quorum = Big.from(quorum)
+
+        Assert.check(0 < this.proposalReviewPeriod.big && 0 < this.registrationPeriod.big && 0 < this.preSnapshotPeriod.big 
+            && 0 < this.votingPeriod.big && 0 < this.postSnapshotPeriod.big && 0 < this.executionDelayPeriod.big, 
+            MitumError.detail(ECODE.DAO.INVALID_POLICY, "period must not be set to 0 or below")
+        )
+
+        Assert.check(0 < this.threshold.big,
+            MitumError.detail(ECODE.DAO.INVALID_POLICY, "threhold must be over zero"),
+        )
+
+        Assert.check(
+            Config.DAO.QUORUM.satisfy(this.turnout.v),
+            MitumError.detail(ECODE.DAO.INVALID_POLICY, "turnout out of range"),
+        )
+
+        Assert.check(
+            Config.DAO.QUORUM.satisfy(this.quorum.v),
+            MitumError.detail(ECODE.DAO.INVALID_POLICY, "quorum out of range"),
+        )
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
-            this.token.toBuffer(),
+            this.votingPowerToken.toBuffer(),
             this.threshold.toBuffer(),
             this.fee.toBuffer(),
             this.whitelist.toBuffer(),
@@ -68,7 +89,7 @@ export class DAOPolicy implements IBuffer, IHintedObject {
     toHintedObject(): HintedObject {
         return {
             _hint: this.hint.toString(),
-            token: this.token.toString(),
+            voting_power_token: this.votingPowerToken.toString(),
             threshold: this.threshold.toString(),
             fee: this.fee.toHintedObject(),
             whitelist: this.whitelist.toHintedObject(),

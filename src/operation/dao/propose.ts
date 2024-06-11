@@ -22,8 +22,9 @@ export class ProposeFact extends DAOFact {
         this.proposal = proposal
  
         Assert.check(proposal.proposer.toString() === sender, 
-        MitumError.detail(ECODE.DAO.UNMATCHED_SENDER, `sender is unmatched with proposer of given proposal`))
-
+            MitumError.detail(ECODE.DAO.UNMATCHED_SENDER, `sender is unmatched with proposer of given proposal`)
+        )
+        
         this._hash = this.hashing()
     }
 

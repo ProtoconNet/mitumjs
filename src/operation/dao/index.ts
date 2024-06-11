@@ -15,7 +15,7 @@ import { TransferCalldata, GovernanceCalldata } from "./proposal"
 import { ContractGenerator, Operation } from "../base"
 
 import { Address } from "../../key"
-import { Amount, CurrencyID } from "../../common"
+import { Amount, Fee, CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp, URIString } from "../../types"
 import { UpdatePolicyFact } from "./update-policy"
@@ -88,18 +88,20 @@ export class DAO extends ContractGenerator {
                 sender,
                 contract,
                 data.option,
-                data.token,
-                data.threshold,
-                new Amount(currency, data.fee),
-                new Whitelist(true, data.proposers.map(a => Address.from(a))),
-                data.proposalReviewPeriod,
-                data.registrationPeriod,
-                data.preSnapshotPeriod,
-                data.votingPeriod,
-                data.postSnapshotPeriod,
-                data.executionDelayPeriod,
-                data.turnout,
-                data.quorum,
+                new DAOPolicy(
+                    data.token,
+                    data.threshold,
+                    new Fee(currency, data.fee),
+                    new Whitelist(true, data.proposers.map(a => Address.from(a))),
+                    data.proposalReviewPeriod,
+                    data.registrationPeriod,
+                    data.preSnapshotPeriod,
+                    data.votingPeriod,
+                    data.postSnapshotPeriod,
+                    data.executionDelayPeriod,
+                    data.turnout,
+                    data.quorum,
+                ),
                 currency,
             )
         )
@@ -144,18 +146,20 @@ export class DAO extends ContractGenerator {
                 sender,
                 contract,
                 data.option,
-                data.token,
-                data.threshold,
-                new Amount(currency, data.fee),
-                new Whitelist(true, data.proposers.map(a => Address.from(a))),
-                data.proposalReviewPeriod,
-                data.registrationPeriod,
-                data.preSnapshotPeriod,
-                data.votingPeriod,
-                data.postSnapshotPeriod,
-                data.executionDelayPeriod,
-                data.turnout,
-                data.quorum,
+                new DAOPolicy(
+                    data.token,
+                    data.threshold,
+                    new Fee(currency, data.fee),
+                    new Whitelist(true, data.proposers.map(a => Address.from(a))),
+                    data.proposalReviewPeriod,
+                    data.registrationPeriod,
+                    data.preSnapshotPeriod,
+                    data.votingPeriod,
+                    data.postSnapshotPeriod,
+                    data.executionDelayPeriod,
+                    data.turnout,
+                    data.quorum,
+                ),
                 currency,
             )
         )
@@ -209,7 +213,7 @@ export class DAO extends ContractGenerator {
             new DAOPolicy(
                 data.token,
                 data.threshold,
-                new Amount(currency, data.fee),
+                new Fee(currency, data.fee),
                 new Whitelist(true, data.proposers.map(a => Address.from(a))),
                 data.proposalReviewPeriod,
                 data.registrationPeriod,
