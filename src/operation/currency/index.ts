@@ -49,14 +49,14 @@ export class Currency extends Generator {
      * Generate a `register-currency` operation for registering a new currency.
      * **Signature of nodes** is required, not a general account signature.
      * @param {string | Address} [genesisAddress] - genesis account's address.
-     * @param {string | number | Big} [totalSupply] - total supply amount.
+     * @param {string | number | Big} [initialSupply] - initial supply amount.
      * @param {string | CurrencyID} [currency] - currency ID to resgister.
      * @param {currencyPolicyData} [data] - The currency policy data.
      * @returns `register-currency` operation.
      */
     registerCurrency(
         genesisAddress: string | Address, 
-        totalSupply: string | number | Big,
+        initialSupply: string | number | Big,
         currency: string | CurrencyID,
         data: currencyPolicyData
     ) {
@@ -67,7 +67,7 @@ export class Currency extends Generator {
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the currencyPolicyData structure`))
         });
 
-        const amount = new Amount(currency, totalSupply)
+        const amount = new Amount(currency, initialSupply)
         const design = new CurrencyDesign(
             amount,
             genesisAddress,

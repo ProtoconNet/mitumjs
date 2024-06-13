@@ -29,10 +29,10 @@ export class CurrencyDesign implements IBuffer, IHintedObject {
     toHintedObject(): HintedObject {
         return {
             _hint: CurrencyDesign.hint.toString(),
-            amount: this.amount.toHintedObject(),
+            initial_supply: this.amount.toHintedObject(),
             genesis_account: this.genesisAccount.toString(),
             policy: this.policy.toHintedObject(),
-            aggregate: this.aggregate.toString(),
+            total_supply: this.aggregate.toString(),
         }
     }
 }
@@ -57,7 +57,7 @@ export class CurrencyPolicy implements IBuffer, IHintedObject {
     toHintedObject(): HintedObject {
         return {
             _hint: CurrencyPolicy.hint.toString(),
-            new_account_min_balance: this.newAccountMinBalance.toString(),
+            min_balance: this.newAccountMinBalance.toString(),
             feeer: this.feeer.toHintedObject(),
         }
     }
