@@ -1,5 +1,5 @@
-import { CreateServiceFact } from "./create-service"
-import { AppendFact } from "./append"
+import { RegisterModelFact } from "./resgister-model"
+import { IssueFact } from "./issue"
 
 import { ContractGenerator, Operation } from "../base"
 
@@ -18,20 +18,20 @@ export class TimeStamp extends ContractGenerator {
     }
     
     /**
-     * Generate a `create-service` operation for creating new timestamp service on the contract.
+     * Generate a `register-model` operation to register new timestamp model on the contract.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `create-service` operation.
+     * @returns `register-model`` operation.
      */
-    createService(
+    registerModel(
         contract: string | Address,
         sender: string | Address,
         currency: string | CurrencyID,
     ) {
         return new Operation(
             this.networkID,
-            new CreateServiceFact(
+            new RegisterModelFact(
                 TS.new().UTC(),
                 sender,
                 contract,
@@ -41,16 +41,16 @@ export class TimeStamp extends ContractGenerator {
     }
     
     /**
-     * Generate `append` operation for appending new timestamp to the project on the timestamp service.
+     * Generate `issue` operation to issue new timestamp to the project on the timestamp model.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
-     * @param {string} [projectID] - The ID of the project to which data is appended.
+     * @param {string} [projectID] - The ID of the project to issue.
      * @param {string | number | Big} [requestTimeStamp] - Value of the timestamp to record.
      * @param {string} [data] - The data to be appended.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `append` operation
+     * @returns `issue` operation
      */
-    append(
+    issue(
         contract: string | Address,
         sender: string | Address,
         projectID: string,
@@ -59,7 +59,7 @@ export class TimeStamp extends ContractGenerator {
         currency: string | CurrencyID,
     ) {
         new URIString(projectID, 'projectID');
-        const fact = new AppendFact(
+        const fact = new IssueFact(
             TS.new().UTC(),
             sender,
             contract,
