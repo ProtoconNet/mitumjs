@@ -8,7 +8,7 @@ import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
 import { Big, HintedObject } from "../../types"
 
-export class AssignItem extends CredentialItem {
+export class IssueItem extends CredentialItem {
     readonly value: string
     readonly validFrom: Big
     readonly validUntil: Big
@@ -18,14 +18,14 @@ export class AssignItem extends CredentialItem {
         contract: string | Address, 
         holder: string | Address, 
         templateID: string,
-        id: string,
+        credentialID: string,
         value: string,
         validFrom: string | number | Big,
         validUntil: string | number | Big,
         did: string,
         currency: string | CurrencyID,
     ) {
-        super(HINT.CREDENTIAL.ASSIGN.ITEM, contract, holder, templateID, id, currency)
+        super(HINT.CREDENTIAL.ISSUE.ITEM, contract, holder, templateID, credentialID, currency)
 
         this.value = value
         this.validFrom = Big.from(validFrom)
@@ -65,13 +65,13 @@ export class AssignItem extends CredentialItem {
     }
 
     toString(): string {
-        return `${super.toString()}-${this.id}`
+        return `${super.toString()}-${this.credentialID}`
     }
 }
 
-export class AssignFact extends OperationFact<AssignItem> {
-    constructor(token: string, sender: string | Address, items: AssignItem[]) {
-        super(HINT.CREDENTIAL.ASSIGN.FACT, token, sender, items)
+export class IssueFact extends OperationFact<IssueItem> {
+    constructor(token: string, sender: string | Address, items: IssueItem[]) {
+        super(HINT.CREDENTIAL.ISSUE.FACT, token, sender, items)
 
         Assert.check(
             new Set(items.map(it => it.toString())).size === items.length,
@@ -89,6 +89,6 @@ export class AssignFact extends OperationFact<AssignItem> {
     }
 
     get operationHint() {
-        return HINT.CREDENTIAL.ASSIGN.OPERATION
+        return HINT.CREDENTIAL.ISSUE.OPERATION
     }
 }

@@ -1,6 +1,6 @@
-import { CreateServiceFact } from "./create-service"
+import { RegisterModelFact } from "./register-model"
 import { AddTemplateFact } from "./add-template"
-import { AssignItem, AssignFact } from "./assign"
+import { IssueItem, IssueFact } from "./issue"
 import { RevokeItem, RevokeFact } from "./revoke"
 
 import { ContractGenerator, Operation } from "../base"
@@ -27,7 +27,7 @@ type templateData = {
 type issueData = {
     holder: string | Address,
     templateID: string,
-    id: string,
+    credentialID: string,
     value: string,
     validFrom: string | number | Big,
     validUntil: string | number | Big,
@@ -44,20 +44,20 @@ export class Credential extends ContractGenerator {
     }
     
     /**
-     * Generate a `create-service` operation for creating new credential service on the contract.
+     * Generate a `register-model` operation to register new credential model on the contract.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `create-service` operation.
+     * @returns `register-model` operation.
      */
-    createService(
+    registerModel(
         contract: string | Address,
         sender: string | Address,
         currency: string | CurrencyID,
     ) {
         return new Operation(
             this.networkID,
-            new CreateServiceFact(
+            new RegisterModelFact(
                 TimeStamp.new().UTC(),
                 sender,
                 contract,
@@ -122,19 +122,19 @@ export class Credential extends ContractGenerator {
     }
     
     /**
-     * Generate an `assign` operation for issue credential to holder.
+     * Generate an `issue` operation for issue credential to holder.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {issueData} [data] - The data required for issuing the credential. The properties of `issueData` include:
      * - {string | Address} `holder` - The address of the credential holder.
      * - {string} `templateID` - The ID of the template.
-     * - {string} `id` - The ID of the credential.
+     * - {string} `credentialID` - The ID of the credential.
      * - {string} `value` - The value of the credential.
      * - {string | number | Big} `validFrom` - The timestamp for validFrom.
      * - {string | number | Big} `validUntil` - The timestamp for validUntil.
      * - {string} `did` - The Decentralized Identifier (DID) associated with the credential.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `assign` operation.
+     * @returns `issue` operation.
      */
     issue(
         contract: string | Address,
@@ -142,7 +142,7 @@ export class Credential extends ContractGenerator {
         data: issueData,
         currency: string | CurrencyID,
     ) {
-        const keysToCheck: (keyof issueData)[] = ['holder', 'templateID', 'id', 'value', 'validFrom', 'validUntil', 'did'];
+        const keysToCheck: (keyof issueData)[] = ['holder', 'templateID', 'credentialID', 'value', 'validFrom', 'validUntil', 'did'];
         keysToCheck.forEach((key) => {
             const s = data[key];
             Assert.check(
@@ -151,19 +151,19 @@ export class Credential extends ContractGenerator {
             )
         });
         new URIString(data['templateID'], 'templateID');
-        new URIString(data['id'], 'id');
+        new URIString(data['credentialID'], 'credentialID');
 
         return new Operation(
             this.networkID,
-            new AssignFact(
+            new IssueFact(
                 TimeStamp.new().UTC(),
                 sender,
                 [
-                    new AssignItem(
+                    new IssueItem(
                         contract,
                         data.holder,
                         data.templateID,
-                        data.id,
+                        data.credentialID,
                         data.value,
                         data.validFrom,
                         data.validUntil,
@@ -181,7 +181,7 @@ export class Credential extends ContractGenerator {
      * @param {string | Address} sender - The sender's address.
      * @param {string | Address} holder - The holder's address of the credential to be revoked.
      * @param {string} templateID - The ID of the template associated with the credential.
-     * @param {string} id - The ID of the credential to be revoked.
+     * @param {string} credentialID - The ID of the credential to be revoked.
      * @param {string | CurrencyID} currency - The currency ID.
      * @returns `revoke` operation.
      */
@@ -190,11 +190,11 @@ export class Credential extends ContractGenerator {
         sender: string | Address,
         holder: string | Address,
         templateID: string,
-        id: string,
+        credentialID: string,
         currency: string | CurrencyID,
     ) {
         new URIString(templateID, 'templateID');
-        new URIString(id, 'id');
+        new URIString(credentialID, 'credentialID');
 
         return new Operation(
             this.networkID,
@@ -206,7 +206,7 @@ export class Credential extends ContractGenerator {
                         contract,
                         holder,
                         templateID,
-                        id,
+                        credentialID,
                         currency,
                     )
                 ]

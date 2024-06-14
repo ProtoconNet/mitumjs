@@ -10,7 +10,7 @@ export abstract class CredentialItem extends Item {
     readonly contract: Address
     readonly holder: Address
     readonly templateID: string
-    readonly id: string
+    readonly credentialID: string
     readonly currency: CurrencyID
 
     protected constructor(
@@ -18,7 +18,7 @@ export abstract class CredentialItem extends Item {
         contract: string | Address, 
         holder: string | Address,
         templateID: string, 
-        id: string,
+        credentialID: string,
         currency: string | CurrencyID,
     ) {
         super(hint)
@@ -26,7 +26,7 @@ export abstract class CredentialItem extends Item {
         this.contract = Address.from(contract)
         this.holder = Address.from(holder)
         this.templateID = templateID
-        this.id = id
+        this.credentialID = credentialID
         this.currency = CurrencyID.from(currency)
 
         Assert.check(
@@ -35,7 +35,7 @@ export abstract class CredentialItem extends Item {
         )
 
         Assert.check(
-            Config.CREDENTIAL.ID.satisfy(id.length),
+            Config.CREDENTIAL.ID.satisfy(credentialID.length),
             MitumError.detail(ECODE.INVALID_ITEM, "credential id length out of range"),
         )
 
@@ -50,7 +50,7 @@ export abstract class CredentialItem extends Item {
             this.contract.toBuffer(),
             this.holder.toBuffer(),
             Buffer.from(this.templateID),
-            Buffer.from(this.id),
+            Buffer.from(this.credentialID),
         ])
     }
 
@@ -60,7 +60,7 @@ export abstract class CredentialItem extends Item {
             contract: this.contract.toString(),
             holder: this.holder.toString(),
             template_id: this.templateID,
-            id: this.id,
+            credential_id: this.credentialID,
             currency: this.currency.toString(),
         }
     }

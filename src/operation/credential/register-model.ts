@@ -3,14 +3,14 @@ import { Address } from "../../key"
 import { ContractFact } from "../base"
 import { CurrencyID } from "../../common"
 
-export class CreateServiceFact extends ContractFact {
+export class RegisterModelFact extends ContractFact {
     constructor(
         token: string, 
         sender: string | Address, 
         contract: string | Address, 
         currency: string | CurrencyID,
     ) {
-        super(HINT.CREDENTIAL.CREATE_SERVICE.FACT, token, sender, contract, currency)
+        super(HINT.CREDENTIAL.REGISTER_MODEL.FACT, token, sender, contract, currency)
         this._hash = this.hashing()
     }
 
@@ -22,6 +22,6 @@ export class CreateServiceFact extends ContractFact {
     }
 
     get operationHint() {
-        return HINT.CREDENTIAL.CREATE_SERVICE.OPERATION
+        return HINT.CREDENTIAL.REGISTER_MODEL.OPERATION
     }
 }

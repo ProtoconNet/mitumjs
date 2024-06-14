@@ -11,10 +11,10 @@ export class RevokeItem extends CredentialItem {
         contract: string | Address, 
         holder: string | Address, 
         templateID: string,
-        id: string,
+        credentialID: string,
         currency: string | CurrencyID,
     ) {
-        super(HINT.CREDENTIAL.REVOKE.ITEM, contract, holder, templateID, id, currency)
+        super(HINT.CREDENTIAL.REVOKE.ITEM, contract, holder, templateID, credentialID, currency)
     }
 
     toBuffer(): Buffer {
@@ -25,7 +25,7 @@ export class RevokeItem extends CredentialItem {
     }
 
     toString(): string {
-        return `${super.toString()}-${this.id}`
+        return `${super.toString()}-${this.credentialID}`
     }
 }
 
