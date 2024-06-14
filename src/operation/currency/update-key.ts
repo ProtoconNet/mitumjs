@@ -5,13 +5,13 @@ import { CurrencyID } from "../../common"
 import { Address, Keys } from "../../key"
 
 export class UpdateKeyFact extends Fact {
-    readonly target: Address
+    readonly sender: Address
     readonly keys: Keys
     readonly currency: CurrencyID
 
-    constructor(token: string, target: string | Address, keys: Keys, currency: string | CurrencyID) {
+    constructor(token: string, sender: string | Address, keys: Keys, currency: string | CurrencyID) {
         super(HINT.CURRENCY.UPDATE_KEY.FACT, token)
-        this.target = Address.from(target)
+        this.sender = Address.from(sender)
         this.keys = keys
         this.currency = CurrencyID.from(currency)
         this._hash = this.hashing()
@@ -20,7 +20,7 @@ export class UpdateKeyFact extends Fact {
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
-            this.target.toBuffer(),
+            this.sender.toBuffer(),
             this.keys.toBuffer(),
             this.currency.toBuffer(),
         ])
@@ -29,7 +29,7 @@ export class UpdateKeyFact extends Fact {
     toHintedObject(): FactJson {
         return {
             ...super.toHintedObject(),
-            target: this.target.toString(),
+            sender: this.sender.toString(),
             keys: this.keys.toHintedObject(),
             currency: this.currency.toString(),
         }
