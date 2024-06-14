@@ -3,7 +3,7 @@ import { UpdateKeyFact } from "./update-key"
 import { TransferItem, TransferFact } from "./transfer"
 import { CreateContractAccountItem, CreateContractAccountFact } from "./create-contract-account"
 import { WithdrawItem, WithdrawFact } from "./withdraw"
-import { UpdateOperatorFact } from "./update-operator"
+import { UpdateHandlerFact } from "./update-handler"
 import { RegisterCurrencyFact } from "./register-currency"
 import { UpdateCurrencyFact } from "./update-currency"
 import { MintItem, MintFact } from "./mint"
@@ -465,27 +465,8 @@ export class Account extends KeyG {
     }
 
     /**
-     * @deprecated This function is deprecated, use updateMultiSig instead.
-     */
-    update(
-        target: string | Address,
-        newKey: string | Key | PubKey,
-        currency: string | CurrencyID,
-    ) {
-        return new Operation(
-            this.networkID,
-            new UpdateKeyFact(
-                TimeStamp.new().UTC(),
-                target,
-                new Keys([new PubKey(newKey, 100)], 100),
-                currency,
-            ),
-        )
-    }
-
-    /**
      * Generate an `update-key` operation for replace the public keys involved in given address.
-     * @param {string | Address} [target] - The target account's address.
+     * @param {string | Address} [sender] - The target account's address.
      * @param {keysType} [newKeys] - An array of object {`key`: publickey, `weight`: weight for the key}
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `update-key` operation.
@@ -502,7 +483,7 @@ export class Account extends KeyG {
      * const keysArray = [pubkey01, pubkey02];
      */
     updateMultiSig(
-        target: string | Address,
+        sender: string | Address,
         newKeys: keysType,
         currency: string | CurrencyID,
         threshold: string | number | Big,
@@ -511,7 +492,7 @@ export class Account extends KeyG {
             this.networkID,
             new UpdateKeyFact(
                 TimeStamp.new().UTC(),
-                target,
+                sender,
                 new Keys(
                     newKeys.map(k =>
                         k instanceof PubKey ? k : new PubKey(k.key, k.weight)
@@ -812,27 +793,27 @@ export class Contract extends Generator {
     }
 
     /**
-     * Generate an `update-operator` operation to update operator of contract to given operators.
+     * Generate an `update-handler` operation to update handlers of contract to given accounts.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | Address} [contract] - The contract account address.
      * @param {string | CurrencyID} [currency] - The currency ID. 
-     * @param {(string | Address)[]} [operators] - The array of addresses to be updated as operators.
-     * @returns `update-operator` operation.
+     * @param {(string | Address)[]} [handlers] - The array of addresses to be updated as handlers.
+     * @returns `update-handler` operation.
      */
-    updateOperator(
+    updateHandler(
         sender: string | Address,
         contract: string | Address,
         currency: string | CurrencyID,
-        operators: (string | Address)[],
+        handlers: (string | Address)[],
     ) {
         return new Operation(
             this.networkID,
-            new UpdateOperatorFact(
+            new UpdateHandlerFact(
                 TimeStamp.new().UTC(),
                 sender,
                 contract,
                 currency,
-                operators,
+                handlers,
             )
         );
     }
