@@ -75,6 +75,11 @@ export class PubKey extends Key implements IHintedObject {
         super(typeof key === "string" ? key : key.toString())
         this.weight = Big.from(weight)
 
+        const s = key.toString();
+        StringAssert.with(s, MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid public key"))
+            .chainAnd(s.endsWith(SUFFIX.KEY.MITUM.PUBLIC))
+            .excute();
+
         Assert.check(
             Config.WEIGHT.satisfy(this.weight.v),
             MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "weight out of range")
