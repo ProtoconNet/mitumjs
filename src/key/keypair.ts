@@ -53,6 +53,9 @@ export abstract class BaseKeyPair {
     }
 
     static fromPrivateKey<T extends BaseKeyPair>(key: string | Key): T {
+        const s = key.toString();
+        StringAssert.with(s, MitumError.detail(ECODE.INVALID_PRIVATE_KEY, "invalid private key"))
+        .chainAnd(s.endsWith(SUFFIX.KEY.MITUM.PRIVATE)).excute()
         return this.generator.fromPrivateKey(key) as T
     }
 
