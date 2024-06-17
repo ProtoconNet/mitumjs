@@ -49,7 +49,7 @@ export async function getAPIData(f: () => Promise<AxiosResponse>, _links? : bool
                 status: response.status,
                 method: response.config.method,
                 url: response.config.url,
-                error_code: response.data ? assignCodeFromErrorMessage(response.data) : {pcode:[], dcode:[]},
+                error_code: response.data ? assignCodeFromErrorMessage(response.data) : "",
                 request_body: response.config.data,
                 error_message: response.data,
             };
@@ -59,7 +59,7 @@ export async function getAPIData(f: () => Promise<AxiosResponse>, _links? : bool
                 status: 500,
                 method: error.config.method,
                 url: error.config.url,
-                error_code: {pcode:[], dcode:[]},
+                error_code: "",
                 request_body: error.config.data,
                 error_message: error.code,
             };

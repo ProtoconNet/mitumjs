@@ -12,22 +12,17 @@ export interface IString {
 	toString(): string
 }
 
-export type error_code = {
-    pcode: string[]
-    dcode: string[]
-}
-
 export interface ErrorResponse {
     // status: 400,
     // method: 'post',
     // url: 'http://121.134.233.47:24321/builder/send',
-    // error_code: { pcode: ['P01'], dcode: ['D101']},
+    // error_code: 'P06D502',
     // request_body: '{"_hint":"mitum-currency-transfer-operation-v0.0.1","fact":{....}}'
-    // error_message: 'handle new operation invalid signing :  check threshold unknown key found, 26vyVJFoLZqVPmP8UADoNCsEyJYD4498vdy7uoiHgFKRUmpu'
+    // error_message: 'handle new operation PreProcess: Account not found: sender account, ...'
     status?: number;
     method: string | undefined;
     url: string | undefined;
-    error_code: error_code;
+    error_code: string;
     request_body: string | undefined;
     error_message: string;
 }

@@ -1,5 +1,3 @@
-import { error_code } from '../types'
-
 // ECODE: MitumJS Inner Proccess Error code
 export type ErrorCode = (
     typeof ECODE[keyof typeof ECODE]
@@ -83,19 +81,19 @@ export const PCODE = {
     AMBIGUOUS: {
         code: "P0A",
         keyword: [""],
-        description: "AMBIGUOUS",
+        description: "Ambiguous error",
         subject: "",
     },
     MITUM_CORE: {
         code: "P0M",
         keyword: [""],
-        description: "MITUM CORE",
+        description: "Error from Mitum core",
         subject: "",
     },
     UNDEFINED: {
         code: "P00",
         keyword: [""],
-        description: "UNDEFINED",
+        description: "Undefined error",
         subject: "",
     },
     IV_BASE_OP:{
@@ -153,227 +151,143 @@ export const DCODE = {
     AMBIGUOUS: {
         code: "D00A",
         keyword: [""],
-        description: "AMBIGUOUS",
+        description: "Ambiguous error",
         subject: "",
     },
     COMPLEX: {
         code: "D00C",
         keyword: [""],
-        description: "COMPLEX",
+        description: "Complex error with multiple DCODE",
         subject: "",
     },
     OP_DEP: {
         code: "D00D",
         keyword: [""],
-        description: "Operation dependent",
+        description: "Operation dependent error",
         subject: "",
     },
     UNDEFINED: {
         code: "D000",
         keyword: [""],
-        description: "UNDEFINED",
+        description: "Undefined error",
         subject: ""
     },
-    // data validation
+    // Related to data validation
     EMPTY: {
         code: "D101",
-        keyword: ["Operation has empty token"],
-        description: "EMPTY or NULL data",
+        keyword: [""],
+        description: "Empty or null data",
         subject: ""
     },
-    IV_LENGTH: {
+    IV_LEN: {
         code: "D102",
         keyword: ["Array length"],
-        description: "length of array",
+        description: "The provided array exceeds the allowed length.",
         subject: ""
     },
     IV_RANGE: {
         code: "D103",
-        keyword: ["Value out of range", "Operation token size too large"],
-        description: "Out of range",
+        keyword: ["Value out of range"],
+        description: "The variable exceeds the allowed range.",
         subject: ""
     },
-    IV_TYPE: {
+    IV_VAL: {
         code: "D104",
-        keyword: ["Type mismatch", "Invalid account type", "Invalid value"],
-        description: "Invalid type",
+        keyword: ["Invalid value"],
+        description: "Invalid string, Insufficient balance, Invalid state change etc.",
         subject: ""
     },
-    DUPLICATED_VAL: {
+    IV_DUP: {
         code: "D105",
         keyword: ["Duplicated value"],
-        description: "Duplicated value",
+        description: "The item contains duplicate values.",
         subject: ""
     },
-    D106: {
+    SELF_TARGET: {
         code: "D106",
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    IV_CHAR: {
-        code: "D107",
-        keyword: [""],
-        description: "Special characters",
-        subject: ""
-    },
-    DECODE_FACT: {
-        code: "D108",
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    DECODE_ITEM: {
-        code: "D109",
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    DECODE_OP: {
-        code: "D110",
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    UNMARSHAL_ITEM: {
-        code: "D111",
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    UNMARSHAL_FACT: {
-        code: "D112",
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    SELF_TARGETED: {
-        code: "D113",
         keyword: ["Self targeted"],
-        description: "",
+        description: "Duplicate account addresses provided in an invalid manner. (sender=receiver, sender=contract, etc.)",
         subject: ""
     },
-    D114: {
-        code: "D114",
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    D115: {
-        code: "D115",
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    D116: {
-        code: "D116",
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    D117: {
-        code: "D117",
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    // signature related
+    // Related to signature
     IV_SIGN: {
         code: "D201",
         keyword: ["Invalid signing"],
-        description: "",
+        description: "The private key does not match the address or node sign required or the signatures for the multiSig account do not meet the threshold",
         subject: ""
     },
-    D202: {
-        code: "D202",
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    LACK_OF_SIGN: {
-        code: "D203",
-        keyword: ["Not enough signs"],
-        description: "",
-        subject: ""
-    },
-    D204: {
-        code: "D204",
-        keyword: [""],
-        description: "",
-        subject: ""
-    },
-    // authorization related
-    UNAUTHORIZED_AC: {
+    // Related to authorization
+    NO_AUTH: {
         code: "D301",
         keyword: ["Account not authorized"],
-        description: "sender is not owner neither operator of the contract",
+        description: "The sender account does not have permission to execute the operation.",
         subject: ""
     },
-    NOT_IN_WHITELIST: {
+    CA_DISALLOW: {
         code: "D302",
-        keyword: [""],
-        description: "account not in the whitelist",
+        keyword: ["Contract account not allowed"],
+        description: "A contract account cannot be used as sender, receiver etc.",
         subject: ""
     },
-    // insufficient balance
-    D401: {
+    // Insufficient balance
+    INSUFF_BAL: {
         code: "D401",
         keyword: [""],
-        description: "",
+        description: "Insufficient token or point balance.",
         subject: ""
     },
-    // state related
-    STATE_NOT_FOUND: {
+    // Related to state
+    NF_CUR: {
         code: "D501",
-        keyword: ["Account not found", "Currency not found", "Contract account not found", "Service not found"],
-        description: "",
+        keyword: ["Currency not found"],
+        description: "The currency cannot be found on the blockchain.",
         subject: ""
     },
-    D502: {
+    NF_ACC: {
         code: "D502",
-        keyword: [""],
-        description: "",
+        keyword: ["Account not found", "Contract account not found"],
+        description: "The account or contract account cannot be found on the blockchain.",
         subject: ""
     },
-    STATE_EXIST: {
+    NF_SERVICE: {
         code: "D503",
-        keyword: ["Account exist", "Contract account exist", "Currency exist", "State exist"],
-        description: "",
+        keyword: ["Service not found"],
+        description: "The service cannot be found in the given contract.",
         subject: ""
     },
-    D504: {
+    NF_STATE: {
         code: "D504",
-        keyword: [""],
-        description: "",
+        keyword: ["State not found"],
+        description: "The state cannot be found on the blockchain.",
         subject: ""
     },
-    IV_STATE_VAL: {
+    EXIST_CUR: {
         code: "D505",
-        keyword: ["Invalid state value"],
-        description: "",
+        keyword: ["Currency exist"],
+        description: "The currency already exists on the blockchain.",
         subject: ""
     },
-    CONTRACT_ACCOUNT: {
+    EXIST_ACC: {
         code: "D506",
-        keyword: ["Contract account not allowed"],  
-        description: "",
+        keyword: ["Account exist", "Contract account exist"],  
+        description: "The account or contract account already exists on the blockchain.",
         subject: ""
     },
-    D507: {
+    EXIST_SERVICE: {
         code: "D507",
-        keyword: [""],
-        description: "",
+        keyword: ["Service exist"],
+        description: "The contract already contains the service.",
         subject: ""
     },
-    D508: {
+    EXSIT_STATE: {
         code: "D508",
-        keyword: [""],
-        description: "",
+        keyword: ["State exist"],
+        description: "The state already exists on the blockchain.",
         subject: ""
     },
 } as const
 
-export const assignCodeFromErrorMessage = (errorMessage: string): error_code => {
+export const assignCodeFromErrorMessage = (errorMessage: string): string => {
     const pcodeArr : string[] = [];
     const dcodeArr : string[] = [];
 
@@ -389,11 +303,25 @@ export const assignCodeFromErrorMessage = (errorMessage: string): error_code => 
                 if (errorMessage.includes(keyword)) {
                     dcodeArr.push(obj.code);
                 }
+                if (obj.code === "D302") {
+                    break;
+                }
             }
+        }
+        if (obj.code === "D302") {
+            break;
         }
     }
 
-    return {pcode: pcodeArr, dcode: dcodeArr}
+    pcodeArr.length === 0 ?? pcodeArr.push(PCODE.UNDEFINED.code);
+
+    if (dcodeArr.length > 1) {
+        return pcodeArr.slice(-1) + DCODE.COMPLEX.code
+    } else if (dcodeArr.length == 1) {
+        return pcodeArr.slice(-1) + dcodeArr[0]
+    } else {
+        return pcodeArr.slice(-1) + DCODE.UNDEFINED.code
+    }
 }
 
 Object.keys(PCODE)
