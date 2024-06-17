@@ -38,7 +38,7 @@ abstract class BaseAddress implements IBuffer, IString {
 export class Address extends BaseAddress {
     constructor(s: string) {
         super(s)
-        StringAssert.with(s, MitumError.detail(ECODE.INVALID_ADDRESS_TYPE, "The address must be starting with '0x' and ending with 'mca'"))
+        StringAssert.with(s, MitumError.detail(ECODE.INVALID_ADDRESS_TYPE, `The address must be starting with '0x' and ending with '${SUFFIX.ADDRESS.MITUM}'`))
             .startsWith('0x')
             .endsWith(SUFFIX.ADDRESS.MITUM)
             .excute()
