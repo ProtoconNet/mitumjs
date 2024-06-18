@@ -49,7 +49,7 @@ export async function getAPIData(f: () => Promise<AxiosResponse>, _links? : bool
                 status: response.status,
                 method: response.config.method,
                 url: response.config.url,
-                error_code: response.data ? assignCodeFromErrorMessage(response.data) : "",
+                error_code: response.config.method === 'get' ? '' : response.data ? assignCodeFromErrorMessage(response.data) : '',
                 request_body: response.config.data,
                 error_message: response.data,
             };
