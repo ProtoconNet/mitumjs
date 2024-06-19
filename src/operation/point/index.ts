@@ -1,4 +1,4 @@
-import { RegisterPointFact } from "./register-point"
+import { RegisterModelFact } from "./register-model"
 import { MintFact } from "./mint"
 import { BurnFact } from "./burn"
 import { TransferFact } from "./transfer"
@@ -24,16 +24,16 @@ export class Point extends ContractGenerator {
     }
 
     /**
-     * Generate a `register-point` operation for registering a point on a contract.
+     * Generate a `register-model` operation to register new point model on a contract.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @param {string | LongString} [name] - The name of the point to register.
      * @param {string | CurrencyID} [symbol] - The symbol of the point to register.
      * @param {string | number | Big} [initialSupply] - (Optional) The initial supply of the point to register. If not provided, the default value is 0.
-     * @returns `register-point` operation.
+     * @returns `register-model` operation.
      */
-    registerPoint(
+    registerModel(
         contract: string | Address,
         sender: string | Address,
         currency: string | CurrencyID,
@@ -43,7 +43,7 @@ export class Point extends ContractGenerator {
     ) {
         return new Operation(
             this.networkID,
-            new RegisterPointFact(
+            new RegisterModelFact(
                 TimeStamp.new().UTC(),
                 sender,
                 contract,

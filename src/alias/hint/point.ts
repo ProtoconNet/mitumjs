@@ -1,7 +1,7 @@
 export default {
-    REGISTER_POINT: {
-        FACT: "mitum-point-register-point-operation-fact",
-        OPERATION: "mitum-point-register-point-operation",
+    REGISTER_MODEL: {
+        FACT: "mitum-point-register-model-operation-fact",
+        OPERATION: "mitum-point-register-model-operation",
     },
     MINT: {
         FACT: "mitum-point-mint-operation-fact",

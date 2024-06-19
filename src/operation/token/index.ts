@@ -1,4 +1,4 @@
-import { RegisterTokenFact } from "./register-token"
+import { RegisterModelFact } from "./register-model"
 import { MintFact } from "./mint"
 import { BurnFact } from "./burn"
 import { TransferFact } from "./transfer"
@@ -24,16 +24,16 @@ export class Token extends ContractGenerator {
     }
 
     /**
-     * Generate a `register-token` operation for registering a token on a contract.
+     * Generate a `register-model` operation to register new token model on a contract.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @param {string | LongString} [name] - The name of the token to register.
      * @param {string | CurrencyID} [symbol] - The symbol of the token to register.
      * @param {string | number | Big} [initialSupply] - (Optional) The initial supply of the token to register. If not provided, the default value is 0.
-     * @returns `register-token` operation.
+     * @returns `register-model` operation.
      */
-    registerToken(
+    registerModel(
         contract: string | Address,
         sender: string | Address,
         currency: string | CurrencyID,
@@ -43,7 +43,7 @@ export class Token extends ContractGenerator {
     ) {
         return new Operation(
             this.networkID,
-            new RegisterTokenFact(
+            new RegisterModelFact(
                 TimeStamp.new().UTC(),
                 sender,
                 contract,

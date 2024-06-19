@@ -1,4 +1,4 @@
-import { PointFact } from "./fact"
+import { TokenFact } from "./fact"
 import { FactJson } from "../base"
 import { HINT } from "../../alias"
 import { Address } from "../../key"
@@ -6,7 +6,7 @@ import { CurrencyID } from "../../common"
 import { Big, LongString } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
-export class RegisterPointFact extends PointFact {
+export class RegisterModelFact extends TokenFact {
     readonly symbol: CurrencyID
     readonly name: LongString
     readonly initialSupply: Big
@@ -20,7 +20,7 @@ export class RegisterPointFact extends PointFact {
         name: string | LongString,
         initialSupply: string | number | Big,
     ) {
-        super(HINT.POINT.REGISTER_POINT.FACT, token, sender, contract, currency)
+        super(HINT.TOKEN.REGISTER_MODEL.FACT, token, sender, contract, currency)
         this.symbol = CurrencyID.from(symbol)
         this.name = LongString.from(name)
         this.initialSupply = Big.from(initialSupply)
@@ -51,6 +51,6 @@ export class RegisterPointFact extends PointFact {
     }
 
     get operationHint() {
-        return HINT.POINT.REGISTER_POINT.OPERATION
+        return HINT.TOKEN.REGISTER_MODEL.OPERATION
     }
 }

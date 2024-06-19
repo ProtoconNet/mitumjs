@@ -1,7 +1,7 @@
 export default {
-    REGISTER_TOKEN: {
-        FACT: "mitum-token-register-token-operation-fact",
-        OPERATION: "mitum-token-register-token-operation",
+    REGISTER_MODEL: {
+        FACT: "mitum-token-register-model-operation-fact",
+        OPERATION: "mitum-token-register-model-operation",
     },
     MINT: {
         FACT: "mitum-token-mint-operation-fact",
