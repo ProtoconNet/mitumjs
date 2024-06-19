@@ -69,7 +69,7 @@ export const Config = {
 	NFT: {
 		ROYALTY: getRangeConfig(0, 99),
 		SHARE: getRangeConfig(0, 100),
-		ADDRESS_IN_WHITELIST: getRangeConfig(0, 10),
+		ADDRESS_IN_MINTER_WHITELIST: getRangeConfig(0, 10),
 		SIGNERS_IN_SIGNERS: getRangeConfig(0, 10),
 	},
 	CREDENTIAL: {

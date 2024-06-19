@@ -1,16 +1,13 @@
 export default {
-    NFT_ID: "mitum-nft-nft-id",
-    DESIGN: "mitum-nft-design",
-    POLICY: "mitum-nft-collection-policy",
     SIGNER: "mitum-nft-signer",
     SIGNERS: "mitum-nft-signers",
-    CREATE_COLLECTION: {
-        FACT: "mitum-nft-create-collection-operation-fact",
-        OPERATION: "mitum-nft-create-collection-operation",
+    REGISTER_MODEL: {
+        FACT: "mitum-nft-register-model-operation-fact",
+        OPERATION: "mitum-nft-register-model-operation",
     },
-    UPDATE_COLLECTION_POLICY: {
-        FACT: "mitum-nft-update-collection-policy-operation-fact",
-        OPERATION: "mitum-nft-update-collection-policy-operation",
+    UPDATE_MODEL_POLICY: {
+        FACT: "mitum-nft-update-model-policy-operation-fact",
+        OPERATION: "mitum-nft-update-model-policy-operation",
     },
     MINT: {
         FORM: "mitum-nft-mint-form",
@@ -18,10 +15,10 @@ export default {
         FACT: "mitum-nft-mint-operation-fact",
         OPERATION: "mitum-nft-mint-operation",
     },
-    DELEGATE: {
-        ITEM: "mitum-nft-delegate-item",
-        FACT: "mitum-nft-delegate-operation-fact",
-        OPERATION: "mitum-nft-delegate-operation",
+    APPROVE_ALL: {
+        ITEM: "mitum-nft-approve-all-item",
+        FACT: "mitum-nft-approve-all-operation-fact",
+        OPERATION: "mitum-nft-approve-all-operation",
     },
     APPROVE: {
         ITEM: "mitum-nft-approve-item",
@@ -33,9 +30,9 @@ export default {
         FACT: "mitum-nft-transfer-operation-fact",
         OPERATION: "mitum-nft-transfer-operation",
     },
-    SIGN: {
-        ITEM: "mitum-nft-sign-item",
-        FACT: "mitum-nft-sign-operation-fact",
-        OPERATION: "mitum-nft-sign-operation",
+    ADD_SIGNATURE: {
+        ITEM: "mitum-nft-add-signature-item",
+        FACT: "mitum-nft-add-signature-operation-fact",
+        OPERATION: "mitum-nft-add-signature-operation",
     }
 }

@@ -9,25 +9,25 @@ import { Assert, ECODE, MitumError } from "../../error"
 
 export class ApproveItem extends NFTItem {
     readonly approved: Address
-    readonly nftIDX: Big
+    readonly nftIdx: Big
 
     constructor(
         contract: string | Address, 
         approved: string | Address, 
-        nftIDX: string | number | Big, 
+        nftIdx: string | number | Big, 
         currency: string | CurrencyID,
     ) {
         super(HINT.NFT.APPROVE.ITEM, contract, currency)
 
         this.approved = Address.from(approved)
-        this.nftIDX = Big.from(nftIDX)
+        this.nftIdx = Big.from(nftIdx)
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
             this.approved.toBuffer(),
-            this.nftIDX.toBuffer("fill"),
+            this.nftIdx.toBuffer("fill"),
             this.currency.toBuffer(),
         ])
     }
@@ -36,7 +36,7 @@ export class ApproveItem extends NFTItem {
         return {
             ...super.toHintedObject(),
             approved: this.approved.toString(),
-            nftidx: this.nftIDX.v,
+            nft_idx: this.nftIdx.v,
         }
     }
 
@@ -62,7 +62,7 @@ export class ApproveFact extends OperationFact<ApproveItem> {
                 )
                 Assert.check(
                     it.approved.toString() != it.contract.toString(),
-                    MitumError.detail(ECODE.INVALID_ITEMS, "operator is same with contract address"),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "approved is same with contract address"),
                 )
             }
         )

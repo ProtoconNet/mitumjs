@@ -1,10 +1,10 @@
-import { CreateCollectionFact } from "./create-collection"
-import { UpdateCollectionPolicyFact } from "./update-collection-policy"
+import { RegisterModelFact } from "./register-model"
+import { UpdateModelPolicyFact } from "./update-model-policy"
 import { MintItem, MintFact } from "./mint"
 import { ApproveItem, ApproveFact } from "./approve"
-import { DelegateItem, DelegateFact } from "./delegate"
+import { ApproveAllItem, ApproveAlleFact } from "./approve-all"
 import { TransferItem, TransferFact } from "./transfer"
-import { SignItem, SignFact } from "./sign"
+import { AddSignatureItem, AddSignatureFact } from "./add-signature"
 
 import { Signer, Signers } from "./signer"
 
@@ -21,7 +21,7 @@ type collectionData = {
     name: string | LongString
     uri: string | LongString
     royalty: string | number | Big
-    whitelist: (string | Address)[]
+    minterWhitelist: (string | Address)[]
 }
 
 type Creator = {
@@ -39,24 +39,24 @@ export class NFT extends ContractGenerator {
     }
 
     /**
-     * Generate `create-collection` operation for creating a new NFT collection on the contract.
+     * Generate `register-model` operation to register a new NFT model for creating a collection on the contract.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {collectionData} [data] - The collection data to be registed. The properties of `collectionData` include:
      * - {string | LongString} `name` - The name of the NFT collection.
      * - {string | LongString} `uri` - The uri of the NFT collection.
      * - {string | number | Big} `royalty` - The royalty of the NFT collection.
-     * - {(string | Address)[]} `whitelist` - Accounts who have permissions to mint. If it's empty, anyone can mint.
+     * - {(string | Address)[]} `minterWhitelist` - Accounts who have permissions to mint. If it's empty, anyone can mint.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `create-collection` operation
+     * @returns `register-model` operation
      */
-    createCollection(
+    registerModel(
         contract: string | Address,
         sender: string | Address,
         data: collectionData,
         currency: string | CurrencyID,
     ) {
-        const keysToCheck: (keyof collectionData)[] = ['name', 'uri', 'royalty', 'whitelist'];
+        const keysToCheck: (keyof collectionData)[] = ['name', 'uri', 'royalty', 'minterWhitelist'];
         keysToCheck.forEach((key) => {
             Assert.check(data[key] !== undefined, 
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the collectionData structure`))
@@ -64,52 +64,52 @@ export class NFT extends ContractGenerator {
 
         return new Operation(
             this.networkID,
-            new CreateCollectionFact(
+            new RegisterModelFact(
                 TimeStamp.new().UTC(),
                 sender,
                 contract,
                 data.name,
                 data.royalty,
                 data.uri,
-                data.whitelist,
+                data.minterWhitelist,
                 currency,
             )
         )
     }
     
     /**
-     * Generate `update-collection` operation for updating the policy of an existing NFT collection on the contract.
+     * Generate `update-model-policy` operation to update the policy of an existing NFT collection on the contract.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {collectionData} [data] - The collection data to be registed. The properties of `collectionData` include:
      * - {string | LongString} `name` - The name of the NFT collection.
      * - {string | LongString} `uri` - The uri of the NFT collection.
      * - {string | number | Big} `royalty` - The royalty of the NFT collection.
-     * - {(string | Address)[]} `whitelist` - Accounts who have permissions to mint.
+     * - {(string | Address)[]} `minterWhitelist` - Accounts who have permissions to mint.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `update-collection` operation.
+     * @returns `update-model-policy` operation.
      */
-    setPolicy(
+    updateModelPolicy(
         contract: string | Address,
         sender: string | Address,
         data: collectionData,
         currency: string | CurrencyID,
     ) {
-        const keysToCheck: (keyof collectionData)[] = ['name', 'uri', 'royalty', 'whitelist'];
+        const keysToCheck: (keyof collectionData)[] = ['name', 'uri', 'royalty', 'minterWhitelist'];
         keysToCheck.forEach((key) => {
             Assert.check(data[key] !== undefined, 
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the collectionData structure`))
         });
         return new Operation(
             this.networkID,
-            new UpdateCollectionPolicyFact(
+            new UpdateModelPolicyFact(
                 TimeStamp.new().UTC(),
                 sender,
                 contract,
                 data.name,
                 data.royalty,
                 data.uri,
-                data.whitelist,
+                data.minterWhitelist,
                 currency,
             ))
     }
@@ -236,7 +236,7 @@ export class NFT extends ContractGenerator {
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | Address} [receiver] - The address of the receiver of the NFT.
-     * @param {string | number | Big} [nftID] - The ID of the NFT (Indicate the order of minted).
+     * @param {string | number | Big} [nftIdx] - The index of the NFT (Indicate the order of minted).
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `transfer` operation.
      */
@@ -244,7 +244,7 @@ export class NFT extends ContractGenerator {
         contract: string | Address,
         sender: string | Address,
         receiver: string | Address,
-        nftID: string | number | Big,
+        nftIdx: string | number | Big,
         currency: string | CurrencyID,
     ) {
         const fact = new TransferFact(
@@ -254,7 +254,7 @@ export class NFT extends ContractGenerator {
                 new TransferItem(
                     contract,
                     receiver,
-                    nftID,
+                    nftIdx,
                     currency,
                 )
             ]
@@ -264,63 +264,63 @@ export class NFT extends ContractGenerator {
     }
     
     /**
-     * Generate `approve` operation to approves NFT to another account (operator).
+     * Generate `approve` operation to approves NFT to another account (approved).
      * @param {string | Address} [contract] - The contract's address.
-     * @param {string | Address} [owner] - The address of the owner of the NFT.
-     * @param {string | Address} [operator] - The address being granted approval to manage the NFT.
-     * @param {string | number | Big} [nftID] - The ID of the NFT (Indicate the order of minted).
+     * @param {string | Address} [sender] - The address of the sender of the NFT.
+     * @param {string | Address} [approved] - The address being granted approval to manage the NFT.
+     * @param {string | number | Big} [nftIdx] - The index of the NFT (Indicate the order of minted).
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `approve` operation.
      */
     approve(
         contract: string | Address,
-        owner: string | Address,
-        operator: string | Address,
-        nftID: string | number | Big,
+        sender: string | Address,
+        approved: string | Address,
+        nftIdx: string | number | Big,
         currency: string | CurrencyID,
     ) {
         return new Operation(
             this.networkID,
             new ApproveFact(
                 TimeStamp.new().UTC(),
-                owner,
+                sender,
                 [
                     new ApproveItem(
                         contract,
-                        operator,
-                        nftID,
+                        approved,
+                        nftIdx,
                         currency,
                     )
                 ]
             )
         )
     }
-    
+
     /**
-     * Generate `delegate` operation to sets or cancels the approval for an operator to manage all NFTs of the owner.
+     * Generate `approve-all` operation to grant or revoke approval for an account to manage all NFTs of the sender.
      * @param {string | Address} [contract] - The contract's address.
-     * @param {string | Address} [owner] - The address of the owner of the NFT.
-     * @param {string | Address} [operator] - The address being granted or denied approval to manage all NFTs.
+     * @param {string | Address} [sender] - The address of the sender giving or revoking approval.
+     * @param {string | Address} [approved] - The address being granted or denied approval to manage all NFTs.
      * @param {"allow" | "cancel"} [mode] - The mode indicating whether to allow or cancel the approval.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `delegate` operation.
+     * @returns `approve-all` operation.
      */
-    setApprovalForAll(
+    approveAll(
         contract: string | Address,
-        owner: string | Address,
-        operator: string | Address,
+        sender: string | Address,
+        approved: string | Address,
         mode: "allow" | "cancel",
         currency: string | CurrencyID,
     ) {
         return new Operation(
             this.networkID,
-            new DelegateFact(
+            new ApproveAlleFact(
                 TimeStamp.new().UTC(),
-                owner,
+                sender,
                 [
-                    new DelegateItem(
+                    new ApproveAllItem(
                         contract,
-                        operator,
+                        approved,
                         mode,
                         currency,
                     )
@@ -330,28 +330,28 @@ export class NFT extends ContractGenerator {
     }
     
     /**
-     * Generate `sign` operation to signs an NFT as creator of the artwork.
+     * Generate `add-signature` operation to signs an NFT as creator of the artwork.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [creator] - The address of the creator signing the NFT.
-     * @param {string | number | Big} [nftID] - The ID of the NFT (Indicate the order of minted).
+     * @param {string | number | Big} [nftIdx] - The index of the NFT (Indicate the order of minted).
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `sign` operation.
      */
-    sign(
+    addSignature(
         contract: string | Address,
         creator: string | Address,
-        nftID: string | number | Big,
+        nftIdx: string | number | Big,
         currency: string | CurrencyID,
     ) {
         return new Operation(
             this.networkID,
-            new SignFact(
+            new AddSignatureFact(
                 TimeStamp.new().UTC(),
                 creator,
                 [
-                    new SignItem(
+                    new AddSignatureItem(
                         contract,
-                        nftID,
+                        nftIdx,
                         currency,
                     )
                 ]
@@ -373,7 +373,7 @@ export class NFT extends ContractGenerator {
      * - - `name`: Name of the NFT collection,
      * - - `royalty`: Royalty of the NFT collection,
      * - - `uri`: URI of the NFT collection,
-     * - - `whitelist`: Array of the addresses of accounts who have permissions to mint
+     * - - `minterWhitelist`: Array of the addresses of accounts who have permissions to mint
      */
     async getCollectionInfo(contract: string | Address) {
         Address.from(contract);
@@ -384,15 +384,15 @@ export class NFT extends ContractGenerator {
      * Get the owner of a specific NFT.
      * @async
      * @param {string | Address} [contract] - The contract's address.
-     * @param {string | number | Big} [nftID] - The ID of the NFT (Indicate the order of minted).
+     * @param {string | number | Big} [nftIdx] - The index of the NFT (Indicate the order of minted).
      * @returns `data` of `SuccessResponse` is the address of the NFT owner.
      */
-    async ownerOf(contract: string | Address, nftID: string | number | Big) {
+    async ownerOf(contract: string | Address, nftIdx: string | number | Big) {
         Address.from(contract);
         const response = await getAPIData(() => contractApi.nft.getNFT(
             this.api,
             contract,
-            nftID,
+            nftIdx,
             this.delegateIP
         ));
 
@@ -406,15 +406,15 @@ export class NFT extends ContractGenerator {
      * Get the address approved to manage a specific NFT.
      * @async
      * @param {string | Address} [contract] - The contract's address.
-     * @param {number} [nftID] - The ID of the NFT (Indicate the order of minted).
+     * @param {number} [nftIdx] - The index of the NFT (Indicate the order of minted).
      * @returns `data` of `SuccessResponse` is an address of the approved account to manage the NFT.
      */
-    async getApproved(contract: string | Address, nftID: number) {
+    async getApproved(contract: string | Address, nftIdx: number) {
         Address.from(contract);
         const response = await getAPIData(() => contractApi.nft.getNFT(
             this.api,
             contract,
-            nftID,
+            nftIdx,
             this.delegateIP
         ));
 
@@ -448,15 +448,15 @@ export class NFT extends ContractGenerator {
      * Get the URI of a specific NFT.
      * @async
      * @param {string | Address} [contract] - The contract's address.
-     * @param {number} [nftID] - The ID of the NFT (Indicate the order of minted).
+     * @param {number} [nftIdx] - The index of the NFT (Indicate the order of minted).
      * @returns `data` of `SuccessResponse` is the URI of the NFT.
      */
-    async tokenURI(contract: string | Address, nftID: number) {
+    async tokenURI(contract: string | Address, nftIdx: number) {
         Address.from(contract);
         const response = await getAPIData(() => contractApi.nft.getNFT(
             this.api,
             contract,
-            nftID,
+            nftIdx,
             this.delegateIP
         ));
 
@@ -490,7 +490,7 @@ export class NFT extends ContractGenerator {
      * Get detailed information about a specific NFT.
      * @async
      * @param {string | Address} [contract] - The contract's address.
-     * @param {number} [nftID] - The ID of the NFT (Indicate the order of minted).
+     * @param {number} [nftIdx] - The index of the NFT (Indicate the order of minted).
      * @returns `data` of `SuccessResponse` is detailed information about the NFT:
      * - `_hint`: Hint for NFT,
      * - `id`: Index of the NFT,
@@ -501,12 +501,12 @@ export class NFT extends ContractGenerator {
      * - `approved`: Address of the approved account for the NFT,
      * - `creators`: Creator object,
      */
-    async getNFTInfo(contract: string | Address, nftID: number) {
+    async getNFTInfo(contract: string | Address, nftIdx: number) {
         Address.from(contract);
         return await getAPIData(() => contractApi.nft.getNFT(
             this.api,
             contract,
-            nftID,
+            nftIdx,
             this.delegateIP
         ))
     }

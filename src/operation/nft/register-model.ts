@@ -9,11 +9,11 @@ import { Assert, ECODE, MitumError } from "../../error"
 import { SortFunc, hasOverlappingAddress } from "../../utils"
 
 
-export class CreateCollectionFact extends ContractFact {
+export class RegisterModelFact extends ContractFact {
     readonly name: LongString
     readonly royalty: Big
     readonly uri: LongString
-    readonly whitelist: Address[] 
+    readonly minterWhitelist: Address[] 
 
     constructor(
         token: string, 
@@ -22,14 +22,14 @@ export class CreateCollectionFact extends ContractFact {
         name: string | LongString,
         royalty: string | number | Big,
         uri: string | LongString,
-        whitelist: (string | Address)[],
+        minterWhitelist: (string | Address)[],
         currency: string | CurrencyID,
     ) {
-        super(HINT.NFT.CREATE_COLLECTION.FACT, token, sender, contract, currency)
+        super(HINT.NFT.REGISTER_MODEL.FACT, token, sender, contract, currency)
         this.name = LongString.from(name)
         this.royalty = Big.from(royalty)
         this.uri = LongString.from(uri)
-        this.whitelist = whitelist ? whitelist.map(w => Address.from(w)) : []
+        this.minterWhitelist = minterWhitelist ? minterWhitelist.map(w => Address.from(w)) : []
 
         Assert.check(
             Config.NFT.ROYALTY.satisfy(this.royalty.v), 
@@ -37,16 +37,16 @@ export class CreateCollectionFact extends ContractFact {
         )
 
         Assert.check(
-            Config.NFT.ADDRESS_IN_WHITELIST.satisfy(this.whitelist.length),
+            Config.NFT.ADDRESS_IN_MINTER_WHITELIST.satisfy(this.minterWhitelist.length),
             MitumError.detail(ECODE.INVALID_FACT, "whitelist length out of range"),
         )
 
         Assert.check(
-            hasOverlappingAddress(this.whitelist),
+            hasOverlappingAddress(this.minterWhitelist),
             MitumError.detail(ECODE.INVALID_FACT, "duplicate address found in whitelist"),
         )
 
-        this.whitelist.forEach(
+        this.minterWhitelist.forEach(
             account => Assert.check(
                 this.contract.toString() !== account.toString(),
                 MitumError.detail(ECODE.INVALID_FACT, "contract is same with whitelist address")
@@ -63,7 +63,7 @@ export class CreateCollectionFact extends ContractFact {
             this.royalty.toBuffer("fill"),
             this.uri.toBuffer(),
             this.currency.toBuffer(),
-            Buffer.concat(this.whitelist.sort(SortFunc).map(w => w.toBuffer())),
+            Buffer.concat(this.minterWhitelist.sort(SortFunc).map(w => w.toBuffer())),
         ])
     }
 
@@ -73,11 +73,11 @@ export class CreateCollectionFact extends ContractFact {
             name: this.name.toString(),
             royalty: this.royalty.v,
             uri: this.uri.toString(),
-            whitelist: this.whitelist.sort(SortFunc).map(w => w.toString()),
+            minter_whitelist: this.minterWhitelist.sort(SortFunc).map(w => w.toString()),
         }
     }
 
     get operationHint() {
-        return HINT.NFT.CREATE_COLLECTION.OPERATION
+        return HINT.NFT.REGISTER_MODEL.OPERATION
     }
 }

@@ -7,26 +7,26 @@ import { CurrencyID } from "../../common"
 import { HintedObject } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
-export class DelegateItem extends NFTItem {
-    readonly operator: Address
+export class ApproveAllItem extends NFTItem {
+    readonly approved: Address
     readonly mode: "allow" | "cancel"
 
     constructor(
         contract: string | Address, 
-        operator: string | Address, 
+        approved: string | Address, 
         mode: "allow" | "cancel",
         currency: string | CurrencyID,
     ) {
-        super(HINT.NFT.DELEGATE.ITEM, contract, currency)
+        super(HINT.NFT.APPROVE_ALL.ITEM, contract, currency)
 
-        this.operator = Address.from(operator)
+        this.approved = Address.from(approved)
         this.mode = mode
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
-            this.operator.toBuffer(),
+            this.approved.toBuffer(),
             Buffer.from(this.mode),
             this.currency.toBuffer(),
         ])
@@ -35,23 +35,23 @@ export class DelegateItem extends NFTItem {
     toHintedObject(): HintedObject {
         return {
             ...super.toHintedObject(),
-            delegatee: this.operator.toString(),
+            approved: this.approved.toString(),
             mode: this.mode,
         }
     }
 
     toString(): string {
-        return `${super.toString()}-${this.operator.toString()}`
+        return `${super.toString()}-${this.approved.toString()}`
     }
 }
 
-export class DelegateFact extends OperationFact<DelegateItem> {
-    constructor(token: string, sender: string | Address, items: DelegateItem[]) {
-        super(HINT.NFT.DELEGATE.FACT, token, sender, items)
+export class ApproveAlleFact extends OperationFact<ApproveAllItem> {
+    constructor(token: string, sender: string | Address, items: ApproveAllItem[]) {
+        super(HINT.NFT.APPROVE_ALL.FACT, token, sender, items)
 
         Assert.check(
             new Set(items.map(it => it.toString())).size === items.length,
-            MitumError.detail(ECODE.INVALID_ITEMS, "duplicate operator found in items")
+            MitumError.detail(ECODE.INVALID_ITEMS, "duplicate approved found in items")
         )
 
         this.items.forEach(
@@ -61,18 +61,18 @@ export class DelegateFact extends OperationFact<DelegateItem> {
                     MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address"),
                 )
                 Assert.check(
-                    it.operator.toString() != it.contract.toString(),
-                    MitumError.detail(ECODE.INVALID_ITEMS, "operator is same with contract address"),
+                    it.approved.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "approved is same with contract address"),
                 )
                 Assert.check(
-                    this.sender.toString() != it.operator.toString(),
-                    MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with operator address"),
+                    this.sender.toString() != it.approved.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with approved address"),
                 )
             }
         )
     }
 
     get operationHint() {
-        return HINT.NFT.DELEGATE.OPERATION
+        return HINT.NFT.APPROVE_ALL.OPERATION
     }
 }

@@ -7,22 +7,22 @@ import { CurrencyID } from "../../common"
 import { Big, HintedObject } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
-export class SignItem extends NFTItem {
-    readonly nft: Big
+export class AddSignatureItem extends NFTItem {
+    readonly nftIdx: Big
 
     constructor(
         contract: string | Address, 
-        nft: string | number | Big, 
+        nftIdx: string | number | Big, 
         currency: string | CurrencyID,
     ) {
-        super(HINT.NFT.SIGN.ITEM, contract, currency)
-        this.nft = Big.from(nft)
+        super(HINT.NFT.ADD_SIGNATURE.ITEM, contract, currency)
+        this.nftIdx = Big.from(nftIdx)
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
-            this.nft.toBuffer("fill"),
+            this.nftIdx.toBuffer("fill"),
             this.currency.toBuffer(),
         ])
     }
@@ -30,14 +30,14 @@ export class SignItem extends NFTItem {
     toHintedObject(): HintedObject {
         return {
             ...super.toHintedObject(),
-            nft: this.nft.v,
+            nft_idx: this.nftIdx.v,
         }
     }
 }
 
-export class SignFact extends OperationFact<SignItem> {
-    constructor(token: string, sender: string | Address, items: SignItem[]) {
-        super(HINT.NFT.SIGN.FACT, token, sender, items)
+export class AddSignatureFact extends OperationFact<AddSignatureItem> {
+    constructor(token: string, sender: string | Address, items: AddSignatureItem[]) {
+        super(HINT.NFT.ADD_SIGNATURE.FACT, token, sender, items)
 
         this.items.forEach(
             it => Assert.check(
@@ -48,6 +48,6 @@ export class SignFact extends OperationFact<SignItem> {
     }
 
     get operationHint() {
-        return HINT.NFT.SIGN.OPERATION
+        return HINT.NFT.ADD_SIGNATURE.OPERATION
     }
 }
