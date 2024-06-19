@@ -22,7 +22,7 @@ export class TimeStamp extends ContractGenerator {
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `register-model`` operation.
+     * @returns `register-model` operation.
      */
     registerModel(
         contract: string | Address,
