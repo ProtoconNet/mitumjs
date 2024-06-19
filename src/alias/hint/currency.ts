@@ -37,12 +37,12 @@ export default {
         OPERATION: "mitum-currency-mint-operation",
     },
     CREATE_CONTRACT_ACCOUNT: {
-        ITEM: "mitum-currency-create-contract-account-multiple-amounts",
+        ITEM: "mitum-extension-create-contract-account-multiple-amounts",
         FACT: "mitum-extension-create-contract-account-operation-fact",
         OPERATION: "mitum-extension-create-contract-account-operation",
     },
     WITHDRAW: {
-        ITEM: "mitum-currency-contract-account-withdraw-multi-amounts",
+        ITEM: "mitum-extension-contract-account-withdraw-multi-amounts",
         FACT: "mitum-extension-withdraw-operation-fact",
         OPERATION: "mitum-extension-withdraw-operation",
     },
