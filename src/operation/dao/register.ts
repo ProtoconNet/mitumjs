@@ -7,23 +7,23 @@ import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export class RegisterFact extends DAOFact {
-    readonly delegated: Address
+    readonly approved: Address
 
     constructor(
         token: string,
         sender: string | Address,
         contract: string | Address,
         proposalID: string,
-        delegated: string | Address,
+        approved: string | Address,
         currency: string | CurrencyID,
     ) {
         super(HINT.DAO.REGISTER.FACT, token, sender, contract, proposalID, currency)
         
-        this.delegated = Address.from(delegated)
+        this.approved = Address.from(approved)
 
         Assert.check(
-            this.contract.toString() !== this.delegated.toString(),
-            MitumError.detail(ECODE.INVALID_FACT, "contract is same with delegated address")
+            this.contract.toString() !== this.approved.toString(),
+            MitumError.detail(ECODE.INVALID_FACT, "contract is same with approved address")
         )
         this._hash = this.hashing()
     }
@@ -31,7 +31,7 @@ export class RegisterFact extends DAOFact {
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
-            this.delegated.toBuffer(),
+            this.approved.toBuffer(),
             this.currency.toBuffer(),
         ])
     }
@@ -39,7 +39,7 @@ export class RegisterFact extends DAOFact {
     toHintedObject(): FactJson {
         return {
             ...super.toHintedObject(),
-            delegated: this.delegated.toString(),
+            approved: this.approved.toString(),
         }
     }
 

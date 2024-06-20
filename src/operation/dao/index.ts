@@ -1,4 +1,4 @@
-import { CreateDAOFact } from "./create-dao"
+import { RegisterModelFact } from "./register-model"
 import { ProposeFact } from "./propose"
 import { CancelProposalFact } from "./cancel-proposal"
 import { RegisterFact } from "./register"
@@ -18,14 +18,14 @@ import { Address } from "../../key"
 import { Amount, Fee, CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp, URIString } from "../../types"
-import { UpdatePolicyFact } from "./update-policy"
+import { UpdateModelConfigFact } from "./update-model-config"
 import { Assert, ECODE, MitumError } from "../../error"
 
 type policyData = {
-    token: string | CurrencyID,
+    votingPowerToken: string | CurrencyID,
     threshold: string | number | Big,
-    fee: string | number | Big,
-    proposers: (string | Address)[],
+    proposalFee: string | number | Big,
+    proposerWhitelist: (string | Address)[],
     proposalReviewPeriod: string | number | Big,
     registrationPeriod: string | number | Big,
     preSnapshotPeriod: string | number | Big,
@@ -50,15 +50,15 @@ export class DAO extends ContractGenerator {
     }
     
     /**
-     * Generate `create-dao` operation for creating a new DAO on the contract.
+     * Generate `register-model` operation to register a new DAO model on the contract.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {daoData} [data] - Data for policy of DAO service to create. The properties of `daoData` include:
      * - {'crypto' | 'biz'} `option` - Option indicates the type of proposal to be registered.
-     * - {string | CurrencyID} `token` - The currency ID to be used when calculating voting power.
-     * - {string | number | Big} `threshold` - The minimum balance of a proposer must hold.
-     * - {string | number | Big} `fee` - The fee paid when registering a proposal.
-     * - {(string | Address)[]} `proposers` - An array of addresses for accounts who can propose the new proposals.
+     * - {string | CurrencyID} `votingPowerToken` - The currency ID to be used when calculating voting power.
+     * - {string | number | Big} `threshold` - The minimum balance of a proposer must hold after paying for the proposal fee.
+     * - {string | number | Big} `proposalFee` - The fee paid when registering a proposal.
+     * - {(string | Address)[]} `proposerWhitelist` - An array of addresses for accounts who can propose the new proposals.
      * - {string | number | Big} `proposalReviewPeriod` - The duration of the proposal review period (in seconds).
      * - {string | number | Big} `registrationPeriod` - The duration of the registration period (in seconds).
      * - {string | number | Big} `preSnapshotPeriod` - The duration of the pre-snapshot period (in seconds).
@@ -68,31 +68,31 @@ export class DAO extends ContractGenerator {
      * - {string | number | Big} `turnout` - The minimum rate of attendees for a proposal to pass (in percentage)
      * - {string | number | Big} `quorum` - The minimum rate of upvotes for a proposal to pass (in percentage)
      * @param {string | CurrencyID} currency - The currency ID.
-     * @returns `create-dao` operation.
+     * @returns `register-model` operation.
      */
-    createService(
+    registerModel(
         contract: string | Address,
         sender: string | Address,
         data: daoData,
         currency: string | CurrencyID,
     ) {
-        const keysToCheck: (keyof daoData)[] = ['option', 'token', 'threshold', 'fee', 'proposers', 'proposalReviewPeriod', 'registrationPeriod', 'preSnapshotPeriod', 'votingPeriod', 'postSnapshotPeriod', 'executionDelayPeriod', 'turnout', 'quorum'];
+        const keysToCheck: (keyof daoData)[] = ['option', 'votingPowerToken', 'threshold', 'proposalFee', 'proposerWhitelist', 'proposalReviewPeriod', 'registrationPeriod', 'preSnapshotPeriod', 'votingPeriod', 'postSnapshotPeriod', 'executionDelayPeriod', 'turnout', 'quorum'];
         keysToCheck.forEach((key) => {
             Assert.check(data[key] !== undefined, 
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the daoData structure`))
         });
         return new Operation(
             this.networkID,
-            new CreateDAOFact(
+            new RegisterModelFact(
                 TimeStamp.new().UTC(),
                 sender,
                 contract,
                 data.option,
                 new DAOPolicy(
-                    data.token,
+                    data.votingPowerToken,
                     data.threshold,
-                    new Fee(currency, data.fee),
-                    new Whitelist(true, data.proposers.map(a => Address.from(a))),
+                    new Fee(currency, data.proposalFee),
+                    new Whitelist(true, data.proposerWhitelist.map(a => Address.from(a))),
                     data.proposalReviewPeriod,
                     data.registrationPeriod,
                     data.preSnapshotPeriod,
@@ -108,15 +108,15 @@ export class DAO extends ContractGenerator {
     }
     
     /**
-     * Generate `update-policy` operation for updating the DAO policy on the contract.
+     * Generate `update-model-config` operation for updating the DAO policy on the contract.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {daoData} [data] - Data for policy of DAO service to update. The properties of `daoData` include:
      * - {'crypto' | 'biz'} `option` - Option indicates the type of proposal to be registered.
-     * - {string | CurrencyID} `token` - The currency ID to be used when calculating voting power.
-     * - {string | number | Big} `threshold` - The minimum balance of a proposer must hold.
-     * - {string | number | Big} `fee` - The fee paid when registering a proposal.
-     * - {(string | Address)[]} `proposers` - An array of addresses for accounts who can propose the new proposals.
+     * - {string | CurrencyID} `votingPowerToken` - The currency ID to be used when calculating voting power.
+     * - {string | number | Big} `threshold` - The minimum balance of a proposer must hold after paying for the proposal fee.
+     * - {string | number | Big} `proposalFee` - The fee paid when registering a proposal.
+     * - {(string | Address)[]} `proposerWhitelist` - An array of addresses for accounts who can propose the new proposals.
      * - {string | number | Big} `proposalReviewPeriod` - The duration of the proposal review period (in seconds).
      * - {string | number | Big} `registrationPeriod` - The duration of the registration period (in seconds).
      * - {string | number | Big} `preSnapshotPeriod` - The duration of the pre-snapshot period (in seconds).
@@ -126,31 +126,31 @@ export class DAO extends ContractGenerator {
      * - {string | number | Big} `turnout` - The minimum rate of attendees for a proposal to pass (in percentage)
      * - {string | number | Big} `quorum` - The minimum rate of upvotes for a proposal to pass (in percentage)
      * @param {string | CurrencyID} currency - The currency ID.
-     * @returns `update-policy` operation
+     * @returns `update-model-config` operation
      */
-    updateService(
+    updateModelConfig(
         contract: string | Address,
         sender: string | Address,
         data: daoData,
         currency: string | CurrencyID,
     ) {
-        const keysToCheck: (keyof daoData)[] = ['option', 'token', 'threshold', 'fee', 'proposers', 'proposalReviewPeriod', 'registrationPeriod', 'preSnapshotPeriod', 'votingPeriod', 'postSnapshotPeriod', 'executionDelayPeriod', 'turnout', 'quorum'];
+        const keysToCheck: (keyof daoData)[] = ['option', 'votingPowerToken', 'threshold', 'proposalFee', 'proposerWhitelist', 'proposalReviewPeriod', 'registrationPeriod', 'preSnapshotPeriod', 'votingPeriod', 'postSnapshotPeriod', 'executionDelayPeriod', 'turnout', 'quorum'];
         keysToCheck.forEach((key) => {
             Assert.check(data[key] !== undefined, 
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the daoData structure`))
         });
         return new Operation(
             this.networkID,
-            new UpdatePolicyFact(
+            new UpdateModelConfigFact(
                 TimeStamp.new().UTC(),
                 sender,
                 contract,
                 data.option,
                 new DAOPolicy(
-                    data.token,
+                    data.votingPowerToken,
                     data.threshold,
-                    new Fee(currency, data.fee),
-                    new Whitelist(true, data.proposers.map(a => Address.from(a))),
+                    new Fee(currency, data.proposalFee),
+                    new Whitelist(true, data.proposerWhitelist.map(a => Address.from(a))),
                     data.proposalReviewPeriod,
                     data.registrationPeriod,
                     data.preSnapshotPeriod,
@@ -185,10 +185,10 @@ export class DAO extends ContractGenerator {
     /**
      * Create governance calldata for the crypto proposal to update DAO policy.
      * @param {policyData} [data] - Data for policy of DAO service to update. The properties of `policyData` include:
-     * - {string | CurrencyID} `token` - The currency ID to be used when calculating voting power.
-     * - {string | number | Big} `threshold` - The minimum balance of a proposer must hold.
-     * - {string | number | Big} `fee` - The fee paid when registering a proposal.
-     * - {(string | Address)[]} `proposers` - An array of addresses for accounts who can propose the new proposals.
+     * - {string | CurrencyID} `votingPowerToken` - The currency ID to be used when calculating voting power.
+     * - {string | number | Big} `threshold` - The minimum balance of a proposer must hold after paying for the proposal fee.
+     * - {string | number | Big} `proposalFee` - The fee paid when registering a proposal.
+     * - {(string | Address)[]} `proposerWhitelist` - An array of addresses for accounts who can propose the new proposals.
      * - {string | number | Big} `proposalReviewPeriod` - The duration of the proposal review period (in seconds).
      * - {string | number | Big} `registrationPeriod` - The duration of the registration period (in seconds).
      * - {string | number | Big} `preSnapshotPeriod` - The duration of the pre-snapshot period (in seconds).
@@ -204,17 +204,17 @@ export class DAO extends ContractGenerator {
         data: policyData,
         currency: string | CurrencyID,
     ): GovernanceCalldata {
-        const keysToCheck: (keyof policyData)[] = ['token', 'threshold', 'fee', 'proposers', 'proposalReviewPeriod', 'registrationPeriod', 'preSnapshotPeriod', 'votingPeriod', 'postSnapshotPeriod', 'executionDelayPeriod', 'turnout', 'quorum'];
+        const keysToCheck: (keyof policyData)[] = ['votingPowerToken', 'threshold', 'proposalFee', 'proposerWhitelist', 'proposalReviewPeriod', 'registrationPeriod', 'preSnapshotPeriod', 'votingPeriod', 'postSnapshotPeriod', 'executionDelayPeriod', 'turnout', 'quorum'];
         keysToCheck.forEach((key) => {
             Assert.check(data[key] !== undefined, 
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the policyData structure`))
         });
         return new GovernanceCalldata(
             new DAOPolicy(
-                data.token,
+                data.votingPowerToken,
                 data.threshold,
-                new Fee(currency, data.fee),
-                new Whitelist(true, data.proposers.map(a => Address.from(a))),
+                new Fee(currency, data.proposalFee),
+                new Whitelist(true, data.proposerWhitelist.map(a => Address.from(a))),
                 data.proposalReviewPeriod,
                 data.registrationPeriod,
                 data.preSnapshotPeriod,
@@ -287,12 +287,12 @@ export class DAO extends ContractGenerator {
     }
     
     /**
-     * Generate `register` operation to register to get voting right to the proposal. If delegator is given, delegate voting rights.
+     * Generate `register` operation to register to get voting right to the proposal. If approved is given, delegate voting rights to the account.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string} [proposalID] - The proposal ID.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @param {string | Address} [delegator] - (Optional) The address of the delegator.
+     * @param {string | Address} [approved] - (Optional) The address of the account to which voting rights will be delegated..
      * @returns `register` operation
      */
     register(
@@ -300,7 +300,7 @@ export class DAO extends ContractGenerator {
         sender: string | Address,
         proposalID: string,
         currency: string | CurrencyID,
-        delegator?: string | Address,
+        approved?: string | Address,
     ) {
         return new Operation(
             this.networkID,
@@ -309,7 +309,7 @@ export class DAO extends ContractGenerator {
                 sender,
                 contract,
                 proposalID,
-                delegator ? delegator : sender,
+                approved ? approved : sender,
                 currency,
             )
         )
@@ -323,7 +323,7 @@ export class DAO extends ContractGenerator {
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `cancel-proposal` operation
      */
-    cancel(
+    cancelProposal(
         contract: string | Address,
         sender: string | Address,
         proposalID: string,
@@ -349,7 +349,7 @@ export class DAO extends ContractGenerator {
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `pre-snap` operation.
      */
-    snapBeforeVoting(
+    preSnap(
         contract: string | Address,
         sender: string | Address,
         proposalID: string,
@@ -376,7 +376,7 @@ export class DAO extends ContractGenerator {
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `vote` operation.
      */
-    castVote(
+    vote(
         contract: string | Address,
         sender: string | Address,
         proposalID: string,
@@ -404,7 +404,7 @@ export class DAO extends ContractGenerator {
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `post-snap` operation
      */
-    snapAfterVoting(
+    postSnap(
         contract: string | Address,
         sender: string | Address,
         proposalID: string,

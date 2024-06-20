@@ -10,9 +10,9 @@ export default {
         BIZ: "mitum-dao-biz-proposal",
     },
     WHITELIST: "mitum-dao-whitelist",
-    CREATE_DAO: {
-        FACT: "mitum-dao-create-dao-operation-fact",
-        OPERATION: "mitum-dao-create-dao-operation",
+    REGISTER_MODEL: {
+        FACT: "mitum-dao-register-model-operation-fact",
+        OPERATION: "mitum-dao-register-model-operation",
     },
     UPDATE_POLICY: {
         FACT: "mitum-dao-update-policy-operation-fact",

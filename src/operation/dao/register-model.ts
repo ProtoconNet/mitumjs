@@ -5,23 +5,24 @@ import { CurrencyID, Hint } from "../../common"
 import { DAOPolicy } from "./policy"
 import { Assert, ECODE, MitumError } from "../../error"
 
-export class UpdatePolicyFact extends ContractFact {
+export class RegisterModelFact extends ContractFact {
     readonly option: "crypto" | "biz"
     readonly policy: DAOPolicy
 
     constructor(
-        token: string,
+        votingPowerToken: string,
         sender: string | Address,
         contract: string | Address,
         option: "crypto" | "biz",
         policy: DAOPolicy,
         currency: string | CurrencyID,
     ) {
-        super(HINT.DAO.UPDATE_POLICY.FACT, token, sender, contract, currency)
+        super(HINT.DAO.REGISTER_MODEL.FACT, votingPowerToken, sender, contract, currency)
+
         this.option = option
         this.policy = policy
 
-        this.policy.whitelist.accounts.forEach(
+        this.policy.proposerWhitelist.accounts.forEach(
             account => Assert.check(
                 this.contract.toString() !== account.toString(),
                 MitumError.detail(ECODE.INVALID_FACT, "contract is same with whitelist address")
@@ -45,11 +46,11 @@ export class UpdatePolicyFact extends ContractFact {
             ...super.toHintedObject(),
             option: this.option,
             ...this.policy.toHintedObject(),
-            _hint: new Hint(HINT.DAO.UPDATE_POLICY.FACT).toString()
+            _hint: new Hint(HINT.DAO.REGISTER_MODEL.FACT).toString()
         }
     }
 
     get operationHint() {
-        return HINT.DAO.UPDATE_POLICY.OPERATION
+        return HINT.DAO.REGISTER_MODEL.OPERATION
     }
 }

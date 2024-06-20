@@ -10,8 +10,8 @@ export class DAOPolicy implements IBuffer, IHintedObject {
     private hint: Hint
     readonly votingPowerToken: CurrencyID
     readonly threshold: Big
-    readonly fee: Fee
-    readonly whitelist: Whitelist
+    readonly proposalFee: Fee
+    readonly proposerWhitelist: Whitelist
     readonly proposalReviewPeriod: Big
     readonly registrationPeriod: Big
     readonly preSnapshotPeriod: Big
@@ -24,8 +24,8 @@ export class DAOPolicy implements IBuffer, IHintedObject {
     constructor(
         votingPowerToken: string | CurrencyID,
         threshold: string | number | Big,
-        fee: Fee,
-        whitelist: Whitelist,
+        proposalFee: Fee,
+        proposerWhitelist: Whitelist,
         proposalReviewPeriod: string | number | Big,
         registrationPeriod: string | number | Big,
         preSnapshotPeriod: string | number | Big,
@@ -38,8 +38,8 @@ export class DAOPolicy implements IBuffer, IHintedObject {
         this.hint = new Hint(HINT.DAO.POLICY)
         this.votingPowerToken = CurrencyID.from(votingPowerToken)
         this.threshold = Big.from(threshold)
-        this.fee = fee,
-        this.whitelist = whitelist
+        this.proposalFee = proposalFee,
+        this.proposerWhitelist = proposerWhitelist
         this.proposalReviewPeriod = Big.from(proposalReviewPeriod)
         this.registrationPeriod = Big.from(registrationPeriod)
         this.preSnapshotPeriod = Big.from(preSnapshotPeriod)
@@ -73,8 +73,8 @@ export class DAOPolicy implements IBuffer, IHintedObject {
         return Buffer.concat([
             this.votingPowerToken.toBuffer(),
             this.threshold.toBuffer(),
-            this.fee.toBuffer(),
-            this.whitelist.toBuffer(),
+            this.proposalFee.toBuffer(),
+            this.proposerWhitelist.toBuffer(),
             this.proposalReviewPeriod.toBuffer("fill"),
             this.registrationPeriod.toBuffer("fill"),
             this.preSnapshotPeriod.toBuffer("fill"),
@@ -91,8 +91,8 @@ export class DAOPolicy implements IBuffer, IHintedObject {
             _hint: this.hint.toString(),
             voting_power_token: this.votingPowerToken.toString(),
             threshold: this.threshold.toString(),
-            fee: this.fee.toHintedObject(),
-            whitelist: this.whitelist.toHintedObject(),
+            proposal_fee: this.proposalFee.toHintedObject(),
+            proposer_whitelist: this.proposerWhitelist.toHintedObject(),
             proposal_review_period: this.proposalReviewPeriod.v,
             registration_period: this.registrationPeriod.v,
             pre_snapshot_period: this.preSnapshotPeriod.v,
