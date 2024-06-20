@@ -9,7 +9,7 @@ const url = (
     contract: string | Address, 
 ) => `${IP.from(api).toString()}/point/${Address.from(contract).toString()}`
 
-async function getPoint(
+async function getModel(
     api: string | IP,
     contract: string | Address,
     delegateIP: string | IP
@@ -29,6 +29,6 @@ async function getPointBalance(
 }
 
 export default {
-    getPoint,
+    getModel,
     getPointBalance,
 }

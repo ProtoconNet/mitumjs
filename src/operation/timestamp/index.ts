@@ -80,9 +80,9 @@ export class TimeStamp extends ContractGenerator {
      * - `_hint`: Hint for timestamp design,
      * - `projects`: Array of all project's id
      */
-    async getServiceInfo(contract: string | Address) {
+    async getModelInfo(contract: string | Address) {
         Address.from(contract);
-        return await getAPIData(() => contractApi.timestamp.getService(this.api, contract, this.delegateIP))
+        return await getAPIData(() => contractApi.timestamp.getModel(this.api, contract, this.delegateIP))
     }
     
     /**
@@ -90,22 +90,22 @@ export class TimeStamp extends ContractGenerator {
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @param {string} [projectID] - The ID of the project.
-     * @param {string | number | Big} [tid] - The timestamp ID (Indicate the order of appended to the project)
+     * @param {string | number | Big} [timestampIdx] - The index of timestamp (Indicate the order of appended to the project)
      * @returns `data` of `SuccessResponse` is information about the timestamp with certain tid on the certain project:
      * - `_hint`: Hint for timestamp item,
-     * - `projectid`: ID of the timestamp project,
+     * - `project_id`: ID of the timestamp project,
      * - `request_timestamp`: Request timestamp entered when appending timestamp,
      * - `response_timestamp`: Time when the timestamp was registered,
-     * - `timestampid`: A number representing the timestamp id,
+     * - `timestamp_idx`: A index for the timestamp ,
      * - `data`: Data string
      */
-    async getTimestampInfo(
+    async getTimestamp(
         contract: string | Address,
         projectID: string,
-        tid: string | number | Big,
+        timestampIdx: string | number | Big,
     ) {
         Address.from(contract);
         new URIString(projectID, 'projectID');
-        return await getAPIData(() => contractApi.timestamp.getTimeStamp(this.api, contract, projectID, tid, this.delegateIP))
+        return await getAPIData(() => contractApi.timestamp.getTimeStamp(this.api, contract, projectID, timestampIdx, this.delegateIP))
     }
 }

@@ -9,7 +9,7 @@ const url = (
     contract: string | Address, 
 ) => `${IP.from(api).toString()}/dao/${Address.from(contract).toString()}`
 
-async function getService(
+async function getModel(
     api: string | IP, 
     contract: string | Address,
     delegateIP: string | IP
@@ -28,7 +28,7 @@ async function getProposal(
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
-async function getDelegator(
+async function getApproved(
     api: string | IP, 
     contract: string | Address,
     proposalID: string,
@@ -39,7 +39,7 @@ async function getDelegator(
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
-async function getVoter(
+async function getVoters(
     api: string | IP, 
     contract: string | Address,
     proposalID: string,
@@ -49,7 +49,7 @@ async function getVoter(
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
-async function getVotingResult(
+async function getVotingStatus(
     api: string | IP, 
     contract: string | Address,
     proposalID: string,
@@ -60,9 +60,9 @@ async function getVotingResult(
 }
 
 export default {
-    getService,
+    getModel,
     getProposal,
-    getDelegator,
-    getVoter,
-    getVotingResult,
+    getApproved,
+    getVoters,
+    getVotingStatus,
 }

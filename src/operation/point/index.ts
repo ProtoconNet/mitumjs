@@ -201,7 +201,7 @@ export class Point extends ContractGenerator {
     }
 
     /**
-     * Get information about the specific point on the contract.
+     * Get information about the specific point model on the contract.
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @returns `data` of `SuccessResponse` is point information:
@@ -210,9 +210,9 @@ export class Point extends ContractGenerator {
      * - `name`: Name of the point,
      * - `policy`: Point policy object including `_hint`, `total_supply`, `approve_list`
      */
-    async getPointInfo(contract: string | Address) {
+    async getModelInfo(contract: string | Address) {
         Address.from(contract);
-        return await getAPIData(() => contractApi.point.getPoint(this.api, contract, this.delegateIP))
+        return await getAPIData(() => contractApi.point.getModel(this.api, contract, this.delegateIP))
     }
 
     /**
@@ -228,7 +228,7 @@ export class Point extends ContractGenerator {
         Address.from(contract);
         Address.from(owner);
         Address.from(approved);
-        const response = await getAPIData(() => contractApi.point.getPoint(this.api, contract, this.delegateIP));
+        const response = await getAPIData(() => contractApi.point.getModel(this.api, contract, this.delegateIP));
         if (isSuccessResponse(response) && response.data) {
             response.data = calculateAllowance(response, owner, approved);
         }
@@ -239,13 +239,13 @@ export class Point extends ContractGenerator {
      * Get point balance for given account.
      * @async
      * @param {string | Address} [contract] - The contract's address.
-     * @param {string | Address} [owner] - The point owner's address.
+     * @param {string | Address} [account] - The point owner's address.
      * @returns `data` of `SuccessResponse` is point balance information:
      * - `amount`: String of amount
      */
-    async getPointBalance(contract: string | Address, owner: string | Address) {
+    async getBalance(contract: string | Address, account: string | Address) {
         Address.from(contract);
-        Address.from(owner);
-        return await getAPIData(() => contractApi.point.getPointBalance(this.api, contract, owner, this.delegateIP))
+        Address.from(account);
+        return await getAPIData(() => contractApi.point.getPointBalance(this.api, contract, account, this.delegateIP))
     }
 }

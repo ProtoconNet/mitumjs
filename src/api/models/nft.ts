@@ -39,7 +39,7 @@ async function getNFTCount(
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
-async function getCollection(
+async function getModel(
     api: string | IP,
     contract: string | Address,
     delegateIP: string | IP
@@ -62,6 +62,6 @@ export default {
     getNFT,
     getNFTs,
     getNFTCount,
-    getCollection,
+    getModel,
     getAccountOperators,
 }

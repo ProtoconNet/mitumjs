@@ -298,10 +298,10 @@ export class Currency extends Generator {
      * @param {string | CurrencyID} [currencyID] - The currency ID.
      * @returns `data` of `SuccessResponse` is currency information:
      * - `_hint`: Hint for currency design
-     * - `amount`: [Amount]
+     * - `initial_supply`: [Amount]
      * - `genesis_account`: Initial account for the currency.
-     * - `policy`: Currency policy information including `new_account_min_balance`, `feeer`
-     * - `aggregate`: Aggregate amount of the currency.
+     * - `policy`: Currency policy information including `min_balance`, `feeer`
+     * - `total_supply`: Total supply amount of the currency.
      */
     async getCurrency(currencyID: string | CurrencyID) {
         return await getAPIData(() => api.currency.getCurrency(this.api, currencyID, this.delegateIP))

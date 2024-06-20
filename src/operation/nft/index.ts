@@ -365,7 +365,7 @@ export class NFT extends ContractGenerator {
      * @param {string | Address} [contract] - The contract's address.
      * @returns `data` of `SuccessResponse` is information about the NFT collection:
      * - `_hint`: Hint for NFT design,
-     * - `parent`: Address of the contract account,
+     * - `contract`: Address of the contract account,
      * - `creator`: Address of the creator,
      * - `active`: Bool represents activation,
      * - `policy`:
@@ -373,11 +373,11 @@ export class NFT extends ContractGenerator {
      * - - `name`: Name of the NFT collection,
      * - - `royalty`: Royalty of the NFT collection,
      * - - `uri`: URI of the NFT collection,
-     * - - `minterWhitelist`: Array of the addresses of accounts who have permissions to mint
+     * - - `minter_whitelist`: Array of the addresses of accounts who have permissions to mint
      */
-    async getCollectionInfo(contract: string | Address) {
+    async getModelInfo(contract: string | Address) {
         Address.from(contract);
-        return await getAPIData(() => contractApi.nft.getCollection(this.api, contract, this.delegateIP))
+        return await getAPIData(() => contractApi.nft.getModel(this.api, contract, this.delegateIP))
     }
     
     /**
@@ -387,7 +387,7 @@ export class NFT extends ContractGenerator {
      * @param {string | number | Big} [nftIdx] - The index of the NFT (Indicate the order of minted).
      * @returns `data` of `SuccessResponse` is the address of the NFT owner.
      */
-    async ownerOf(contract: string | Address, nftIdx: string | number | Big) {
+    async getOwner(contract: string | Address, nftIdx: string | number | Big) {
         Address.from(contract);
         const response = await getAPIData(() => contractApi.nft.getNFT(
             this.api,
@@ -430,7 +430,7 @@ export class NFT extends ContractGenerator {
      * @param {string | Address} [contract] - The contract's address.
      * @returns `data` of `SuccessResponse` is the total supply of NFTs in the collection.
      */
-    async totalSupply(contract: string | Address) {
+    async getTotalSupply(contract: string | Address) {
         Address.from(contract);
         const response = await getAPIData(() => contractApi.nft.getNFTCount(
             this.api,
@@ -439,7 +439,7 @@ export class NFT extends ContractGenerator {
         ));
 
         if (isSuccessResponse(response) && response.data) {
-            response.data = response.data.nft_count? Number(response.data.nft_count) : 0;
+            response.data = response.data.nft_count? Number(response.data.nft_total_supply) : 0;
         }
         return response
     }
@@ -451,7 +451,7 @@ export class NFT extends ContractGenerator {
      * @param {number} [nftIdx] - The index of the NFT (Indicate the order of minted).
      * @returns `data` of `SuccessResponse` is the URI of the NFT.
      */
-    async tokenURI(contract: string | Address, nftIdx: number) {
+    async getURI(contract: string | Address, nftIdx: number) {
         Address.from(contract);
         const response = await getAPIData(() => contractApi.nft.getNFT(
             this.api,
@@ -475,7 +475,7 @@ export class NFT extends ContractGenerator {
      * - `_hint`: Hint for NFT operators book,
      * - `operators`: Array of the addresses of accounts that have been delegated authority over all of the owner’s NFTs
      */
-    async isApprovedForAll(contract: string | Address, owner: string) {
+    async getApprovedAll(contract: string | Address, owner: string) {
         Address.from(contract);
         Address.from(owner);
         return await getAPIData(() => contractApi.nft.getAccountOperators(
@@ -493,7 +493,7 @@ export class NFT extends ContractGenerator {
      * @param {number} [nftIdx] - The index of the NFT (Indicate the order of minted).
      * @returns `data` of `SuccessResponse` is detailed information about the NFT:
      * - `_hint`: Hint for NFT,
-     * - `id`: Index of the NFT,
+     * - `nft_idx`: Index of the NFT,
      * - `active`: Bool represents activation,
      * - `owner`: Address of the owner,
      * - `hash`: Hash for the NFT,
@@ -501,7 +501,7 @@ export class NFT extends ContractGenerator {
      * - `approved`: Address of the approved account for the NFT,
      * - `creators`: Creator object,
      */
-    async getNFTInfo(contract: string | Address, nftIdx: number) {
+    async getNFT(contract: string | Address, nftIdx: number) {
         Address.from(contract);
         return await getAPIData(() => contractApi.nft.getNFT(
             this.api,
@@ -523,7 +523,7 @@ export class NFT extends ContractGenerator {
      * - `_hint`: Hint for currency,
      * - `_embedded`:
      * - - `_hint`: Hint for NFT,
-     * - - `id`: Index of the NFT,
+     * - - `nft_idx`: Index of the NFT,
      * - - `active`: Bool represents activation,
      * - - `owner`: Address of the owner,
      * - - `hash`: Hash for the NFT,

@@ -215,7 +215,7 @@ export class Credential extends ContractGenerator {
     }
     
     /**
-     * Get information about a credential service on the contract.
+     * Get information about a credential model on the contract.
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @returns `data` of `SuccessResponse` is credential service information:
@@ -229,9 +229,9 @@ export class Credential extends ContractGenerator {
      * - - - `credential_count`: The number of credential for the holder
      * - - `credential_count`: The total number of credential
      */
-    async getServiceInfo(contract: string | Address) {
+    async getModelInfo(contract: string | Address) {
         Address.from(contract);
-        return await getAPIData(() => contractApi.credential.getService(this.api, contract, this.delegateIP))
+        return await getAPIData(() => contractApi.credential.getModel(this.api, contract, this.delegateIP))
     }
     
     /**
@@ -245,14 +245,14 @@ export class Credential extends ContractGenerator {
      * - - `_hint`: Hint for credential,
      * - - `holder`: Address of holder,
      * - - `template_id`: The id for the template,
-     * - - `id`: The id for the credential,
+     * - - `credential_id`: The id for the credential,
      * - - `value`: The value of credential,
      * - - `valid_from`: The timestamp for valid_from,
      * - - `valid_until`: The timestamp for valid_until,
      * - - `did`: The name of the credential,
      * - `is_active`: Indicates whether the credential is active or revoked
      */
-    async getCredentialInfo(
+    async getCredential(
         contract: string | Address,
         templateID: string,
         credentialID: string,
@@ -301,7 +301,7 @@ export class Credential extends ContractGenerator {
      * - - - `_hint`: Hint for credential,
      * - - - `holder`: Address of holder,
      * - - - `template_id`: The id for the template,
-     * - - - `id`: The id for the credential,
+     * - - - `credential_id`: The id for the credential,
      * - - - `value`: The value of credential,
      * - - - `valid_from`: The timestamp for valid_from,
      * - - - `valid_until`: The timestamp for valid_until,
@@ -332,7 +332,7 @@ export class Credential extends ContractGenerator {
      * - - - - `_hint`: Hint for credential,
      * - - - - `holder`: Address of holder,
      * - - - - `template_id`: The id for the template,
-     * - - - - `id`: The id for the credential,
+     * - - - - `credential_id`: The id for the credential,
      * - - - - `value`: The value of credential,
      * - - - - `valid_from`: The timestamp for valid_from,
      * - - - - `valid_until`: The timestamp for valid_until,
@@ -340,7 +340,7 @@ export class Credential extends ContractGenerator {
      * - - - `is_active`: Indicates whether the credential is active or revoked,
      * - - `_links`: links to get additional information of the credential
      */
-    async claimCredential(
+    async getByHolder(
         contract: string | Address,
         holder: string | Address,
     ) {

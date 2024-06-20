@@ -449,7 +449,7 @@ export class DAO extends ContractGenerator {
     }
     
     /**
-     * Get DAO service information for a specific contract address.
+     * Get DAO model information for a specific contract address.
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @returns `data` of `SuccessResponse` is information of the DAO service:
@@ -457,9 +457,9 @@ export class DAO extends ContractGenerator {
      * - `option`: 'biz' or 'crypto',
      * - `policy`: [Policy]
      */
-    async getServiceInfo(contract: string | Address) {
+    async getModelInfo(contract: string | Address) {
         Address.from(contract);
-        return await getAPIData(() => contractApi.dao.getService(this.api, contract, this.delegateIP))
+        return await getAPIData(() => contractApi.dao.getModel(this.api, contract, this.delegateIP))
     }
     
     /**
@@ -473,27 +473,27 @@ export class DAO extends ContractGenerator {
      * - `proposal`: [BizProposal] or [CryptoProposal],
      * - `policy`: [Policy]
      */
-    async getProposalInfo(contract: string | Address, proposalID: string) {
+    async getProposal(contract: string | Address, proposalID: string) {
         Address.from(contract);
         new URIString(proposalID, 'proposalID');
         return await getAPIData(() => contractApi.dao.getProposal(this.api, contract, proposalID,this.delegateIP))
     }
     
     /**
-     * Get information about a specific delegator in a DAO proposal.
+     * Get the approved account who has taken over the voting rights from the given account.
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @param {string} [proposalID] - The proposal ID.
-     * @param {string | Address} [delegator] - The address of the delegator.
+     * @param {string | Address} [account] - The address of the account that has approved another account.
      * @returns `data` of `SuccessResponse` is delegator information:
-     * - `_hint`: Hint for dao delegator info,
-     * - `account`: Address of delegator account,
-     * - `delegatee`: Address of delegatee account,
+     * - `_hint`: Hint for DAO approval voting info,
+     * - `account`: Address of the account that approved,
+     * - `approved`: Address of the approved account,
      */
-    async getDelegatorInfo(contract: string | Address, proposalID: string, delegator: string | Address) {
+    async getApproved(contract: string | Address, proposalID: string, account: string | Address) {
         Address.from(contract);
         new URIString(proposalID, 'proposalID');
-        return await getAPIData(() => contractApi.dao.getDelegator(this.api, contract, proposalID, delegator, this.delegateIP))
+        return await getAPIData(() => contractApi.dao.getApproved(this.api, contract, proposalID, account, this.delegateIP))
     }
     
     /**
@@ -503,17 +503,17 @@ export class DAO extends ContractGenerator {
      * @param {string} [proposalID] - The proposal ID.
      * @returns `data` of `SuccessResponse` is an array of information of the voters:
      * - `_hint`: Hint for dao voter,
-     * - `account`: Address of the voter,
-     * - `delegators`: [ Address of delegatee, Address of delegator ]
+     * - `approved`: approved address,
+     * - `voters`: [ Address of delegatee, Address of delegator ]
      */
-    async getVoterInfo(contract: string | Address, proposalID: string) {
+    async getVoters(contract: string | Address, proposalID: string) {
         Address.from(contract);
         new URIString(proposalID, 'proposalID');
-        return await getAPIData(() => contractApi.dao.getVoter(this.api, contract, proposalID, this.delegateIP))
+        return await getAPIData(() => contractApi.dao.getVoters(this.api, contract, proposalID, this.delegateIP))
     }
     
     /**
-     * Get the voting result of a specific DAO proposal.
+     * Get the status of the voting for the proposal.
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @param {string} [proposalID] - The proposal ID.
@@ -523,9 +523,9 @@ export class DAO extends ContractGenerator {
      * - `voting_powers`: Object mapping registered account addresses to their corresponding voting information represents `_hint`, `account`,`voted`, `vote_for`, `voting_power`.
      * - `result`: Object consisting of the selected option and the number of votes.
      */
-    async getVotingResult(contract: string | Address, proposalID: string) {
+    async getVotingStatus(contract: string | Address, proposalID: string) {
         Address.from(contract);
         new URIString(proposalID, 'proposalID');
-        return await getAPIData(() => contractApi.dao.getVotingResult(this.api, contract, proposalID, this.delegateIP))
+        return await getAPIData(() => contractApi.dao.getVotingStatus(this.api, contract, proposalID, this.delegateIP))
     }
 }

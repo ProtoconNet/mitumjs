@@ -201,7 +201,7 @@ export class Token extends ContractGenerator {
     }
 
     /**
-     * Get information about the specific token on the contract.
+     * Get information about the specific token model on the contract.
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @returns `data` of `SuccessResponse` is token information:
@@ -210,9 +210,9 @@ export class Token extends ContractGenerator {
      * - `name`: Name of the token,
      * - `policy`: Token policy object including `_hint`, `total_supply`, `approve_list`
      */
-    async getTokenInfo(contract: string | Address) {
+    async getModelInfo(contract: string | Address) {
         Address.from(contract);
-        return await getAPIData(() => contractApi.token.getToken(this.api, contract, this.delegateIP))
+        return await getAPIData(() => contractApi.token.getModel(this.api, contract, this.delegateIP))
     }
 
     /**
@@ -228,7 +228,7 @@ export class Token extends ContractGenerator {
         Address.from(contract);
         Address.from(owner);
         Address.from(approved);
-        const response = await getAPIData(() => contractApi.token.getToken(this.api, contract, this.delegateIP));
+        const response = await getAPIData(() => contractApi.token.getModel(this.api, contract, this.delegateIP));
         if (isSuccessResponse(response) && response.data) {
             response.data = calculateAllowance(response, owner, approved);
         }
@@ -239,13 +239,13 @@ export class Token extends ContractGenerator {
      * Get token balance for given account.
      * @async
      * @param {string | Address} [contract] - The contract's address.
-     * @param {string | Address} [owner] - The token owner's address.
+     * @param {string | Address} [account] - The token owner's address.
      * @returns`data` of `SuccessResponse` is token balance information:
      * - `amount`: String of amount
      */
-    async getTokenBalance(contract: string | Address, owner: string | Address) {
+    async getBalance(contract: string | Address, account: string | Address) {
         Address.from(contract);
-        Address.from(owner);
-        return await getAPIData(() => contractApi.token.getTokenBalance(this.api, contract, owner, this.delegateIP))
+        Address.from(account);
+        return await getAPIData(() => contractApi.token.getTokenBalance(this.api, contract, account, this.delegateIP))
     }
 }

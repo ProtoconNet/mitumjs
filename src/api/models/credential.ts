@@ -9,7 +9,7 @@ const url = (
     contract: string | Address, 
 ) => `${IP.from(api).toString()}/did/${Address.from(contract).toString()}`
 
-async function getService(api: string | IP, contract: string | Address, delegateIP: string | IP) {
+async function getModel(api: string | IP, contract: string | Address, delegateIP: string | IP) {
     const apiPath = `${url(api, contract)}/service`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
@@ -56,7 +56,7 @@ async function getCredentialByHolder(
 }
 
 export default {
-    getService,
+    getModel,
     getCredential,
     getTemplate,
     getCredentials,
