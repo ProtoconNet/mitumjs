@@ -14,9 +14,9 @@ export default {
         FACT: "mitum-dao-register-model-operation-fact",
         OPERATION: "mitum-dao-register-model-operation",
     },
-    UPDATE_POLICY: {
-        FACT: "mitum-dao-update-policy-operation-fact",
-        OPERATION: "mitum-dao-update-policy-operation",
+    UPDATE_MODEL_CONFIG: {
+        FACT: "mitum-dao-update-model-config-operation-fact",
+        OPERATION: "mitum-dao-update-model-config-operation",
     },
     PROPOSE: {
         FACT: "mitum-dao-propose-operation-fact",
