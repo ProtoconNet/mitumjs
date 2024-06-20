@@ -1,5 +1,5 @@
 import { RegisterModelFact } from "./register-model"
-import { UpdateModelPolicyFact } from "./update-model-policy"
+import { UpdateModelConfigFact } from "./update-model-config"
 import { MintItem, MintFact } from "./mint"
 import { ApproveItem, ApproveFact } from "./approve"
 import { ApproveAllItem, ApproveAlleFact } from "./approve-all"
@@ -78,18 +78,18 @@ export class NFT extends ContractGenerator {
     }
     
     /**
-     * Generate `update-model-policy` operation to update the policy of an existing NFT collection on the contract.
+     * Generate `update-model-config` operation to update the policy of the nft collection on the contract.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
-     * @param {collectionData} [data] - The collection data to be registed. The properties of `collectionData` include:
+     * @param {collectionData} [data] - The policy data for nft collection to be updated. The properties of `collectionData` include:
      * - {string | LongString} `name` - The name of the NFT collection.
      * - {string | LongString} `uri` - The uri of the NFT collection.
      * - {string | number | Big} `royalty` - The royalty of the NFT collection.
      * - {(string | Address)[]} `minterWhitelist` - Accounts who have permissions to mint.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `update-model-policy` operation.
+     * @returns `update-model-config` operation.
      */
-    updateModelPolicy(
+    updateModelConfig(
         contract: string | Address,
         sender: string | Address,
         data: collectionData,
@@ -102,7 +102,7 @@ export class NFT extends ContractGenerator {
         });
         return new Operation(
             this.networkID,
-            new UpdateModelPolicyFact(
+            new UpdateModelConfigFact(
                 TimeStamp.new().UTC(),
                 sender,
                 contract,

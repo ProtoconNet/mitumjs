@@ -5,9 +5,9 @@ export default {
         FACT: "mitum-nft-register-model-operation-fact",
         OPERATION: "mitum-nft-register-model-operation",
     },
-    UPDATE_MODEL_POLICY: {
-        FACT: "mitum-nft-update-model-policy-operation-fact",
-        OPERATION: "mitum-nft-update-model-policy-operation",
+    UPDATE_MODEL_CONFIG: {
+        FACT: "mitum-nft-update-model-config-operation-fact",
+        OPERATION: "mitum-nft-update-model-config-operation",
     },
     MINT: {
         FORM: "mitum-nft-mint-form",
