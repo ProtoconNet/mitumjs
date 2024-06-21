@@ -10,7 +10,7 @@ const url = (
 ) => `${IP.from(api).toString()}/did/${Address.from(contract).toString()}`
 
 async function getModel(api: string | IP, contract: string | Address, delegateIP: string | IP) {
-    const apiPath = `${url(api, contract)}/service`;
+    const apiPath = `${url(api, contract)}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 

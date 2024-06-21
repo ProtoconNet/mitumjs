@@ -14,7 +14,7 @@ async function getModel(
     contract: string | Address,
     delegateIP: string | IP
 ) {
-    const apiPath = `${url(api, contract)}/service`;
+    const apiPath = `${url(api, contract)}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
@@ -25,7 +25,7 @@ async function getTimeStamp(
     timestampIdx: string | number | Big,
     delegateIP: string | IP
 ) {
-    const apiPath = `${url(api, contract)}/project/${projectID}/id/${Big.from(timestampIdx).toString()}`;
+    const apiPath = `${url(api, contract)}/project/${projectID}/idx/${Big.from(timestampIdx).toString()}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 

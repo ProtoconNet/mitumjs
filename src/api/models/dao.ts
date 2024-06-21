@@ -14,7 +14,7 @@ async function getModel(
     contract: string | Address,
     delegateIP: string | IP
 ) {
-    const apiPath = `${url(api, contract)}/service`;
+    const apiPath = `${url(api, contract)}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
@@ -32,10 +32,10 @@ async function getApproved(
     api: string | IP, 
     contract: string | Address,
     proposalID: string,
-    delegator: string | Address,
+    registrant: string | Address,
     delegateIP: string | IP
 ) {
-    const apiPath = `${url(api, contract)}/proposal/${proposalID}/delegator/${Address.from(delegator).toString()}`;
+    const apiPath = `${url(api, contract)}/proposal/${proposalID}/registrant/${Address.from(registrant).toString()}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 

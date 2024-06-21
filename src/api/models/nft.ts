@@ -12,10 +12,10 @@ const url = (
 async function getNFT(
     api: string | IP,
     contract: string | Address,
-    nftID: string | number | Big,
+    nftIdx: string | number | Big,
     delegateIP: string | IP
 ) {
-    const apiPath = `${url(api, contract)}/${nftID}`;
+    const apiPath = `${url(api, contract)}/nftidx/${nftIdx}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
@@ -35,7 +35,7 @@ async function getNFTCount(
     contract: string | Address,
     delegateIP: string | IP,
 ) {
-    const apiPath = `${url(api, contract)}/count`;
+    const apiPath = `${url(api, contract)}/totalsupply`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
@@ -44,7 +44,7 @@ async function getModel(
     contract: string | Address,
     delegateIP: string | IP
 ) {
-    const apiPath = `${url(api, contract)}/collection`;
+    const apiPath = `${url(api, contract)}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
@@ -54,7 +54,7 @@ async function getAccountOperators(
     account: string | Address,
     delegateIP: string | IP
 ) {
-    const apiPath = `${url(api, contract)}/account/${Address.from(account).toString()}/operators`;
+    const apiPath = `${url(api, contract)}/account/${Address.from(account).toString()}/allapproved`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
