@@ -480,14 +480,14 @@ export class DAO extends ContractGenerator {
     }
     
     /**
-     * Get the approved account who has taken over the voting rights from the given account.
+     * Get the approved account who has taken over the voting rights from the registrant account.
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @param {string} [proposalID] - The proposal ID.
      * @param {string | Address} [account] - The address of the account that has approved another account.
-     * @returns `data` of `SuccessResponse` is delegator information:
+     * @returns `data` of `SuccessResponse` is approval information:
      * - `_hint`: Hint for DAO approval voting info,
-     * - `account`: Address of the account that approved,
+     * - `account`: Address of the registrant that has approved another account,
      * - `approved`: Address of the approved account,
      */
     async getApproved(contract: string | Address, proposalID: string, account: string | Address) {
@@ -503,8 +503,8 @@ export class DAO extends ContractGenerator {
      * @param {string} [proposalID] - The proposal ID.
      * @returns `data` of `SuccessResponse` is an array of information of the voters:
      * - `_hint`: Hint for dao voter,
-     * - `approved`: approved address,
-     * - `voters`: [ Address of delegatee, Address of delegator ]
+     * - `voter`: Address of account that can vote,
+     * - `votring_power_holders`: List of accounts that have delegated their voting power to voter.
      */
     async getVoters(contract: string | Address, proposalID: string) {
         Address.from(contract);
