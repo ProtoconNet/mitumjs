@@ -1,8 +1,8 @@
-import { ECODE, assignCodeFromErrorMessage } from "./code"
+import { ECODE, DCODE, PCODE, assignCodeFromErrorMessage } from "./code"
 import { MitumError, Assert, StringAssert } from "./assert"
 
 export {
-    ECODE,
+    ECODE, DCODE, PCODE,
     MitumError,
     Assert,
     StringAssert,

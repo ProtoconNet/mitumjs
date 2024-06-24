@@ -1,5 +1,5 @@
 import { Generator, IP } from "./types"
-
+import { ECODE, DCODE, PCODE } from "./error"
 import { Block, Node, NetworkID } from "./node"
 import { 
     Account, Currency, Contract, 
@@ -30,6 +30,10 @@ export class Mitum extends Generator {
     private _token: Token
     private _point: Point
 
+    public ECODE: Object
+    public PCODE: Object
+    public DCODE: Object
+
     public constructor(api?: string, delegateIP?: string) {
         super(NetworkID.get(), api, delegateIP)
         this._node = new Node(this.api, this.delegateIP)
@@ -49,6 +53,10 @@ export class Mitum extends Generator {
         this._dao = new DAO(this.networkID, this.api, this.delegateIP)
         this._token = new Token(this.networkID, this.api, this.delegateIP)
         this._point = new Point(this.networkID, this.api, this.delegateIP)
+
+        this.ECODE = ECODE;
+        this.PCODE = PCODE;
+        this.DCODE = DCODE;
     }
 
     private refresh() {
