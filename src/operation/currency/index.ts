@@ -50,14 +50,16 @@ export class Currency extends Generator {
      * **Signature of nodes** is required, not a general account signature.
      * @param {string | Address} [genesisAddress] - genesis account's address.
      * @param {string | number | Big} [initialSupply] - initial supply amount.
-     * @param {string | CurrencyID} [currency] - currency ID to resgister.
+     * @param {string | CurrencyID} [currencyID] - currency ID to resgister.
+     * @param {string | number | Big} [decimal] - decimal number for the currency.
      * @param {currencyPolicyData} [data] - The currency policy data.
      * @returns `register-currency` operation.
      */
     registerCurrency(
         genesisAddress: string | Address, 
         initialSupply: string | number | Big,
-        currency: string | CurrencyID,
+        currencyID: string | CurrencyID,
+        decimal: string | number | Big,
         data: currencyPolicyData
     ) {
         Address.from(genesisAddress);
@@ -67,10 +69,11 @@ export class Currency extends Generator {
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the currencyPolicyData structure`))
         });
 
-        const amount = new Amount(currency, initialSupply)
         const design = new CurrencyDesign(
-            amount,
+            initialSupply,
+            currencyID,
             genesisAddress,
+            decimal,
             this.buildPolicy(
                 data.feeType,
                 data.minBalance,
@@ -92,10 +95,11 @@ export class Currency extends Generator {
      * Generate an `update-currency` operation for updating an existing Mitum currency.
      * **Signature of nodes** is required, not a general account signature.
      * @param {string | CurrencyID} [currency] - The currency ID to want to updated.
+     * @param {string | number | Big} [decimal] - decimal number for the currency.
      * @param {currencyPolicyData} [data] - The currency policy data.
      * @returns `update-currency` operation.
      */
-    updateCurrency(currency: string | CurrencyID, data: currencyPolicyData) {
+    updateCurrency(currency: string | CurrencyID, decimal: string | number | Big, data: currencyPolicyData) {
         const keysToCheck: (keyof currencyPolicyData)[] = ['minBalance', 'feeType', 'feeReceiver'];
         keysToCheck.forEach((key) => {
             Assert.check(data[key] !== undefined, 
@@ -107,6 +111,7 @@ export class Currency extends Generator {
             new UpdateCurrencyFact(
                 TimeStamp.new().UTC(),
                 currency,
+                decimal,
                 this.buildPolicy(
                     data.feeType,
                     data.minBalance,

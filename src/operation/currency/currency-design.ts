@@ -1,38 +1,58 @@
 import { HINT } from "../../alias"
 import { Address } from "../../key"
-import { Amount, Hint } from "../../common"
+import { Hint, CurrencyID } from "../../common"
 import { Big, Float, HintedObject, IBuffer, IHintedObject } from "../../types"
+import { Assert, ECODE, MitumError } from "../../error"
 
 export class CurrencyDesign implements IBuffer, IHintedObject {
     private static hint: Hint = new Hint(HINT.CURRENCY.DESIGN)
-    readonly amount: Amount
+    readonly initialSupply: Big
+    readonly currencyID: CurrencyID
     readonly policy: CurrencyPolicy
     readonly genesisAccount: Address
-    readonly aggregate: Big
+    readonly totalSupply: Big
+    readonly decimal: Big
 
-    constructor(amount: Amount, genesisAccount: string | Address, policy: CurrencyPolicy) {
-        this.amount = amount
+    constructor(
+        initialSupply: string | number | Big,
+        currencyID: string | CurrencyID,
+        genesisAccount: string | Address,
+        decimal: string | number | Big,
+        policy: CurrencyPolicy
+    ) {
+        this.initialSupply = Big.from(initialSupply)
+        this.currencyID = CurrencyID.from(currencyID)
         this.genesisAccount = Address.from(genesisAccount)
         this.policy = policy
-        this.aggregate = amount.big
+        this.totalSupply = Big.from(initialSupply)
+        this.decimal = Big.from(decimal)
+        Assert.check(0 < this.decimal.big, 
+            MitumError.detail(ECODE.CURRENCY.INVALID_CURRENCY_DESIGN, "decimal number must not be set to 0 or below")
+        )
+
+        
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
-            this.amount.toBuffer(),
+            this.initialSupply.toBuffer(),
+            this.currencyID.toBuffer(),
+            this.decimal.toBuffer(),
             this.genesisAccount.toBuffer(),
             this.policy.toBuffer(),
-            this.aggregate.toBuffer(),
+            this.totalSupply.toBuffer(),
         ])
     }
 
     toHintedObject(): HintedObject {
         return {
             _hint: CurrencyDesign.hint.toString(),
-            initial_supply: this.amount.toHintedObject(),
+            initial_supply: this.initialSupply.toString(),
+            currency_id: this.initialSupply.toString(),
+            decimal: this.decimal.v,
             genesis_account: this.genesisAccount.toString(),
             policy: this.policy.toHintedObject(),
-            total_supply: this.aggregate.toString(),
+            total_supply: this.totalSupply.toString(),
         }
     }
 }
