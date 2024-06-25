@@ -30,6 +30,7 @@ export class Token extends ContractGenerator {
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @param {string | LongString} [name] - The name of the token to register.
      * @param {string | CurrencyID} [symbol] - The symbol of the token to register.
+     * @param {string | number | Big} [decimal] - (Optional) The decimal number to the token to register. If not provided, the default value is 0.
      * @param {string | number | Big} [initialSupply] - (Optional) The initial supply of the token to register. If not provided, the default value is 0.
      * @returns `register-model` operation.
      */
@@ -39,6 +40,7 @@ export class Token extends ContractGenerator {
         currency: string | CurrencyID,
         name: string | LongString,
         symbol: string | CurrencyID,
+        decimal?: string | number | Big,
         initialSupply?: string | number | Big,
     ) {
         return new Operation(
@@ -50,6 +52,7 @@ export class Token extends ContractGenerator {
                 currency,
                 symbol,
                 name,
+                decimal ?? 0,
                 initialSupply ?? 0,
             )
         )
