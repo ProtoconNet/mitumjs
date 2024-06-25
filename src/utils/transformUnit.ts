@@ -14,9 +14,13 @@ export class Utils {
 
     /**
      * Sets the decimal value used for unit conversions.
-     * @param {number} decimal - The decimal places to be used.
+     * @param {number} decimal - The decimal places to be used, must be positive integer.
      */
     public setDecimal(decimal: number): void {
+        Assert.check(
+            Number.isInteger(decimal) && decimal > 0,
+            MitumError.detail(ECODE.INVALID_DECIMAL, "Invalid decimal number")
+        )
         this.decimal = decimal;
     }
 
