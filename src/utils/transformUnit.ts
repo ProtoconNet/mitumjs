@@ -46,7 +46,7 @@ export class Utils {
 
     /**
      * Converts integer string *value* into a "decimal string", assuming decimal places.
-     * The **decimal** number can be set with **setDecimal()** and the default value is 9.
+     * The `decimal` number can be set with `setDecimal()` and the default value is 9.
      * @param {string} value - Integer in string type.
      * @returns {string} - Value expressed in minimum units.
      * @example
@@ -69,7 +69,7 @@ export class Utils {
 
     /**
      * Converts the "decimal string" *value* to a integer string, assuming decimal places. 
-     * The **decimal** number can be set with **setDecimal()** and the default value is 9.
+     * The `decimal` number can be set with `setDecimal()` and the default value is 9.
      * @param {string} value - Decimal number in string type.
      * @returns {string} - Value expressed in basis units.
      * @example
