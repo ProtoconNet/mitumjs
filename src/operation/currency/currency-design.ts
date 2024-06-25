@@ -47,7 +47,7 @@ export class CurrencyDesign implements IBuffer, IHintedObject {
     toHintedObject(): HintedObject {
         return {
             _hint: CurrencyDesign.hint.toString(),
-            initial_supply: this.initialSupply.toString(),
+            initial_supply: this.currencyID.toString(),
             currency_id: this.initialSupply.toString(),
             decimal: this.decimal.v,
             genesis_account: this.genesisAccount.toString(),
