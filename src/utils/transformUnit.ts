@@ -78,7 +78,7 @@ export class Utils {
      * @returns {string} - Value expressed in basis units.
      * @example
      * // Example: Convert FACT to mFACT (decimal: 9)
-     * const value = "12.12345"; // 1 ether
+     * const value = "12.12345"; //FACT
      * const result = mitum.utils.parseUnits(value);
      * console.log(`FACT to mFACT: ${result}`); // "12123450000"
      */
