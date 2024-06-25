@@ -439,7 +439,7 @@ export class NFT extends ContractGenerator {
         ));
 
         if (isSuccessResponse(response) && response.data) {
-            response.data = response.data.nft_count? Number(response.data.nft_total_supply) : 0;
+            response.data = response.data.nft_total_supply? Number(response.data.nft_total_supply) : 0;
         }
         return response
     }
