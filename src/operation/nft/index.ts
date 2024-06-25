@@ -332,14 +332,14 @@ export class NFT extends ContractGenerator {
     /**
      * Generate `add-signature` operation to signs an NFT as creator of the artwork.
      * @param {string | Address} [contract] - The contract's address.
-     * @param {string | Address} [creator] - The address of the creator signing the NFT.
+     * @param {string | Address} [sender] - The address of the creator signing the NFT.
      * @param {string | number | Big} [nftIdx] - The index of the NFT (Indicate the order of minted).
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `sign` operation.
      */
     addSignature(
         contract: string | Address,
-        creator: string | Address,
+        sender: string | Address,
         nftIdx: string | number | Big,
         currency: string | CurrencyID,
     ) {
@@ -347,7 +347,7 @@ export class NFT extends ContractGenerator {
             this.networkID,
             new AddSignatureFact(
                 TimeStamp.new().UTC(),
-                creator,
+                sender,
                 [
                     new AddSignatureItem(
                         contract,
