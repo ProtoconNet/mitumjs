@@ -1,6 +1,7 @@
 import { Generator, IP } from "./types"
 import { ECODE, DCODE, PCODE } from "./error"
 import { Block, Node, NetworkID } from "./node"
+import { Utils } from "./utils/transformUnit"
 import { 
     Account, Currency, Contract, 
     NFT,
@@ -34,6 +35,8 @@ export class Mitum extends Generator {
     public PCODE: Object
     public DCODE: Object
 
+    private _utils: Utils
+
     public constructor(api?: string, delegateIP?: string) {
         super(NetworkID.get(), api, delegateIP)
         this._node = new Node(this.api, this.delegateIP)
@@ -57,6 +60,8 @@ export class Mitum extends Generator {
         this.ECODE = ECODE;
         this.PCODE = PCODE;
         this.DCODE = DCODE;
+
+        this._utils = new Utils();
     }
 
     private refresh() {
@@ -76,6 +81,8 @@ export class Mitum extends Generator {
         this._dao = new DAO(this.networkID, this.api, this.delegateIP)
         this._token = new Token(this.networkID, this.api, this.delegateIP)
         this._point = new Point(this.networkID, this.api, this.delegateIP)
+
+        this._utils = new Utils();
     }
 
     get node(): Node {
@@ -136,6 +143,10 @@ export class Mitum extends Generator {
 
     get point(): Point {
         return this._point
+    }
+
+    get utils(): Utils {
+        return this._utils
     }
 
     /**
