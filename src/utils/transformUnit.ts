@@ -13,7 +13,7 @@ export class Utils {
     }
 
     /**
-     * Sets the decimal value used for conversions.
+     * Sets the decimal value used for unit conversions.
      * @param {number} decimal - The decimal places to be used.
      */
     public setDecimal(decimal: number): void {
