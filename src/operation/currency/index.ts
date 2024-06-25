@@ -471,6 +471,8 @@ export class Account extends KeyG {
 
     /**
      * Generate an `update-key` operation for replace the public keys involved in given address.
+     * 
+     * `update-key` cannot be used for single-sig accounts and CA accounts.
      * @param {string | Address} [sender] - The target account's address.
      * @param {keysType} [newKeys] - An array of object {`key`: publickey, `weight`: weight for the key}
      * @param {string | CurrencyID} [currency] - The currency ID.
@@ -487,7 +489,7 @@ export class Account extends KeyG {
      * };
      * const keysArray = [pubkey01, pubkey02];
      */
-    updateMultiSig(
+    updateKey(
         sender: string | Address,
         newKeys: keysType,
         currency: string | CurrencyID,
