@@ -29,7 +29,6 @@ export type OperationJson = {
     _hint: string,
     fact: FactJson,
     hash: string,
-    memo?: string,
     signs: FS[]
 }
 
