@@ -17,14 +17,12 @@ type SigType = "FactSign" | "NodeFactSign" | null
 export class Operation<T extends Fact> implements IBuffer, IHintedObject {
     readonly id: string
     readonly hint: Hint
-    readonly memo: string
     readonly fact: T
     private _factSigns: FactSign[]
     private _hash: Buffer
 
-    constructor(networkID: string, fact: T, memo?: string) {
+    constructor(networkID: string, fact: T) {
         this.id = networkID
-        this.memo = memo ?? ""
         this.fact = fact
 
         this.hint = new Hint(fact.operationHint)
@@ -163,13 +161,12 @@ export class Operation<T extends Fact> implements IBuffer, IHintedObject {
     }
 
     toHintedObject(): HintedObject {
-        const op = {
+        const operation = {
             _hint: this.hint.toString(),
             fact: this.fact.toHintedObject(),
             hash: this._hash.length === 0 ? "" : base58.encode(this._hash)
         }
 
-        const operation = this.memo ? op : { ...op, memo: this.memo }
         const factSigns = this._factSigns.length === 0 ? [] : this._factSigns.sort(SortFunc)
 
         return {
