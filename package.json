@@ -1,6 +1,6 @@
 {
   "name": "@mitumjs/mitumjs",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "framework for mitum network",
   "main": "dist/bundle.cjs.cjs",
   "module": "dist/bundle.esm.mjs",
