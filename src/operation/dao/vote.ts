@@ -39,7 +39,7 @@ export class VoteFact extends DAOFact {
     toHintedObject(): FactJson {
         return {
             ...super.toHintedObject(),
-            vote: this.vote.v,
+            vote_option: this.vote.v,
         }
     }
 
