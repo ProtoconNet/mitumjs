@@ -314,7 +314,7 @@ export const assignCodeFromErrorMessage = (errorMessage: string): string => {
         }
     }
 
-    pcodeArr.length === 0 ?? pcodeArr.push(PCODE.UNDEFINED.code);
+    pcodeArr.length === 0 && pcodeArr.push(PCODE.UNDEFINED.code);
 
     if (dcodeArr.length > 1) {
         return pcodeArr.slice(-1) + DCODE.COMPLEX.code
