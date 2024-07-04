@@ -36,7 +36,7 @@ export class TransferItem extends NFTItem {
         return {
             ...super.toHintedObject(),
             receiver: this.receiver.toString(),
-            nft: this.nft.v,
+            nft_idx: this.nft.v,
         }
     }
 
