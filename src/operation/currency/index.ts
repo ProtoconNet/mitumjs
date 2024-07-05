@@ -95,11 +95,10 @@ export class Currency extends Generator {
      * Generate an `update-currency` operation for updating an existing Mitum currency.
      * **Signature of nodes** is required, not a general account signature.
      * @param {string | CurrencyID} [currency] - The currency ID to want to updated.
-     * @param {string | number | Big} [decimal] - decimal number for the currency.
      * @param {currencyPolicyData} [data] - The currency policy data.
      * @returns `update-currency` operation.
      */
-    updateCurrency(currency: string | CurrencyID, decimal: string | number | Big, data: currencyPolicyData) {
+    updateCurrency(currency: string | CurrencyID, data: currencyPolicyData) {
         const keysToCheck: (keyof currencyPolicyData)[] = ['minBalance', 'feeType', 'feeReceiver'];
         keysToCheck.forEach((key) => {
             Assert.check(data[key] !== undefined, 
@@ -111,7 +110,6 @@ export class Currency extends Generator {
             new UpdateCurrencyFact(
                 TimeStamp.new().UTC(),
                 currency,
-                decimal,
                 this.buildPolicy(
                     data.feeType,
                     data.minBalance,
