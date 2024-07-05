@@ -84,7 +84,7 @@ export class Currency extends Generator {
                 data.maxFee,
             ),
         )
-
+                
         return new Operation(
             this.networkID,
             new RegisterCurrencyFact(TimeStamp.new().UTC(), design),

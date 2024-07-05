@@ -29,13 +29,11 @@ export class CurrencyDesign implements IBuffer, IHintedObject {
         Assert.check(0 < this.decimal.big, 
             MitumError.detail(ECODE.CURRENCY.INVALID_CURRENCY_DESIGN, "decimal number must not be set to 0 or below")
         )
-
-        
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
-            this.initialSupply.toBuffer(),
+            this.initialSupply.toBuffer(), 
             this.currencyID.toBuffer(),
             this.decimal.toBuffer(),
             this.genesisAccount.toBuffer(),
@@ -47,10 +45,10 @@ export class CurrencyDesign implements IBuffer, IHintedObject {
     toHintedObject(): HintedObject {
         return {
             _hint: CurrencyDesign.hint.toString(),
-            initial_supply: this.currencyID.toString(),
-            currency_id: this.initialSupply.toString(),
-            decimal: this.decimal.v,
+            currency_id: this.currencyID.toString(),
+            decimal: this.decimal.toString(),
             genesis_account: this.genesisAccount.toString(),
+            initial_supply: this.initialSupply.toString(),
             policy: this.policy.toHintedObject(),
             total_supply: this.totalSupply.toString(),
         }
@@ -77,8 +75,8 @@ export class CurrencyPolicy implements IBuffer, IHintedObject {
     toHintedObject(): HintedObject {
         return {
             _hint: CurrencyPolicy.hint.toString(),
-            min_balance: this.newAccountMinBalance.toString(),
             feeer: this.feeer.toHintedObject(),
+            min_balance: this.newAccountMinBalance.toString(),
         }
     }
 }
@@ -135,8 +133,8 @@ export class FixedFeeer extends Feeer {
     toHintedObject(): HintedObject {
         const feeer = {
             ...super.toHintedObject(),
-            receiver: this.receiver.toString(),
             amount: this.amount.toString(),
+            receiver: this.receiver.toString(),
         }
 
         if (this.exchangeMinAmount) {
