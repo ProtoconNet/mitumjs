@@ -67,12 +67,13 @@ export class Utils {
         const bigIntVal = BigInt(value);
         const factor = BigInt(10 ** this.decimal);
         const integerPart = bigIntVal / factor;
-        const fractionalPart = bigIntVal % factor;
+        const integerString = integerPart === 0n && bigIntVal < 0n ? `-${integerPart.toString()}` : integerPart.toString();
+        const fractionalPart = bigIntVal % factor < 0n ? -bigIntVal % factor : bigIntVal % factor;
         const fractionalString = fractionalPart.toString().padStart(this.decimal, '0');
         if ( fractionalString === undefined || /^0*$/.test(fractionalString)) {
-            return `${integerPart.toString()}.0`
+            return `${integerString}.0`
         } else {
-            return `${integerPart.toString()}.${fractionalString}`
+            return `${integerString}.${fractionalString.replace(/0+$/, '')}`
         }
     }
 
@@ -92,7 +93,9 @@ export class Utils {
             this.isValidDecimalString(value),
             MitumError.detail(ECODE.INVALID_FLOAT, "Invalid decimal string")
         )
-    
+        if (Number(value) === 0) {
+            return "0"
+        }
         let [integerPart, fractionalPart = ''] = value.split('.');
         fractionalPart = Number(fractionalPart) === 0 ? '' : fractionalPart;
         integerPart = Number(integerPart) === 0 ? '' : integerPart;
