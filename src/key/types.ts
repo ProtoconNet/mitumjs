@@ -11,3 +11,8 @@ export type Account = {
     publickey: string
     address: string
 }
+
+export type HDAccount = Account & {
+    phrase: string | undefined
+    path : string | null
+}

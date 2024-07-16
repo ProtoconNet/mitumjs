@@ -1,6 +1,7 @@
 // ECODE: MitumJS Inner Proccess Error code
 export type ErrorCode = (
     typeof ECODE[keyof typeof ECODE]
+    | typeof ECODE.HDWALLET[keyof typeof ECODE.HDWALLET]
     | typeof ECODE.CURRENCY[keyof typeof ECODE.CURRENCY]
     | typeof ECODE.NFT[keyof typeof ECODE.NFT]
     | typeof ECODE.STO[keyof typeof ECODE.STO]
@@ -55,6 +56,11 @@ export const ECODE = {
     NOT_IMPLEMENTED_METHOD: "EC_NOT_IMPLEMENTED_METHOD",
     FAIL_FILE_CREATION: "EC_FAIL_FILE_CREATION",
     FAIL_SIGN: "EC_FAIL_SIGN",
+    HDWALLET: {
+        INVALID_PHRASE: "EC_INVALID_PHRASE",
+        INVALID_ENTROPY: "EC_INVALID_ENTROPY",
+        INVALID_PATH: "EC_INVALID_PATH",
+    },
     CURRENCY: {
         INVALID_CURRENCY_FEEER: "EC_INVALID_CURRENCY_FEEER",
         INVALID_CURRENCY_POLICY: "EC_INVALID_CURRENCY_POLICY",

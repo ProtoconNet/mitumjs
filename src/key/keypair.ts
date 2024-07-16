@@ -1,7 +1,7 @@
 import base58 from "bs58"
 
 // import ethWallet from "ethereumjs-wallet"
-import { Wallet } from "ethers"
+import { Wallet, Mnemonic, HDNodeWallet } from "ethers"
 
 import { hmac } from "@noble/hashes/hmac"
 import { sha256 as nobleSha256 } from "@noble/hashes/sha256"
@@ -10,7 +10,7 @@ import * as crypto from "crypto";
 import { ec as EC } from "elliptic";
 
 import { Key } from "./pub"
-import { KeyPairType } from "./types"
+import { HDAccount, KeyPairType } from "./types"
 
 import { Big } from "../types"
 import { Config } from "../node"
@@ -23,6 +23,9 @@ interface IKeyGenerator {
     random(option?: KeyPairType): BaseKeyPair
     fromPrivateKey(key: string | Key): BaseKeyPair
     fromSeed(seed: string | Buffer | Uint8Array, option?: KeyPairType): BaseKeyPair
+    hdRandom(option?: KeyPairType): HDAccount
+    hdFromEntropy(entropy: string | Uint8Array, option?: KeyPairType): HDAccount
+    fromPhrase(phrase: string, path?: string, option?: KeyPairType): HDAccount
 }
 
 export abstract class BaseKeyPair {
@@ -52,6 +55,10 @@ export abstract class BaseKeyPair {
         return this.generator.random(option) as T
     }
 
+    static fromSeed<T extends BaseKeyPair>(seed: string | Buffer | Uint8Array, option?: KeyPairType): T {
+        return this.generator.fromSeed(seed, option) as  T
+    }
+
     static fromPrivateKey<T extends BaseKeyPair>(key: string | Key): T {
         const s = key.toString();
         StringAssert.with(s, MitumError.detail(ECODE.INVALID_PRIVATE_KEY, "invalid private key"))
@@ -59,8 +66,16 @@ export abstract class BaseKeyPair {
         return this.generator.fromPrivateKey(key) as T
     }
 
-    static fromSeed<T extends BaseKeyPair>(seed: string | Buffer | Uint8Array, option?: KeyPairType): T {
-        return this.generator.fromSeed(seed, option) as  T
+    static hdRandom(option?: KeyPairType): HDAccount {
+        return this.generator.hdRandom(option) as HDAccount
+    }
+
+    static hdFromEntropy(entropy: string | Uint8Array, option?: KeyPairType): HDAccount {
+        return this.generator.hdFromEntropy(entropy, option) as HDAccount
+    }
+
+    static fromPhrase(phrase: string, path?: string, option?: KeyPairType): HDAccount {
+        return this.generator.fromPhrase(phrase, path, option) as HDAccount
     }
 
     protected ethSign(msg: string | Buffer): Buffer {
@@ -130,17 +145,74 @@ export abstract class BaseKeyPair {
 
 export class KeyPair extends BaseKeyPair {
     static generator = {
+        fillHDAccount(kp: KeyPair, wallet: HDNodeWallet): HDAccount {
+            return {
+                privatekey: kp.privateKey.toString(),
+                publickey: kp.publicKey.toString(),
+                address: "",
+                phrase: wallet.mnemonic?.phrase,
+                path: wallet.path
+            }
+        },
         random(): KeyPair {
             return new KeyPair(Wallet.createRandom().privateKey.substring(2) + SUFFIX.KEY.MITUM.PRIVATE)
-        },
-        fromPrivateKey(key: string | Key): KeyPair {
-            return new KeyPair(key)
         },
         fromSeed(seed: string): KeyPair {
             StringAssert.with(seed, MitumError.detail(ECODE.INVALID_SEED, "seed length out of range"))
                 .satisfyConfig(Config.SEED)
                 .excute()
             return new KeyPair(BaseKeyPair.K(seed).toString(16) + SUFFIX.KEY.MITUM.PRIVATE)
+        },
+        fromPrivateKey(key: string | Key): KeyPair {
+            return new KeyPair(key)
+        },
+        hdRandom(): HDAccount {
+            const wallet = Wallet.createRandom();
+            const kp = new KeyPair(wallet.privateKey.substring(2) + SUFFIX.KEY.MITUM.PRIVATE)
+            return this.fillHDAccount(kp, wallet)
+        },
+        hdFromEntropy(entropy: string | Uint8Array): HDAccount {
+            let byteArray: Uint8Array;
+
+            if (entropy instanceof Uint8Array) {
+                byteArray = entropy;
+            } else {
+                Assert.check(
+                    /^0x([0-9a-f][0-9a-f])*$/i.test(entropy), 
+                    MitumError.detail(ECODE.HDWALLET.INVALID_ENTROPY, "invalid entropy, must be an even length hexadecimal number")
+                );
+                const hex = entropy.slice(2);
+                byteArray = new Uint8Array(hex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+            }
+        
+            Assert.check(
+                byteArray.length % 4 === 0 && byteArray.length >= 16 && byteArray.length <= 32,
+                MitumError.detail(ECODE.HDWALLET.INVALID_ENTROPY, "invalid entropy size, must be convertible to a multiple of 4 bytes, and between 16 and 32 bytes")
+            );
+        
+            return this.fromPhrase(Mnemonic.fromEntropy(byteArray).phrase);
+        },
+        fromPhrase(phrase: string, path?: string): HDAccount {
+            const defaultPath = "m/44'/60'/0'/0/0";
+            try {
+                const wallet = HDNodeWallet.fromPhrase(phrase, "", path ? path : defaultPath);
+                const kp = new KeyPair(wallet.privateKey.substring(2) + SUFFIX.KEY.MITUM.PRIVATE);
+                return this.fillHDAccount(kp, wallet);
+            } catch(error: any) {
+                if (error.argument === 'mnemonic') {
+                    Assert.check(
+                        false,
+                        MitumError.detail(ECODE.HDWALLET.INVALID_PHRASE, `invalid phrase, ${error.shortMessage}`)
+                    );
+                } else {
+                    Assert.check(
+                        false,
+                        MitumError.detail(ECODE.HDWALLET.INVALID_PATH, `invalid path, ${error.shortMessage} with value ${error.value}`)
+                    );
+                }
+
+                throw error;
+            }
         }
     }
 
