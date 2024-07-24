@@ -71,6 +71,8 @@ export const Config = {
 		SHARE: getRangeConfig(0, 100),
 		ADDRESS_IN_MINTER_WHITELIST: getRangeConfig(0, 10),
 		SIGNERS_IN_SIGNERS: getRangeConfig(0, 10),
+		HASH: getRangeConfig(0, 1024),
+		URI: getRangeConfig(0, 1000),
 	},
 	CREDENTIAL: {
 		ID: getRangeConfig(1, 20),
