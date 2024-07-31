@@ -11,6 +11,7 @@ export type ErrorCode = (
 export const ECODE = {
     NO_API: "EC_NO_API",    
     UNKNOWN: "EC_UNKNOWN",
+    OP_SIZE_EXCEEDED: "EC_OP_SIZE_EXCEEDED",
     EMPTY_STRING: "EC_EMPTY_STRING",
     EMPTY_SIGN: "EC_EMPTY_SIGN",
     INVALID_DATE: "EC_INVALID_DATE",
