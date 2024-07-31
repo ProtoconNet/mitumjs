@@ -7,6 +7,7 @@ import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { HintedObject, LongString } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
+import { Config } from "../../node"
 
 export class MintItem extends NFTItem {
     readonly receiver: Address
@@ -23,6 +24,15 @@ export class MintItem extends NFTItem {
         currency: string | CurrencyID,
     ) {
         super(HINT.NFT.MINT.ITEM, contract, currency)
+
+        Assert.check(
+            Config.NFT.HASH.satisfy(hash.toString().length),
+            MitumError.detail(ECODE.INVALID_LENGTH, "hash length is out of range")
+        );
+        Assert.check(
+            Config.NFT.URI.satisfy(uri.toString().length),
+            MitumError.detail(ECODE.INVALID_LENGTH, "uri length is out of range")
+        );
 
         this.receiver = Address.from(receiver)
         this.hash = LongString.from(hash)

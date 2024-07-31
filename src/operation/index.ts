@@ -11,13 +11,12 @@ import { Token } from "./token"
 import { Point } from "./point"
 import { Signer } from "./signer"
 
-import { operation as api } from "../api"
+import { Config } from "../node"
+import { operation as api, getAPIData } from "../api"
 import { Key, KeyPair } from "../key"
 import { Generator, HintedObject, IP, SuccessResponse, ErrorResponse } from "../types"
 import { Assert, ECODE, MitumError } from "../error"
-import { getAPIData } from "../api"
 import { isOpFact, isHintedObject } from "../utils/typeGuard"
-
 import { delegateUri, isSuccessResponse } from "../utils"
 
 import * as Base from "./base"
@@ -133,6 +132,10 @@ export class Operation extends Generator {
 		Assert.check(
 			operation.signs.length !== 0, 
 			MitumError.detail(ECODE.EMPTY_SIGN, `signature is required before sending the operation`)
+		)
+		Assert.check(
+			Config.OP_SIZE.satisfy(Buffer.byteLength(JSON.stringify(operation), 'utf8')),
+			MitumError.detail(ECODE.OP_SIZE_EXCEEDED, `Operation size exceeds the allowed limit of ${Config.OP_SIZE.max} bytes.`)
 		)
 
 		const sendResponse = await getAPIData(() => 

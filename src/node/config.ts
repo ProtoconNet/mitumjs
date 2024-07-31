@@ -59,7 +59,7 @@ export const Config = {
 	KEYS_IN_ACCOUNT: getRangeConfig(1, 100),
 	AMOUNTS_IN_ITEM: getRangeConfig(1, 10),
 	ITEMS_IN_FACT: getRangeConfig(1, 100),
-	OPERATIONS_IN_SEAL: getRangeConfig(1, 10),
+	OP_SIZE: getRangeConfig(1, 262144),
 	KEY: {
 		MITUM: {
 			PRIVATE: getRangeConfig(67),
@@ -71,6 +71,8 @@ export const Config = {
 		SHARE: getRangeConfig(0, 100),
 		ADDRESS_IN_MINTER_WHITELIST: getRangeConfig(0, 10),
 		SIGNERS_IN_SIGNERS: getRangeConfig(0, 10),
+		HASH: getRangeConfig(1, 1024),
+		URI: getRangeConfig(1, 1000),
 	},
 	CREDENTIAL: {
 		ID: getRangeConfig(1, 20),
