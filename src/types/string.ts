@@ -40,8 +40,7 @@ export class IP extends LongString {
     constructor(s: string) {
         super(s)
         Assert.check(
-            /^(http|https):\/\/(\d{1,3}\.){3}\d{1,3}(?::\d+)?$/.test(s)
-            || /^(http|https):\/\/(?:[\w-]+\.)+[\w-]+(?::\d+)?(?:\/[\w-./?%&=]*)?$/.test(s),
+            /^(http|https):\/\/(?:[\w-]+\.)*[\w-]+(?::\d+)?(?:\/[\w-./?%&=]*)?$/.test(s),
             MitumError.detail(ECODE.INVALID_IP, "invalid ip address, ip"),
         )
     }
