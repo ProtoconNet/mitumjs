@@ -177,18 +177,18 @@ export class Mitum extends Generator {
     }
     
     /**Get the API URL in use.
-     * @returns {string} The API URL. 
+     * @returns {string | undefined} The API URL. 
     */
-    getAPI(): string {
-        return this.api.toString()
+    getAPI(): string | undefined {
+        return this.api ? this.api.toString() : undefined
     }
 
     /**
      * Get the delegate IP in use.
      * @returns {string} The delegate IP address.
      */
-    getDelegate(): string {
-        return this.delegateIP.toString()
+    getDelegate(): string | undefined {
+        return this.delegateIP ? this.delegateIP.toString() : undefined
     }
     
     /**Get the network ID in use.
