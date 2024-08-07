@@ -1,28 +1,26 @@
 import axios from "axios"
-
 import { Address } from "../../key"
-import { IP } from "../../types"
 import { delegateUri } from "../../utils"
 
 const url = (
-    api: string | IP, 
+    api: string | undefined, 
     contract: string | Address, 
-) => `${IP.from(api).toString()}/token/${Address.from(contract).toString()}`
+) => `${api}/token/${Address.from(contract).toString()}`
 
 async function getModel(
-    api: string | IP,
+    api: string | undefined,
     contract: string | Address,
-    delegateIP: string | IP
+    delegateIP: string | undefined
 ) {
     const apiPath = `${url(api, contract)}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getTokenBalance(
-    api: string | IP,
+    api: string | undefined,
     contract: string | Address,
     account: string | Address,
-    delegateIP: string | IP
+    delegateIP: string | undefined
 ) {
     const apiPath = `${url(api, contract)}/account/${Address.from(account).toString()}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 

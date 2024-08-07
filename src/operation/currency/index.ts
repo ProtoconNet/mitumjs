@@ -283,6 +283,7 @@ export class Currency extends Generator {
      * @returns `data` of `SuccessResponse` is a array with currency id.
      */
     async getAllCurrencies(): Promise<any> {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         const response = await getAPIData(() => api.currency.getCurrencies(this.api, this.delegateIP), true);
 
         if (isSuccessResponse(response) && response.data) {
@@ -307,6 +308,7 @@ export class Currency extends Generator {
      * - `total_supply`: Total supply amount of the currency.
      */
     async getCurrency(currencyID: string | CurrencyID) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         return await getAPIData(() => api.currency.getCurrency(this.api, currencyID, this.delegateIP))
     }
 }
@@ -558,6 +560,7 @@ export class Account extends KeyG {
      */
     async getAccountInfo(address: string | Address) {
         Address.from(address);
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
         if (isSuccessResponse(response)) {
             response.data = response.data? response.data : null;
@@ -592,6 +595,7 @@ export class Account extends KeyG {
         limit?: number, offset?: [number, number], reverse?: true
     ) {
         Address.from(address);
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         const response = await getAPIData(() => api.operation.getAccountOperations(this.api, address, this.delegateIP, limit, offset, reverse));
         if (isSuccessResponse(response)) {
             response.data = response.data? response.data : null;
@@ -615,6 +619,7 @@ export class Account extends KeyG {
      * - `_links`: Links to get additional information
      */
     async getByPublickey(publickey: string | Key | PubKey) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         const s = typeof (publickey) === 'string' ? publickey : publickey.toString();
         StringAssert.with(s, MitumError.detail(ECODE.INVALID_PUBLIC_KEY, "invalid public key"))
             .empty().not()
@@ -638,6 +643,7 @@ export class Account extends KeyG {
      * **null means that the account has not yet been recorded in the block.**
      */
     async balance(address: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(address);
         const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
         if (isSuccessResponse(response) && response.data) {
@@ -789,6 +795,7 @@ export class Contract extends Generator {
      * **null means that the contract account has not yet been recorded in the block.**
      */
     async getContractInfo(address: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
        Address.from(address);
         const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
         if (isSuccessResponse(response)) {
@@ -850,6 +857,7 @@ export class Contract extends Generator {
         privatekey: string | Key,
         wallet: { wallet: AccountType, operation: Operation<CreateContractAccountFact> }
     ) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         const op = wallet.operation
         op.sign(privatekey)
 

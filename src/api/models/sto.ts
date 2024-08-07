@@ -1,70 +1,69 @@
 import axios from "axios"
-
 import { Address } from "../../key"
-import { IP } from "../../types"
 import { delegateUri } from "../../utils"
 
 const url = (
-    api: string | IP, 
+    api: string | undefined, 
     contract: string | Address, 
-) => `${IP.from(api).toString()}/sto/${Address.from(contract).toString()}`
+) => `${api}/sto/${Address.from(contract).toString()}`
 
 async function getService(
-    api: string | IP, 
+    api: string | undefined, 
     contract: string | Address,
-    delegateIP: string | IP
+    delegateIP: string | undefined
 ) {
     const apiPath = `${url(api, contract)}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getPartitions(
-    api: string | IP, 
+    api: string | undefined, 
     contract: string | Address,
     holder: string | Address,
-    delegateIP: string | IP
+    delegateIP: string | undefined
 ) {
     const apiPath = `${url(api, contract)}/holder/${Address.from(holder).toString()}/partitions`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getBalanceByHolder(
-    api: string | IP, 
+    api: string | undefined, 
     contract: string | Address,
     holder: string | Address,
     partition: string,
-    delegateIP: string | IP
+    delegateIP: string | undefined
 ) {
     const apiPath = `${url(api, contract)}/holder/${Address.from(holder).toString()}/partition/${partition}/balance`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getOperatorsByHolder(
-    api: string | IP, 
+    api: string | undefined, 
     contract: string | Address,
     holder: string | Address,
     partition: string,
-    delegateIP: string | IP
+    delegateIP: string | undefined
 ) {
     const apiPath = `${url(api, contract)}/holder/${Address.from(holder).toString()}/partition/${partition}/operators`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getPartitionBalance(
-    api: string | IP, 
+    api: string | undefined, 
     contract: string | Address,
     partition: string,
-    delegateIP: string | IP
+    delegateIP: string | undefined
 ) {
-    const apiPath = `${url(api, contract)}/partition/${partition}/balance`;
+    const apiPath = `${url(api, contract)}/p
+    artition/${partition}/balance`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getAuthorized(
-    api: string | IP, 
+    api: string | undefined, 
     contract: string | Address,
     operator: string | Address,
-    delegateIP: string | IP
+    delegateIP: string | undefined
 ) {
     const apiPath = `${url(api, contract)}/operator/${Address.from(operator).toString()}/holders`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 

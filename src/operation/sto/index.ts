@@ -291,6 +291,7 @@ export class STO extends ContractGenerator {
      * }
      */
     async getServiceInfo(contract: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         return await getAPIData(() => contractApi.sto.getService(this.api, contract, this.delegateIP))
     }
@@ -303,6 +304,7 @@ export class STO extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is an array of token partition names owned by the holder.
      */
     async getPartitionsInfo(contract: string | Address, holder: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         Address.from(holder);
         return await getAPIData(() => contractApi.sto.getPartitions(this.api, contract, holder, this.delegateIP))
@@ -317,6 +319,7 @@ export class STO extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is the balance of holder for the partition
      */
     async getBalanceByHolder(contract: string | Address, holder: string | Address, partition: string) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         Address.from(holder);
         return await getAPIData(() => contractApi.sto.getBalanceByHolder(this.api, contract, holder, partition, this.delegateIP))
@@ -332,6 +335,7 @@ export class STO extends ContractGenerator {
      * - `operators`: Array of the address of operators.
      */
     async getOperatorsByHolder(contract: string | Address, holder: string | Address, partition: string) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         Address.from(holder);
         return await getAPIData(() => contractApi.sto.getOperatorsByHolder(this.api, contract, holder, partition, this.delegateIP))
@@ -345,6 +349,7 @@ export class STO extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is the partition balance amount.
      */
     async getPartitionBalanceInfo(contract: string | Address, partition: string) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         return await getAPIData(() => contractApi.sto.getPartitionBalance(this.api, contract, partition, this.delegateIP))
     }
@@ -357,6 +362,7 @@ export class STO extends ContractGenerator {
      * - `holders`: Array of the address of holders.
      */
     async getAuthorizedInfo(contract: string | Address, operator: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         Address.from(operator);
         return await getAPIData(() => contractApi.sto.getAuthorized(this.api, contract, operator, this.delegateIP))

@@ -1,50 +1,49 @@
 import axios from "axios"
 import { Address } from "../key"
-import { Big, HintedObject, IP } from "../types"
-
+import { Big, HintedObject } from "../types"
 import { delegateUri, apiPathWithParams, apiPathWithParamsExt } from "../utils"
 
 async function getOperations(
-    api: string | IP, 
-    delegateIP: string | IP,
+    api: string | undefined,
+    delegateIP: string | undefined,
     limit?: number, offset?: [number, number], reverse?: true
 ) {
-    const apiPath = apiPathWithParamsExt(`${IP.from(api).toString()}/block/operations`, limit, offset, reverse);
+    const apiPath = apiPathWithParamsExt(`${api}/block/operations`, limit, offset, reverse);
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
-async function getOperation(api: string | IP, hash: string, delegateIP: string | IP) {
-    const apiPath = `${IP.from(api).toString()}/block/operation/${hash}`;
+async function getOperation(api: string | undefined, hash: string, delegateIP: string | undefined,) {
+    const apiPath = `${api}/block/operation/${hash}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
 async function getBlockOperationsByHeight(
-    api: string | IP, 
+    api: string | undefined, 
     height: string | number | Big, 
-    delegateIP: string | IP,
+    delegateIP: string | undefined,
     limit?: number, offset?: number, reverse?: true
 ) {
-    const apiPath = apiPathWithParams(`${IP.from(api).toString()}/block/${Big.from(height).toString()}/operations`, limit, offset, reverse);
+    const apiPath = apiPathWithParams(`${api}/block/${Big.from(height).toString()}/operations`, limit, offset, reverse);
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
-// async function getBlockOperationsByHash(api: string | IP, hash: string, delegateIP: string | IP) {
-//     const apiPath = `${IP.from(api).toString()}/block/${hash}/operations`;
+// async function getBlockOperationsByHash(api: string | undefined, hash: string, delegateIP: string | undefined) {
+//     const apiPath = `${api}/block/${hash}/operations`;
 //     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 // }
 
 async function getAccountOperations(
-    api: string | IP,
+    api: string | undefined,
     address: string | Address,
-    delegateIP: string | IP,
+    delegateIP: string | undefined,
     limit?: number, offset?: [number, number], reverse?: true
 ) {
-    const apiPath = apiPathWithParamsExt(`${IP.from(api).toString()}/account/${Address.from(address).toString()}/operations`, limit, offset, reverse);
+    const apiPath = apiPathWithParamsExt(`${api}/account/${Address.from(address).toString()}/operations`, limit, offset, reverse);
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
-async function send(api: string | IP, operation: HintedObject | string, delegateIP: string | IP, config?: { [i: string]: any }) {
-    const apiPath = `${IP.from(api).toString()}/builder/send`;
+async function send(api: string | undefined, operation: HintedObject | string, delegateIP: string | undefined, config?: { [i: string]: any }) {
+    const apiPath = `${api}/builder/send`;
     return !delegateIP 
     ? await axios.post(apiPath, JSON.stringify(operation), config) 
     : await axios.post(delegateIP.toString(), { ...Object(operation), uri: apiPath }, config)

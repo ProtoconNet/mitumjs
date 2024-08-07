@@ -7,6 +7,7 @@ import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
 import { Big, IP, TimeStamp as TS, URIString } from "../../types"
+import { Assert, MitumError, ECODE } from "../../error"
 
 export class TimeStamp extends ContractGenerator {
     constructor(
@@ -81,6 +82,7 @@ export class TimeStamp extends ContractGenerator {
      * - `projects`: Array of all project's id
      */
     async getModelInfo(contract: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         return await getAPIData(() => contractApi.timestamp.getModel(this.api, contract, this.delegateIP))
     }
@@ -104,6 +106,7 @@ export class TimeStamp extends ContractGenerator {
         projectID: string,
         timestampIdx: string | number | Big,
     ) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         new URIString(projectID, 'projectID');
         return await getAPIData(() => contractApi.timestamp.getTimeStamp(this.api, contract, projectID, timestampIdx, this.delegateIP))

@@ -1,23 +1,23 @@
 import axios from "axios"
-import { Big, IP } from "../types"
+import { Big } from "../types"
 import { delegateUri, apiPathWithParams } from "../utils"
 
 async function getBlocks(
-    api: string | IP,
-    delegateIP: string | IP,
+    api: string | undefined,
+    delegateIP: string | undefined,
     limit?: number, offset?: number, reverse?: true
 ) {
-    const apiPath = apiPathWithParams(`${IP.from(api).toString()}/block/manifests`, limit, offset, reverse);
+    const apiPath = apiPathWithParams(`${api}/block/manifests`, limit, offset, reverse);
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
-async function getBlockByHeight(api: string | IP, height: string | number | Big, delegateIP: string | IP) {
-    const apiPath = `${IP.from(api).toString()}/block/${Big.from(height).toString()}/manifest`;
+async function getBlockByHeight(api: string | undefined, height: string | number | Big, delegateIP: string | undefined) {
+    const apiPath = `${api}/block/${Big.from(height).toString()}/manifest`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
-async function getBlockByHash(api: string | IP, hash: string, delegateIP: string | IP) {
-    const apiPath = `${IP.from(api).toString()}/block/${hash}/manifest`;
+async function getBlockByHash(api: string | undefined, hash: string, delegateIP: string | undefined) {
+    const apiPath = `${api}/block/${hash}/manifest`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 

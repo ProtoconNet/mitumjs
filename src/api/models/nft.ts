@@ -1,28 +1,27 @@
 import axios from "axios"
-
 import { Address } from "../../key"
-import { Big, IP } from "../../types"
+import { Big } from "../../types"
 import { delegateUri, apiPathWithHashParams } from "../../utils"
 
 const url = (
-    api: string | IP, 
+    api: string | undefined, 
     contract: string | Address, 
-) => `${IP.from(api).toString()}/nft/${Address.from(contract).toString()}`
+) => `${api}/nft/${Address.from(contract).toString()}`
 
 async function getNFT(
-    api: string | IP,
+    api: string | undefined,
     contract: string | Address,
     nftIdx: string | number | Big,
-    delegateIP: string | IP
+    delegateIP: string | undefined
 ) {
     const apiPath = `${url(api, contract)}/nftidx/${nftIdx}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getNFTs(
-    api: string | IP,
+    api: string | undefined,
     contract: string | Address,
-    delegateIP: string | IP,
+    delegateIP: string | undefined,
     factHash?: string,
     limit?: number, offset?: number, reverse?: true
 ) {
@@ -31,28 +30,28 @@ async function getNFTs(
 }
 
 async function getNFTCount(
-    api: string | IP,
+    api: string | undefined,
     contract: string | Address,
-    delegateIP: string | IP,
+    delegateIP: string | undefined,
 ) {
     const apiPath = `${url(api, contract)}/totalsupply`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getModel(
-    api: string | IP,
+    api: string | undefined,
     contract: string | Address,
-    delegateIP: string | IP
+    delegateIP: string | undefined
 ) {
     const apiPath = `${url(api, contract)}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 async function getAccountOperators(
-    api: string | IP,
+    api: string | undefined,
     contract: string | Address,
     account: string | Address,
-    delegateIP: string | IP
+    delegateIP: string | undefined
 ) {
     const apiPath = `${url(api, contract)}/account/${Address.from(account).toString()}/allapproved`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 

@@ -230,6 +230,7 @@ export class Credential extends ContractGenerator {
      * - - `credential_count`: The total number of credential
      */
     async getModelInfo(contract: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         return await getAPIData(() => contractApi.credential.getModel(this.api, contract, this.delegateIP))
     }
@@ -257,6 +258,7 @@ export class Credential extends ContractGenerator {
         templateID: string,
         credentialID: string,
     ) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         new URIString(templateID, 'templateID');
         new URIString(credentialID, 'credentialID');
@@ -284,6 +286,7 @@ export class Credential extends ContractGenerator {
         contract: string | Address,
         templateID: string,
     ) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         new URIString(templateID, 'templateID');
         return await getAPIData(() => contractApi.credential.getTemplate(this.api, contract, templateID, this.delegateIP))
@@ -313,6 +316,7 @@ export class Credential extends ContractGenerator {
         contract: string | Address,
         templateID: string,
     ) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         new URIString(templateID, 'templateID');
         return await getAPIData(() => contractApi.credential.getCredentials(this.api, contract, templateID, this.delegateIP))
@@ -344,6 +348,7 @@ export class Credential extends ContractGenerator {
         contract: string | Address,
         holder: string | Address,
     ) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         Address.from(holder);
         return await getAPIData(() => contractApi.credential.getCredentialByHolder(this.api, contract, holder, this.delegateIP))

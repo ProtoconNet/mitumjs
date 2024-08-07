@@ -458,6 +458,7 @@ export class DAO extends ContractGenerator {
      * - `policy`: [Policy]
      */
     async getModelInfo(contract: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         return await getAPIData(() => contractApi.dao.getModel(this.api, contract, this.delegateIP))
     }
@@ -474,6 +475,7 @@ export class DAO extends ContractGenerator {
      * - `policy`: [Policy]
      */
     async getProposal(contract: string | Address, proposalID: string) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         new URIString(proposalID, 'proposalID');
         return await getAPIData(() => contractApi.dao.getProposal(this.api, contract, proposalID,this.delegateIP))
@@ -491,6 +493,7 @@ export class DAO extends ContractGenerator {
      * - `approved`: Address of the approved account,
      */
     async getApproved(contract: string | Address, proposalID: string, account: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         new URIString(proposalID, 'proposalID');
         return await getAPIData(() => contractApi.dao.getApproved(this.api, contract, proposalID, account, this.delegateIP))
@@ -507,6 +510,7 @@ export class DAO extends ContractGenerator {
      * - `votring_power_holders`: List of accounts that have delegated their voting power to voter.
      */
     async getVoters(contract: string | Address, proposalID: string) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         new URIString(proposalID, 'proposalID');
         return await getAPIData(() => contractApi.dao.getVoters(this.api, contract, proposalID, this.delegateIP))
@@ -524,6 +528,7 @@ export class DAO extends ContractGenerator {
      * - `result`: Object consisting of the selected option and the number of votes.
      */
     async getVotingStatus(contract: string | Address, proposalID: string) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         new URIString(proposalID, 'proposalID');
         return await getAPIData(() => contractApi.dao.getVotingStatus(this.api, contract, proposalID, this.delegateIP))

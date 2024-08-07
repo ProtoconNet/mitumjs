@@ -13,7 +13,7 @@ import { contractApi, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp } from "../../types"
 import { calculateAllowance } from "../../utils/contractUtils"
 import { isSuccessResponse } from "../../utils"
-
+import { Assert, ECODE, MitumError } from "../../error"
 export class Point extends ContractGenerator {
     constructor(
         networkID: string,
@@ -214,6 +214,7 @@ export class Point extends ContractGenerator {
      * - `policy`: Point policy object including `_hint`, `total_supply`, `approve_list`
      */
     async getModelInfo(contract: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         return await getAPIData(() => contractApi.point.getModel(this.api, contract, this.delegateIP))
     }
@@ -228,6 +229,7 @@ export class Point extends ContractGenerator {
      * - `amount`: String of allowance amount
      */
     async getAllowance(contract: string | Address, owner: string | Address, approved: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         Address.from(owner);
         Address.from(approved);
@@ -247,6 +249,7 @@ export class Point extends ContractGenerator {
      * - `amount`: String of amount
      */
     async getBalance(contract: string | Address, account: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         Address.from(account);
         return await getAPIData(() => contractApi.point.getPointBalance(this.api, contract, account, this.delegateIP))

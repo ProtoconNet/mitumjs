@@ -388,6 +388,7 @@ export class NFT extends ContractGenerator {
      * - - `minter_whitelist`: Array of the addresses of accounts who have permissions to mint
      */
     async getModelInfo(contract: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         return await getAPIData(() => contractApi.nft.getModel(this.api, contract, this.delegateIP))
     }
@@ -400,6 +401,7 @@ export class NFT extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is the address of the NFT owner.
      */
     async getOwner(contract: string | Address, nftIdx: string | number | Big) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         const response = await getAPIData(() => contractApi.nft.getNFT(
             this.api,
@@ -422,6 +424,7 @@ export class NFT extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is an address of the approved account to manage the NFT.
      */
     async getApproved(contract: string | Address, nftIdx: number) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         const response = await getAPIData(() => contractApi.nft.getNFT(
             this.api,
@@ -443,6 +446,7 @@ export class NFT extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is the total supply of NFTs in the collection.
      */
     async getTotalSupply(contract: string | Address) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         const response = await getAPIData(() => contractApi.nft.getNFTCount(
             this.api,
@@ -464,6 +468,7 @@ export class NFT extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is the URI of the NFT.
      */
     async getURI(contract: string | Address, nftIdx: number) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         const response = await getAPIData(() => contractApi.nft.getNFT(
             this.api,
@@ -488,6 +493,7 @@ export class NFT extends ContractGenerator {
      * - `operators`: Array of the addresses of accounts that have been delegated authority over all of the owner’s NFTs
      */
     async getApprovedAll(contract: string | Address, owner: string) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         Address.from(owner);
         return await getAPIData(() => contractApi.nft.getAccountOperators(
@@ -514,6 +520,7 @@ export class NFT extends ContractGenerator {
      * - `creators`: Creator object,
      */
     async getNFT(contract: string | Address, nftIdx: number) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         return await getAPIData(() => contractApi.nft.getNFT(
             this.api,
@@ -545,6 +552,7 @@ export class NFT extends ContractGenerator {
      * - `_links`: Links for additional information
      */
     async getNFTs(contract: string | Address, factHash?: string, limit?: number, offset?: number, reverse?: true) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         return await getAPIData(() => contractApi.nft.getNFTs(
             this.api,

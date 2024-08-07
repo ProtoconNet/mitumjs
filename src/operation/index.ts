@@ -17,7 +17,7 @@ import { Key, KeyPair } from "../key"
 import { Generator, HintedObject, IP, SuccessResponse, ErrorResponse } from "../types"
 import { Assert, ECODE, MitumError } from "../error"
 import { isOpFact, isHintedObject } from "../utils/typeGuard"
-import { delegateUri, isSuccessResponse } from "../utils"
+import { isSuccessResponse } from "../utils"
 
 import * as Base from "./base"
 
@@ -50,6 +50,7 @@ export class Operation extends Generator {
 	 * - `_links`: Links to get additional information
 	 */
 	async getAllOperations(limit?: number, offset?: [number, number], reverse?: true) {
+		Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
 		return await getAPIData(() => api.getOperations(this.api, this.delegateIP, limit, offset, reverse))
 	}
 
@@ -75,6 +76,7 @@ export class Operation extends Generator {
 	 * ***null* means that the account has not yet been recorded in the block.**
 	 */
 	async getOperation(hash: string) {
+		Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
 		const response = await getAPIData(() => api.getOperation(this.api, hash, this.delegateIP));
 		if (isSuccessResponse(response)) {
 			response.data = response.data ? response.data : null;
@@ -124,6 +126,7 @@ export class Operation extends Generator {
 		operation: HintedObject | OP<Fact>,
 		headers?: { [i: string]: any }
 	): Promise<OperationResponse> {
+		Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
 		Assert.check(
 			isOpFact(operation) || isHintedObject(operation), 
 			MitumError.detail(ECODE.INVALID_OPERATION, `input is neither in OP<Fact> nor HintedObject format`)
@@ -147,20 +150,22 @@ export class Operation extends Generator {
 		  )
 		);
 
-		return new OperationResponse(sendResponse, this.api, this.delegateIP)
+		return new OperationResponse(sendResponse, this.networkID, this.api, this.delegateIP)
 	}
 }
 
-export class OperationResponse {
-    readonly response: any;
-    private _api: string | IP;
-    private _delegateIP: string | IP;
 
-    constructor(response: SuccessResponse | ErrorResponse, api: string | IP, delegateIP: string | IP) {
-        this.response = response;
-        this._api = api;
-        this._delegateIP = delegateIP;
-    }
+export class OperationResponse extends Operation {
+	readonly response: any;
+	constructor(
+		response: SuccessResponse | ErrorResponse,
+		networkID: string,
+		api?: string | IP,
+		delegateIP?: string | IP,
+	) {
+		super(networkID, api, delegateIP)
+		this.response = response;
+	}
 
     /**
 	 * Get receipt when a sent operation is recorded in a block by polling the blockchain network for a certain time.
@@ -211,7 +216,7 @@ export class OperationResponse {
 		let stop = false;
         while (!stop && elapsedTime < maxTimeout) {
             try {
-                const receipt = await getAPIData(() => api.getOperation(this._api, this.response.data.fact.hash, this._delegateIP));
+				const receipt = await this.getOperation(this.response.data.fact.hash);
                 if (isSuccessResponse(receipt) && receipt.data !== undefined) {
 					if (receipt.data.in_state) {
 						console.log('\x1b[34m%s\x1b[0m', `operation in_state is true. fact hash: ${this.response.data.fact.hash}`)
@@ -230,10 +235,7 @@ export class OperationResponse {
             elapsedTime += timeoutInterval;
             await new Promise(resolve => setTimeout(resolve, timeoutInterval));
         }
-		const apiPath = `${IP.from(this._api).toString()}/block/operation/${this.response.data.fact.hash}`;
-		const url = !this._delegateIP ? apiPath : delegateUri(this._delegateIP) + encodeURIComponent(apiPath);
-
-		Assert.check(stop, MitumError.detail(ECODE.TIME_OUT, `timeout reached (${maxTimeout/1000} seconds).\nurl: ${url}`))
+		Assert.check(stop, MitumError.detail(ECODE.TIME_OUT, `timeout reached (${maxTimeout/1000} seconds).`))
     }
 
 }
