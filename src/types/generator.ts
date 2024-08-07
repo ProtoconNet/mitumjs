@@ -7,8 +7,8 @@ export abstract class Generator {
 
     protected constructor(networkID: string, api?: string | IP, delegateIP?: string | IP,) {
         this._networkID = networkID
-        this._api = api ? IP.from(api) : undefined
-        this._delegateIP = delegateIP ? IP.from(delegateIP) : undefined
+        this.setAPI(api);
+        this.setDelegate(delegateIP);
     }
 
     protected setNetworkID(networkID: string) {
@@ -16,11 +16,23 @@ export abstract class Generator {
     }
 
     protected setAPI(api?: string | IP) {
-        this._api = api ? IP.from(api) : undefined
+        if (typeof api === "string") {
+            this._api = IP.from(api.endsWith('/') ? api.slice(0, -1) : api);
+        } else if (api instanceof IP) {
+            this._api = api;
+        } else {
+            this._api = undefined;
+        }
     }
 
     protected setDelegate(delegateIP?: string | IP) { 
-        this._delegateIP = delegateIP ? IP.from(delegateIP) : undefined
+        if (typeof delegateIP === "string") {
+            this._delegateIP = IP.from(delegateIP.endsWith('/') ? delegateIP.slice(0, -1) : delegateIP);
+        } else if (delegateIP instanceof IP) {
+            this._delegateIP = delegateIP;
+        } else {
+            this._delegateIP = undefined;
+        }
     }
 
     protected get networkID() {
@@ -28,10 +40,10 @@ export abstract class Generator {
     }
 
     protected get api() {
-        return this._api ? this._api.toString() : ""
+        return this._api ? this._api.toString() : undefined
     }
 
     protected get delegateIP() {
-        return this._delegateIP ? this._delegateIP.toString() : ""
+        return this._delegateIP ? this._delegateIP.toString() : undefined
     }
 }
