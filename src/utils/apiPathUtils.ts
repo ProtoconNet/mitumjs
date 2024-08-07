@@ -1,6 +1,4 @@
-import { IP } from "../types"
-
-export const delegateUri = (delegateIP: string | IP) => `${IP.from(delegateIP).toString()}?uri=`
+export const delegateUri = (delegateIP: string) => `${delegateIP}?uri=`
 
 const validatePositiveInteger = (val: any, name: string) => {
     if (!Number.isSafeInteger(val) || val < 0) {
