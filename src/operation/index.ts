@@ -217,7 +217,7 @@ export class OperationResponse extends Operation {
         while (!stop && elapsedTime < maxTimeout) {
             try {
 				const receipt = await this.getOperation(this.response.data.fact.hash);
-                if (isSuccessResponse(receipt) && receipt.data !== undefined) {
+                if (isSuccessResponse(receipt) && receipt.data !== undefined && receipt.data !== null) {
 					if (receipt.data.in_state) {
 						console.log('\x1b[34m%s\x1b[0m', `operation in_state is true. fact hash: ${this.response.data.fact.hash}`)
 						return receipt;
