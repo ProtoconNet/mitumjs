@@ -10,6 +10,7 @@ import { TimeStamp } from "./timestamp"
 import { Token } from "./token"
 import { Point } from "./point"
 import { Signer } from "./signer"
+import { Storage } from "./storage"
 
 import { Config } from "../node"
 import { operation as api, getAPIData } from "../api"
@@ -251,5 +252,6 @@ export {
 	Token,
 	Point,
 	Signer,
+	Storage,
 	Base,
 }
