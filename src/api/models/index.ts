@@ -7,6 +7,7 @@ import sto from "./sto"
 import timestamp from "./timestamp"
 import token from "./token"
 import point from "./point"
+import storage from "./storage"
 
 export default {
     currency,
@@ -19,5 +20,6 @@ export default {
         timestamp,
         token,
         point,
+        storage
     },
 }
