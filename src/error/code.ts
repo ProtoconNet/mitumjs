@@ -304,7 +304,7 @@ export const DCODE = {
         description: "The contract already contains the service.",
         subject: ""
     },
-    EXSIT_STATE: {
+    EXIST_STATE: {
         code: "D508",
         keyword: ["State exist"],
         description: "The state already exists on the blockchain.",
@@ -327,14 +327,11 @@ export const assignCodeFromErrorMessage = (errorMessage: string): string => {
             for (const keyword of obj.keyword) {
                 if (errorMessage.includes(keyword)) {
                     dcodeArr.push(obj.code);
-                }
-                if (obj.code === "D302") {
-                    break;
+                    if (obj.code === "D302") {
+                        break;
+                    }
                 }
             }
-        }
-        if (obj.code === "D302") {
-            break;
         }
     }
 
