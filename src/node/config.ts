@@ -94,5 +94,10 @@ export const Config = {
 		ADDRESS_IN_WHITELIST: getRangeConfig(0, 10),
 		QUORUM: getRangeConfig(1, 100),
 		VOTE: getRangeConfig(0, 255),
+	},
+	STORAGE: {
+		PROJECT: getRangeConfig(1, 10),
+		DATA_KEY: getRangeConfig(1, 200),
+		DATA_VALUE: getRangeConfig(1, 20000)
 	}
 }
