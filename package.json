@@ -1,6 +1,6 @@
 {
-  "name": "@mitumjs/mitumjs",
-  "version": "2.1.8",
+  "name": "@mitumjs/mitum-storage",
+  "version": "1.0.0",
   "description": "framework for mitum network",
   "main": "dist/bundle.cjs.cjs",
   "module": "dist/bundle.esm.mjs",
@@ -19,14 +19,7 @@
     "mitum",
     "protocon",
     "mitum-currency",
-    "mitum-token",
-    "mitum-point",
-    "mitum-nft",
-    "mitum-sto",
-    "mitum-dao",
-    "mitum-credential",
-    "mitum-kyc",
-    "mitum-timestamp"
+    "mitum-storage"
   ],
   "author": "socialinfratech",
   "license": "GPL-3.0-or-later",
