@@ -3,11 +3,7 @@ import { ECODE, DCODE, PCODE } from "./error"
 import { Block, Node, NetworkID } from "./node"
 import { Utils } from "./utils/transformUnit"
 import { 
-    Account, Currency, Contract, 
-    NFT,
-    DAO, KYC, STO,
-    TimeStamp, Credential,
-    Token, Point,
+    Account, Currency, Contract,
     Operation,
     Signer,
     Storage,
@@ -22,15 +18,6 @@ export class Mitum extends Generator {
     private _block: Block
     private _operation: Operation
     private _signer: Signer
-
-    private _nft: NFT
-    private _credential: Credential
-    private _timestamp: TimeStamp
-    private _sto: STO
-    private _kyc: KYC
-    private _dao: DAO
-    private _token: Token
-    private _point: Point
     private _storage: Storage
 
     public ECODE: Object
@@ -50,14 +37,6 @@ export class Mitum extends Generator {
         this._signer = new Signer(this.networkID, this.api)
 
         this._contract = new Contract(this.networkID, this.api, this.delegateIP)
-        this._nft = new NFT(this.networkID, this.api, this.delegateIP)
-        this._credential = new Credential(this.networkID, this.api, this.delegateIP)
-        this._timestamp = new TimeStamp(this.networkID, this.api, this.delegateIP)
-        this._sto = new STO(this.networkID, this.api, this.delegateIP)
-        this._kyc = new KYC(this.networkID, this.api, this.delegateIP)
-        this._dao = new DAO(this.networkID, this.api, this.delegateIP)
-        this._token = new Token(this.networkID, this.api, this.delegateIP)
-        this._point = new Point(this.networkID, this.api, this.delegateIP)
         this._storage = new Storage(this.networkID, this.api, this.delegateIP)
 
         this.ECODE = ECODE;
@@ -76,14 +55,6 @@ export class Mitum extends Generator {
         this._operation = new Operation(this.networkID, this.api, this.delegateIP)
 
         this._contract = new Contract(this.networkID, this.api, this.delegateIP)
-        this._nft = new NFT(this.networkID, this.api, this.delegateIP)
-        this._credential = new Credential(this.networkID, this.api, this.delegateIP)
-        this._timestamp = new TimeStamp(this.networkID, this.api, this.delegateIP)
-        this._sto = new STO(this.networkID, this.api, this.delegateIP)
-        this._kyc = new KYC(this.networkID, this.api, this.delegateIP)
-        this._dao = new DAO(this.networkID, this.api, this.delegateIP)
-        this._token = new Token(this.networkID, this.api, this.delegateIP)
-        this._point = new Point(this.networkID, this.api, this.delegateIP)
         this._storage = new Storage(this.networkID, this.api, this.delegateIP)
 
         this._utils = new Utils();
@@ -115,38 +86,6 @@ export class Mitum extends Generator {
 
     get contract(): Contract {
         return this._contract
-    }
-
-    get nft(): NFT {
-        return this._nft
-    }
-
-    get credential(): Credential {
-        return this._credential
-    }
-
-    get timestamp(): TimeStamp {
-        return this._timestamp
-    }
-
-    get sto(): STO {
-        return this._sto
-    }
-
-    get kyc(): KYC {
-        return this._kyc
-    }
-
-    get dao(): DAO {
-        return this._dao
-    }
-
-    get token(): Token {
-        return this._token
-    }
-
-    get point(): Point {
-        return this._point
     }
 
     get storage(): Storage {

@@ -66,35 +66,6 @@ export const Config = {
 			PUBLIC: getRangeConfig(69),
 		}
 	},
-	NFT: {
-		ROYALTY: getRangeConfig(0, 99),
-		SHARE: getRangeConfig(0, 100),
-		ADDRESS_IN_MINTER_WHITELIST: getRangeConfig(0, 10),
-		SIGNERS_IN_SIGNERS: getRangeConfig(0, 10),
-		HASH: getRangeConfig(1, 1024),
-		URI: getRangeConfig(1, 1000),
-	},
-	CREDENTIAL: {
-		ID: getRangeConfig(1, 20),
-		VALUE: getRangeConfig(1, 1024),
-		TEMPLATE_ID: getRangeConfig(1, 20),
-		TEMPLATE_NAME: getRangeConfig(1, 20),
-		DISPLAY_NAME: getRangeConfig(1, 20),
-		SUBJECT_KEY: getRangeConfig(1, 20),
-		DESCRIPTION: getRangeConfig(1, 1024),
-	},
-	TIMESTAMP: {
-		PROJECT_ID: getRangeConfig(1, 10),
-		DATA: getRangeConfig(1, 1024),
-	},
-	STO: {
-		PARTITION: getRangeConfig(3, 10),
-	},
-	DAO: {
-		ADDRESS_IN_WHITELIST: getRangeConfig(0, 10),
-		QUORUM: getRangeConfig(1, 100),
-		VOTE: getRangeConfig(0, 255),
-	},
 	STORAGE: {
 		PROJECT: getRangeConfig(1, 10),
 		DATA_KEY: getRangeConfig(1, 200),
