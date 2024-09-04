@@ -66,9 +66,9 @@ export const Config = {
 			PUBLIC: getRangeConfig(69),
 		}
 	},
-	STORAGE: {
-		PROJECT: getRangeConfig(1, 10),
-		DATA_KEY: getRangeConfig(1, 200),
-		DATA_VALUE: getRangeConfig(1, 20000)
+	PRESCRIPTION: {
+		HASH: getRangeConfig(1, 100),
+		HOSPITAL: getRangeConfig(1, 200),
+		PHARMACY: getRangeConfig(1, 20000)
 	}
 }
