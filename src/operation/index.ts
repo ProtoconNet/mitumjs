@@ -2,7 +2,7 @@ import { SignOption, Operation as OP, Fact } from "./base"
 
 import { Currency, Account, Contract } from "./currency"
 import { Signer } from "./signer"
-import { Storage } from "./storage"
+import { Prescription } from "./prescription"
 
 import { Config } from "../node"
 import { operation as api, getAPIData } from "../api"
@@ -236,6 +236,6 @@ export class OperationResponse extends Operation {
 export {
 	Currency, Account, Contract,
 	Signer,
-	Storage,
+	Prescription,
 	Base,
 }
