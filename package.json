@@ -1,6 +1,6 @@
 {
   "name": "@mitumjs/mitumjs",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "description": "framework for mitum network",
   "main": "dist/bundle.cjs.cjs",
   "module": "dist/bundle.esm.mjs",
@@ -57,7 +57,7 @@
   "dependencies": {
     "@noble/hashes": "^1.3.2",
     "@noble/secp256k1": "^1.7.1",
-    "axios": "^1.5.0",
+    "axios": "^1.7.7",
     "big-integer": "^1.6.51",
     "bs58": "^5.0.0",
     "bs58check": "^3.0.1",
