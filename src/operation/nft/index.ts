@@ -41,6 +41,10 @@ export class NFT extends ContractGenerator {
 
     private checkArrayLength(array: string[] | Address[] | LongString[], expectedLength: number, arrayName: string) {
         Assert.check(
+            Array.isArray(array),
+            MitumError.detail(ECODE.INVALID_TYPE, `the ${arrayName} must be in array type`)
+        );
+        Assert.check(
             array.length === expectedLength,
             MitumError.detail(ECODE.INVALID_LENGTH, `length of ${arrayName} must be ${expectedLength}, but got ${array.length}`)
         );
