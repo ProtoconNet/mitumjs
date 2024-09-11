@@ -23,6 +23,8 @@ export const ECODE = {
     INVALID_IP: "EC_INVALID_IP",
     /// Length Validation
     INVALID_LENGTH: "EC_INVALID_LENGTH",
+    /// Type Validation
+    INVALID_TYPE: "EC_INVALID_TYPE",
     /// Seed and Key Validation
     INVALID_SEED: "EC_INVALID_SEED",
     INVALID_KEY: "EC_INVALID_KEY",
