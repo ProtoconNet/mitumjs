@@ -327,9 +327,6 @@ export const assignCodeFromErrorMessage = (errorMessage: string): string => {
             for (const keyword of obj.keyword) {
                 if (errorMessage.includes(keyword)) {
                     dcodeArr.push(obj.code);
-                    if (obj.code === "D302") {
-                        break;
-                    }
                 }
             }
         }
@@ -338,7 +335,11 @@ export const assignCodeFromErrorMessage = (errorMessage: string): string => {
     pcodeArr.length === 0 && pcodeArr.push(PCODE.UNDEFINED.code);
 
     if (dcodeArr.length > 1) {
-        return pcodeArr.slice(-1) + DCODE.COMPLEX.code
+        if (dcodeArr.includes("D302")) {
+            return pcodeArr.slice(-1) + DCODE.CA_DISALLOW.code
+        } else {
+            return pcodeArr.slice(-1) + DCODE.COMPLEX.code
+        }
     } else if (dcodeArr.length == 1) {
         return pcodeArr.slice(-1) + dcodeArr[0]
     } else {
