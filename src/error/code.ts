@@ -315,37 +315,30 @@ export const DCODE = {
 } as const
 
 export const assignCodeFromErrorMessage = (errorMessage: string): string => {
-    const pcodeArr : string[] = [];
-    const dcodeArr : string[] = [];
+    const findCode = (codeSet: any, errorMessage: string): string[] => {
+        return Object.values(codeSet)
+            .filter((obj: any) => obj.keyword.length > 0 && obj.keyword[0] !== "")
+            .filter((obj: any) => obj.keyword.some((keyword: string) => errorMessage.includes(keyword)))
+            .map((obj: any) => obj.code);
+    };
 
-    for (const [_, obj] of Object.entries(PCODE)) {
-        if (obj.keyword[0] !== "" && errorMessage.includes(obj.keyword[0])) {
-            pcodeArr.push(obj.code);
-        }
-    }
-
-    for (const [_, obj] of Object.entries(DCODE)) {
-        if (obj.keyword[0] !== "") {
-            for (const keyword of obj.keyword) {
-                if (errorMessage.includes(keyword)) {
-                    dcodeArr.push(obj.code);
-                    if (obj.code === "D302") {
-                        break;
-                    }
-                }
-            }
-        }
-    }
+    let pcodeArr = findCode(PCODE, errorMessage);
+    let dcodeArr = findCode(DCODE, errorMessage);
 
     pcodeArr.length === 0 && pcodeArr.push(PCODE.UNDEFINED.code);
+    dcodeArr.length === 0 && dcodeArr.push(DCODE.UNDEFINED.code);
 
-    if (dcodeArr.length > 1) {
-        return pcodeArr.slice(-1) + DCODE.COMPLEX.code
-    } else if (dcodeArr.length == 1) {
-        return pcodeArr.slice(-1) + dcodeArr[0]
-    } else {
-        return pcodeArr.slice(-1) + DCODE.UNDEFINED.code
+    if (dcodeArr.includes(DCODE.CA_DISALLOW.code)) {
+        dcodeArr = [DCODE.CA_DISALLOW.code];
+    } else if (dcodeArr.length > 1) {
+        dcodeArr = [DCODE.COMPLEX.code];
     }
-}
 
-Object.keys(PCODE)
+    if (pcodeArr.includes(PCODE.IV_BASE_NODE_OP.code)) {
+        pcodeArr = [PCODE.IV_BASE_NODE_OP.code];
+    } else if (pcodeArr.length > 1) {
+        pcodeArr = [PCODE.AMBIGUOUS.code];
+    }
+
+    return pcodeArr[0] + dcodeArr[0]
+}
