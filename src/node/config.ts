@@ -66,9 +66,4 @@ export const Config = {
 			PUBLIC: getRangeConfig(69),
 		}
 	},
-	PRESCRIPTION: {
-		HASH: getRangeConfig(1, 100),
-		HOSPITAL: getRangeConfig(1, 200),
-		PHARMACY: getRangeConfig(1, 20000)
-	}
 }
