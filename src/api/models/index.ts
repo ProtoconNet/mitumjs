@@ -1,8 +1,11 @@
 import currency from "./currency"
+import dmile from "./dmile"
+import did from "./did"
 
 export default {
     currency,
-    // contract: {
-    //     new_contract
-    // },
+    contract: {
+        dmile,
+        did
+    },
 }
