@@ -66,4 +66,7 @@ export const Config = {
 			PUBLIC: getRangeConfig(69),
 		}
 	},
+	DID: {
+		PUBLIC_KEY: getRangeConfig(128, Number.MAX_SAFE_INTEGER),
+	}
 }
