@@ -1,6 +1,6 @@
 {
-  "name": "@mitumjs/mitum-prescription",
-  "version": "1.0.1",
+  "name": "@mitumjs/mitum-dmile",
+  "version": "1.0.0",
   "description": "framework for mitum network",
   "main": "dist/bundle.cjs.cjs",
   "module": "dist/bundle.esm.mjs",
@@ -19,7 +19,7 @@
     "mitum",
     "protocon",
     "mitum-currency",
-    "mitum-prescription"
+    "mitum-dmile"
   ],
   "author": "socialinfratech",
   "license": "GPL-3.0-or-later",
