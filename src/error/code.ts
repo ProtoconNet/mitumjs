@@ -3,9 +3,7 @@ export type ErrorCode = (
     typeof ECODE[keyof typeof ECODE]
     | typeof ECODE.HDWALLET[keyof typeof ECODE.HDWALLET]
     | typeof ECODE.CURRENCY[keyof typeof ECODE.CURRENCY]
-    | typeof ECODE.NFT[keyof typeof ECODE.NFT]
-    | typeof ECODE.STO[keyof typeof ECODE.STO]
-    | typeof ECODE.DAO[keyof typeof ECODE.DAO]
+    | typeof ECODE.DID[keyof typeof ECODE.DID]
 )
 
 export const ECODE = {
@@ -82,20 +80,9 @@ export const ECODE = {
         INVALID_CURRENCY_POLICY: "EC_INVALID_CURRENCY_POLICY",
         INVALID_CURRENCY_DESIGN: "EC_INVALID_CURRENCY_DESIGN",
     },
-    // NFT Errors
-    NFT: {
-        INVALID_NFT_SIGNER: "EC_INVALID_NFT_SIGNER",
-        INVALID_NFT_SIGNERS: "EC_INVALID_NFT_SIGNERS",
-    },
-    // STO Errors
-    STO: {
-        INVALID_PARTITION: "EC_INVALID_PARTITION",
-    },
-    // DAO Errors
-    DAO: {
-        INVALID_POLICY: "EC_INVALID_POLICY",
-        INVALID_WHITELIST: "EC_INVALID_WHITELIST",
-        UNMATCHED_SENDER: "EC_UNMATCHED_SENDER"
+    // DID Errors
+    DID: {
+        INVALID_DID: "EC_INVALID_DID",
     },
     // Transaction Errors
     TIME_OUT: "EC_TIME_OUT",
