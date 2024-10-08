@@ -1,6 +1,8 @@
 import { SignOption, Operation as OP, Fact } from "./base"
 
 import { Currency, Account, Contract } from "./currency"
+import { Dmile } from "./dmile"
+import { DID } from "./did"
 import { Signer } from "./signer"
 
 import { Config } from "../node"
@@ -234,6 +236,8 @@ export class OperationResponse extends Operation {
 
 export {
 	Currency, Account, Contract,
+	Dmile,
+	DID,
 	Signer,
 	Base,
 }
