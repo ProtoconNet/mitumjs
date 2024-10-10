@@ -6,5 +6,10 @@ export default {
     CREATE_DATA: {
         FACT: "mitum-d-mile-create-data-operation-fact",
         OPERATION: "mitum-d-mile-create-data-operation",
+    },
+    MIGRATE_DATA: {
+        ITEM: "mitum-d-mile-migrate-data-item",
+        FACT: "mitum-d-mile-migrate-data-operation-fact",
+        OPERATION: "mitum-d-mile-migrate-data-operation",
     }
 }
