@@ -1,12 +1,13 @@
 import { RegisterModelFact } from "./register-model"
 import { CreateDidFact } from "./create-did"
+import { MigrateDidFact, MigrateDidItem } from "./migrate-did"
 import { ReactivateDidFact } from "./reactive-did"
 import { DeactivateDidFact } from "./deactive-did"
 import { ContractGenerator, Operation } from "../base"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
-import { IP, TimeStamp as TS, URIString } from "../../types"
+import { IP, TimeStamp as TS, URIString, LongString } from "../../types"
 import { Assert, MitumError, ECODE } from "../../error"
 
 export class DID extends ContractGenerator {
@@ -79,6 +80,49 @@ export class DID extends ContractGenerator {
         )
 
         return new Operation(this.networkID, fact)
+    }
+
+    /**
+     * Generate `migrate-did` operation to migrate did with publicKey and tx id to the did model.
+     * @param {string | Address} [contract] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string[] | LongString[]} [publicKeys] - array with multiple publicKey to record.
+     * @param {string[] | LongString[]} [txIds] - array with multiple tx Id.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `migrate-did` operation
+     */
+    migrateDID(
+        contract: string | Address,
+        sender: string | Address,
+        publicKeys: string[] | LongString[],
+        txIds: string[] | LongString[],
+        currency: string | CurrencyID,
+    ) {
+        Assert.check(
+            publicKeys.length !== 0 && txIds.length !== 0, 
+            MitumError.detail(ECODE.INVALID_LENGTH, "The array must not be empty."),
+        )
+        Assert.check(
+            new Set(publicKeys.map(it => it.toString())).size === publicKeys.length,
+            MitumError.detail(ECODE.INVALID_ITEMS, "duplicated merkleRoot founded")
+        )
+        Assert.check(
+            new Set(txIds.map(it => it.toString())).size === txIds.length,
+            MitumError.detail(ECODE.INVALID_ITEMS, "duplicated txId founded")
+        )
+        Assert.check(
+            publicKeys.length === txIds.length, 
+            MitumError.detail(ECODE.INVALID_LENGTH, "The lengths of the publicKeys and txIds must be the same."),
+        )
+        return new Operation(
+            this.networkID,
+            new MigrateDidFact(
+                TS.new().UTC(),
+                sender,
+                publicKeys.map((publicKey, idx) => new MigrateDidItem(contract, currency, publicKey.toString(), txIds[idx].toString())
+                ),
+            ),
+        )
     }
 
     /**

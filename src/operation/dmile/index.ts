@@ -1,5 +1,6 @@
 import { RegisterModelFact } from "./register-model"
 import { CreateDataFact } from "./create-data"
+import { MigrateDataFact, MigrateDataItem } from "./migrate-data"
 import { ContractGenerator, Operation } from "../base"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
@@ -68,6 +69,49 @@ export class Dmile extends ContractGenerator {
         return new Operation(this.networkID, fact)
     }
     
+    /**
+     * Generate `migrate-data` operation to migrate data with multiple merkle root and tx id to the dmile model.
+     * @param {string | Address} [contract] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string[] | LongString[]} [merkleRoots] - array with multiple merkle root to record.
+     * @param {string[] | LongString[]} [txIds] - array with multiple tx Id.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `migrate-data` operation
+     */
+    migrateData(
+        contract: string | Address,
+        sender: string | Address,
+        merkleRoots: string[] | LongString[],
+        txIds: string[] | LongString[],
+        currency: string | CurrencyID,
+    ) {
+        Assert.check(
+            merkleRoots.length !== 0 && txIds.length !== 0, 
+            MitumError.detail(ECODE.INVALID_LENGTH, "The array must not be empty."),
+        )
+        Assert.check(
+            new Set(merkleRoots.map(it => it.toString())).size === merkleRoots.length,
+            MitumError.detail(ECODE.INVALID_ITEMS, "duplicated merkleRoot founded")
+        )
+        Assert.check(
+            new Set(txIds.map(it => it.toString())).size === txIds.length,
+            MitumError.detail(ECODE.INVALID_ITEMS, "duplicated txId founded")
+        )
+        Assert.check(
+            merkleRoots.length === txIds.length, 
+            MitumError.detail(ECODE.INVALID_LENGTH, "The lengths of the merkleRoots and txIds must be the same."),
+        )
+        return new Operation(
+            this.networkID,
+            new MigrateDataFact(
+                TS.new().UTC(),
+                sender,
+                merkleRoots.map((merkleRoot, idx) => new MigrateDataItem(contract, currency, merkleRoot.toString(), txIds[idx].toString())
+                ),
+            ),
+        )
+    }
+
     /**
      * Get information about a dmile model on the contract.
      * @async
