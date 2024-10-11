@@ -26,18 +26,18 @@ async function getByMerkleRoot(
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
-async function getByTxId(
+async function getByTxHash(
     api: string | undefined, 
     contract: string | Address,
     txId: string,
     delegateIP: string | undefined,
 ) {
-    const apiPath = `${url(api, contract)}/txid/${txId}`;
+    const apiPath = `${url(api, contract)}/txhash/${txId}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 export default {
     getModel,
     getByMerkleRoot,
-    getByTxId
+    getByTxHash
 }
