@@ -5,6 +5,8 @@ import { ContractGenerator, Operation } from "../base"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
+import { isSuccessResponse  } from "../../utils"
+import { Config } from "../../node"
 import { IP, TimeStamp as TS, URIString, LongString } from "../../types"
 import { Assert, MitumError, ECODE } from "../../error"
 
@@ -70,11 +72,11 @@ export class Dmile extends ContractGenerator {
     }
     
     /**
-     * Generate `migrate-data` operation to migrate data with multiple merkle root and tx id to the dmile model.
+     * Generate `migrate-data` operation to migrate data with multiple merkle root and tx hash to the dmile model.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
-     * @param {string[] | LongString[]} [merkleRoots] - array with multiple merkle root to record.
-     * @param {string[] | LongString[]} [txIds] - array with multiple tx Id.
+     * @param {string[] | LongString[]} [merkleRoots] - array with multiple merkle roots to record.
+     * @param {string[] | LongString[]} [txHashes] - array with multiple tx hashes.
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `migrate-data` operation
      */
@@ -82,11 +84,11 @@ export class Dmile extends ContractGenerator {
         contract: string | Address,
         sender: string | Address,
         merkleRoots: string[] | LongString[],
-        txIds: string[] | LongString[],
+        txHashes: string[] | LongString[],
         currency: string | CurrencyID,
     ) {
         Assert.check(
-            merkleRoots.length !== 0 && txIds.length !== 0, 
+            merkleRoots.length !== 0 && txHashes.length !== 0, 
             MitumError.detail(ECODE.INVALID_LENGTH, "The array must not be empty."),
         )
         Assert.check(
@@ -94,19 +96,19 @@ export class Dmile extends ContractGenerator {
             MitumError.detail(ECODE.INVALID_ITEMS, "duplicated merkleRoot founded")
         )
         Assert.check(
-            new Set(txIds.map(it => it.toString())).size === txIds.length,
-            MitumError.detail(ECODE.INVALID_ITEMS, "duplicated txId founded")
+            new Set(txHashes.map(it => it.toString())).size === txHashes.length,
+            MitumError.detail(ECODE.INVALID_ITEMS, "duplicated tx hash founded")
         )
         Assert.check(
-            merkleRoots.length === txIds.length, 
-            MitumError.detail(ECODE.INVALID_LENGTH, "The lengths of the merkleRoots and txIds must be the same."),
+            merkleRoots.length === txHashes.length, 
+            MitumError.detail(ECODE.INVALID_LENGTH, "The lengths of the merkleRoots and txHashes must be the same."),
         )
         return new Operation(
             this.networkID,
             new MigrateDataFact(
                 TS.new().UTC(),
                 sender,
-                merkleRoots.map((merkleRoot, idx) => new MigrateDataItem(contract, currency, merkleRoot.toString(), txIds[idx].toString())
+                merkleRoots.map((merkleRoot, idx) => new MigrateDataItem(contract, currency, merkleRoot.toString(), txHashes[idx].toString())
                 ),
             ),
         )
@@ -127,47 +129,81 @@ export class Dmile extends ContractGenerator {
     }
     
     /**
-     * Get tx id by merkle root.
+     * Get tx hash by merkle root.
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | LongString} [merkleRoot] - The value of merkle root.
-     * @returns `data` of `SuccessResponse` is information about the data with certain merkle root on the project:
-     * - `_hint`: Hint for d-mile data,
-     * - `merkleRoot`: The merkle root value,
-     * - `txid`: The id of create-data transaction,
+     * @returns `data` of `SuccessResponse` is tx hash related to the merkle root:
+     * - `tx_hash`: The fact hash of create-data operation.
      */
-    async getByMerkleRoot(
+    async getTxHashByByMerkleRoot(
         contract: string | Address,
         merkleRoot: string,
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
+        Assert.check(
+            Config.DMILE.MERKLE_ROOT.satisfy(merkleRoot.toString().length),
+            MitumError.detail(ECODE.INVALID_LENGTH, `merkleRoot length must be ${Config.DMILE.MERKLE_ROOT.min}`),
+        )
         new URIString(merkleRoot, 'merkleRoot');
-        return await getAPIData(() => contractApi.dmile.getByMerkleRoot(this.api, contract, merkleRoot, this.delegateIP))
+        const response = await getAPIData(() => contractApi.dmile.getByMerkleRoot(this.api, contract, merkleRoot, this.delegateIP));
+        if (isSuccessResponse(response) && response.data) {
+            response.data = response.data.tx_hash ? {tx_hash: response.data.tx_hash} : null;
+        }
+        return response
     }
 
     /**
-     * Get mekle root by tx id.
+     * Get mekle root by tx hash.
      * @async
      * @param {string | Address} [contract] - The contract's address.
-     * @param {string | LongString} [txId] - The Id of create-data transaction.
-     * @returns `data` of `SuccessResponse` is an array of the history information about the data:
-     * - `_hint`: Hint for d-mile data,
-     * - `merkleRoot`: The merkle root value,
-     * - `txid`: The id of create-data transaction,
+     * @param {string | LongString} [txHash] - The hash of create-data transaction.
+     * @returns `data` of `SuccessResponse` is merkle root related to the tx hash:
+     * - `merkle_root`: The merkle root value
      */
-    async getByTxId(
+    async getMerkleRootByTxHash(
         contract: string | Address,
-        txId: string,
+        txHash: string,
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
-        new URIString(txId, 'txId');
-        return await getAPIData(() => contractApi.dmile.getByTxId(
+        new URIString(txHash, 'txHash');
+        const response = await getAPIData(() => contractApi.dmile.getByTxHash(
             this.api,
             contract,
-            txId,
+            txHash,
             this.delegateIP,
-        ))
+        ));
+        if (isSuccessResponse(response) && response.data) {
+            response.data = response.data.merkle_root ? {merkle_root: response.data.merkle_root} : null;
+        }
+        return response
+    }
+
+    /**
+     * Get mekle root existence.
+     * @async
+     * @param {string | Address} [contract] - The contract's address.
+     * @param {string | LongString} [merkleRoot] - The value of merkle root.
+     * @returns If the data does not exist, an `ErrorResponse` is returned. Otherwise, a `SuccessResponse` is returned with `data` as shown below:
+     * - `result`: "1"
+     */
+    async getMerkleRootExistence(
+        contract: string | Address,
+        merkleRoot: string,
+    ) {
+        Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
+        Address.from(contract);
+        Assert.check(
+            Config.DMILE.MERKLE_ROOT.satisfy(merkleRoot.toString().length),
+            MitumError.detail(ECODE.INVALID_LENGTH, `merkleRoot length must be ${Config.DMILE.MERKLE_ROOT.min}`),
+        )
+        new URIString(merkleRoot, 'merkleRoot');
+        const response = await getAPIData(() => contractApi.dmile.getByMerkleRoot(this.api, contract, merkleRoot, this.delegateIP));
+        if (isSuccessResponse(response) && response.data) {
+            response.data = {result : "1"}
+        }
+        return response
     }
 }

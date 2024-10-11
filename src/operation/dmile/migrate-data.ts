@@ -3,6 +3,7 @@ import { Item } from "../base"
 import { URIString, LongString } from "../../types"
 import { HINT } from "../../alias"
 import { Address } from "../../key"
+import { Config } from "../../node"
 import { CurrencyID } from "../../common"
 import { OperationFact } from "../base"
 import { HintedObject } from "../../types"
@@ -12,24 +13,29 @@ export class MigrateDataItem extends Item {
     readonly contract: Address
     readonly currency: CurrencyID
     readonly merkleRoot: LongString
-    readonly txId: LongString
+    readonly txHash: LongString
 
-    constructor(contract: Address | string, currency: CurrencyID | string, merkleRoot: string, txId: string) {
+    constructor(contract: Address | string, currency: CurrencyID | string, merkleRoot: string, txHash: string) {
         super(HINT.DMILE.MIGRATE_DATA.ITEM)
 
         this.contract = Address.from(contract)
         this.currency = CurrencyID.from(currency)
         this.merkleRoot = LongString.from(merkleRoot)
-        this.txId = LongString.from(txId)
+        this.txHash = LongString.from(txHash)
         new URIString(merkleRoot.toString(), 'merkleRoot');
-        new URIString(txId.toString(), 'txId');
+        new URIString(txHash.toString(), 'txHash');
+
+        Assert.check(
+            Config.DMILE.MERKLE_ROOT.satisfy(merkleRoot.toString().length),
+            MitumError.detail(ECODE.INVALID_LENGTH, `merkleRoot length must be ${Config.DMILE.MERKLE_ROOT.min}`),
+        )
     }
     
     toBuffer(): Buffer {
         return Buffer.concat([
             this.contract.toBuffer(),
             this.merkleRoot.toBuffer(),
-            this.txId.toBuffer(),
+            this.txHash.toBuffer(),
             this.currency.toBuffer(),
         ])
     }
@@ -38,8 +44,8 @@ export class MigrateDataItem extends Item {
         return {
             ...super.toHintedObject(),
             contract: this.contract.toString(),
-            merkleRoot: this.merkleRoot.toString(),
-            txid: this.txId.toString(),
+            merkle_root: this.merkleRoot.toString(),
+            tx_hash: this.txHash.toString(),
             currency: this.currency.toString()
         }
     }
