@@ -66,6 +66,9 @@ export const Config = {
 			PUBLIC: getRangeConfig(69),
 		}
 	},
+	DMILE: {
+		MERKLE_ROOT: getRangeConfig(64, 64),
+	},
 	DID: {
 		PUBLIC_KEY: getRangeConfig(128, Number.MAX_SAFE_INTEGER),
 	}
