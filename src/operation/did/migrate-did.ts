@@ -45,7 +45,7 @@ export class MigrateDidItem extends Item {
             ...super.toHintedObject(),
             contract: this.contract.toString(),
             publicKey: this.publicKey.toString(),
-            txid: this.txId.toString(),
+            tx_hash: this.txId.toString(),
             currency: this.currency.toString()
         }
     }

@@ -7,6 +7,7 @@ import { ContractGenerator, Operation } from "../base"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
+import { isSuccessResponse  } from "../../utils"
 import { IP, TimeStamp as TS, URIString, LongString } from "../../types"
 import { Assert, MitumError, ECODE } from "../../error"
 
@@ -194,33 +195,34 @@ export class DID extends ContractGenerator {
     }
     
     /**
-     * Get did data with publickey
+     * Get did by publickey.
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | LongString} [publicKey] - The publicKey, // Must be longer than 128 digits. If the length over 128, only the 128 characters from the end will be used.
-     * @returns `data` of `SuccessResponse` is did data:
-     * - `_hint`: hint for did data,
-     * - `publicKey`: The publickey with prefix '04',
+     * @returns `data` of `SuccessResponse` is did:
      * - `did`: The did value,
      */
-    async getByPubKey(
+    async getDIDByPublicKey(
         contract: string | Address,
         publicKey: string,
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
         new URIString(publicKey, 'publicKey');
-        return await getAPIData(() => contractApi.did.getByPubKey(this.api, contract, publicKey, this.delegateIP))
+        const response = await getAPIData(() => contractApi.did.getByPubKey(this.api, contract, publicKey, this.delegateIP));
+        if (isSuccessResponse(response) && response.data) {
+            response.data = response.data.did ? {did: response.data.did} : null;
+        }
+        return response
     }
 
     /**
-     * Get did document with certain did.
+     * Get did document by did.
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | LongString} [did] - The did value.
      * @returns `data` of `SuccessResponse` is did document:
-     * - `_hint`: Hint for did data,
-     * - `did_doc`: object
+     * - `did_document`: object
      * - - `'@context'`: The context of did,
      * - - `id`: The did value,
      * - - `created`: The fact hash of create-did operation,
@@ -235,17 +237,21 @@ export class DID extends ContractGenerator {
      * - - - `type`: The type of did service,
      * - - - `service_end_point`: The end point of did service,
      */
-    async getByDID(
+    async getDDocByDID(
         contract: string | Address,
         did: string,
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
-        return await getAPIData(() => contractApi.did.getByDID(
+        const response = await getAPIData(() => contractApi.did.getByDID(
             this.api,
             contract,
             did,
             this.delegateIP,
         ))
+        if (isSuccessResponse(response) && response.data) {
+            response.data = response.data.did_document ? {did_document: response.data.did_document} : null;
+        }
+        return response
     }
 }
