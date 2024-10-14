@@ -136,7 +136,7 @@ export class Dmile extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is tx hash related to the merkle root:
      * - `tx_hash`: The fact hash of create-data operation.
      */
-    async getTxHashByByMerkleRoot(
+    async getTxHashByMerkleRoot(
         contract: string | Address,
         merkleRoot: string,
     ) {
