@@ -5,7 +5,7 @@ import { delegateUri } from "../../utils"
 const url = (
     api: string | undefined, 
     contract: string | Address,
-) => `${api}/did-service/${Address.from(contract).toString()}`
+) => `${api}/did-registry/${Address.from(contract).toString()}`
 
 async function getModel(
     api: string | undefined, 
