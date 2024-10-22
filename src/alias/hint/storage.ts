@@ -7,6 +7,11 @@ export default {
         FACT: "mitum-storage-create-data-operation-fact",
         OPERATION: "mitum-storage-create-data-operation",
     },
+    CREATE_DATAS: {
+        ITEM: "mitum-storage-create-datas-item",
+        FACT: "mitum-storage-create-datas-operation-fact",
+        OPERATION: "mitum-storage-create-datas-operation",
+    },
     DELETE_DATA: {
         FACT: "mitum-storage-delete-data-operation-fact",
         OPERATION: "mitum-storage-delete-data-operation", 
