@@ -253,10 +253,8 @@ export class Storage extends ContractGenerator {
      * @param {string | Address} [contract] - The contract's address.
      * @param {boolean} [deleted] - (Optional) Whether to include deleted data.
      * @returns `data` of `SuccessResponse` is an array of the history information about the data:
-     * - `_hint`: Hint for currency,
-     * - `_embedded`:
-     * - - `contract`: The address of contract account,
-     * - - `data_count`: The number of created data on the contract
+     * - `contract`: The address of contract account,
+     * - `data_count`: The number of created data on the contract
      */
     async getDataCount(
         contract: string | Address,
