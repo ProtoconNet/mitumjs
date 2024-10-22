@@ -1,5 +1,6 @@
 import { RegisterModelFact } from "./resgister-model"
 import { CreateDataFact } from "./create-data"
+import { CreateDatasItem, CreateDatasFact } from "./create-datas"
 import { UpdateDataFact } from "./update-data"
 import { DeleteDataFact } from "./delete-data"
 import { ContractGenerator, Operation } from "../base"
@@ -17,7 +18,22 @@ export class Storage extends ContractGenerator {
     ) {
         super(networkID, api, delegateIP)
     }
-    
+
+    private checkTwoArrayLength(array1: string[] | LongString[], array2: string[] | LongString[], arrayName1: string, arrayName2: string) {
+        Assert.check(
+            Array.isArray(array1),
+            MitumError.detail(ECODE.INVALID_TYPE, `the ${arrayName1} must be in array type`)
+        );
+        Assert.check(
+            Array.isArray(array2),
+            MitumError.detail(ECODE.INVALID_TYPE, `the ${arrayName2} must be in array type`)
+        );
+        Assert.check(
+            array1.length === array2.length,
+            MitumError.detail(ECODE.INVALID_LENGTH, `the lengths of two arrays ${arrayName1}, ${arrayName2} are not the same`)
+        );
+    }
+
     /**
      * Generate a `register-model` operation to register new storage model on the contract.
      * @param {string | Address} [contract] - The contract's address.
@@ -72,6 +88,32 @@ export class Storage extends ContractGenerator {
 
         return new Operation(this.networkID, fact)
     }
+
+    /**
+     * Generate `create-datas` operation to create multiple data on the storage model.
+     * @param {string | Address} [contract] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string[]} [dataKeys] - The array with key of multiple data to create.
+     * @param {string[] | LongString[]} [dataValues] - The array with value of the multiple data to record.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `create-datas` operation
+     */
+        createMultiData(
+            contract: string | Address,
+            sender: string | Address,
+            dataKeys: string[],
+            dataValues: string[] | LongString[],
+            currency: string | CurrencyID,
+        ) {
+            this.checkTwoArrayLength(dataKeys, dataValues, "dataKeys", "dataValues");
+            const items = dataKeys.map((_, idx) => new CreateDatasItem(
+                contract,
+                currency,
+                dataKeys[idx],
+                dataValues[idx]
+            ));
+            return new Operation(this.networkID, new CreateDatasFact(TS.new().UTC(), sender, items))
+        }
 
     /**
      * Generate `update-data` operation to update data with exist data key on the storage model.
@@ -150,7 +192,7 @@ export class Storage extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is information about the data with certain dataKey on the project:
      * - `data`: Object containing below information
      * - - `dataKey`: The key associated with the data,
-     * - - `dataValue`: The current value of the data ,
+     * - - `dataValue`: The current value of the data,
      * - - `deleted`: Indicates whether the data has been deleted
      * - `height`: The block number where the latest related operation is recorded,
      * - `operation`: The fact hash of the latest related operation,
@@ -179,7 +221,7 @@ export class Storage extends ContractGenerator {
      * - `_embedded`:
      * - - `data`: Object containing below information
      * - - - `dataKey`: The key associated with the data,
-     * - - - `dataValue`: The current value of the data ,
+     * - - - `dataValue`: The current value of the data,
      * - - - `deleted`: Indicates whether the data has been deleted
      * - - `height`: The block number where the latest related operation is recorded,
      * - - `operation`: The fact hash of the latest related operation,
@@ -202,6 +244,30 @@ export class Storage extends ContractGenerator {
             limit,
             offset,
             reverse
+        ))
+    }
+
+    /**
+     * Get the number of data (not deleted). If `deleted` is true, the number including deleted data.
+     * @async
+     * @param {string | Address} [contract] - The contract's address.
+     * @param {boolean} [deleted] - (Optional) Whether to include deleted data.
+     * @returns `data` of `SuccessResponse` is an array of the history information about the data:
+     * - `_hint`: Hint for currency,
+     * - `_embedded`:
+     * - - `contract`: The address of contract account,
+     * - - `data_count`: The number of created data on the contract
+     */
+    async getDataCount(
+        contract: string | Address,
+        deleted?: true
+    ) {
+        Address.from(contract);
+        return await getAPIData(() => contractApi.storage.getDataCount(
+            this.api,
+            contract,
+            this.delegateIP,
+            deleted
         ))
     }
 }
