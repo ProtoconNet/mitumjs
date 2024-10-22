@@ -33,12 +33,23 @@ async function getDataHistory(
     delegateIP: string | undefined,
     limit?: number, offset?: number, reverse?: true
 ) {
-    const apiPath = apiPathWithParams(`${url(api, contract)}/datakey/${dataKey}/history`, limit, offset, reverse);
+    const apiPath = apiPathWithParams(`${url(api, contract)}/datacount/${dataKey}/history`, limit, offset, reverse);
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
+}
+
+async function getDataCount(
+    api: string | undefined, 
+    contract: string | Address,
+    delegateIP: string | undefined,
+    deleted?: true
+) {
+    const apiPath = `${url(api, contract)}/datacount?deleted=${deleted ? 1 : 0}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
 export default {
     getModel,
     getData,
-    getDataHistory
+    getDataHistory,
+    getDataCount
 }
