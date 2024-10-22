@@ -1,6 +1,6 @@
 {
   "name": "@mitumjs/mitum-storage",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "framework for mitum network",
   "main": "dist/bundle.cjs.cjs",
   "module": "dist/bundle.esm.mjs",
@@ -17,7 +17,6 @@
   },
   "keywords": [
     "mitum",
-    "protocon",
     "mitum-currency",
     "mitum-storage"
   ],
