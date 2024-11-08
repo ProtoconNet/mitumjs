@@ -20,4 +20,9 @@ export default {
         FACT: "mitum-storage-update-data-operation-fact",
         OPERATION: "mitum-storage-update-data-operation", 
     },
+    UPDATE_DATAS: {
+        ITEM: "mitum-storage-update-datas-item",
+        FACT: "mitum-storage-update-datas-operation-fact",
+        OPERATION: "mitum-storage-update-datas-operation", 
+    },
 }

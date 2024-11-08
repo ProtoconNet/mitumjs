@@ -2,6 +2,7 @@ import { RegisterModelFact } from "./resgister-model"
 import { CreateDataFact } from "./create-data"
 import { CreateDatasItem, CreateDatasFact } from "./create-datas"
 import { UpdateDataFact } from "./update-data"
+import { UpdateDatasItem, UpdateDatasFact } from "./update-datas"
 import { DeleteDataFact } from "./delete-data"
 import { ContractGenerator, Operation } from "../base"
 import { Address } from "../../key"
@@ -91,29 +92,30 @@ export class Storage extends ContractGenerator {
 
     /**
      * Generate `create-datas` operation to create multiple data on the storage model.
-     * @param {string | Address} [contract] - The contract's address.
+     * @param {string[] | Address[]} [contracts] - The array of contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string[]} [dataKeys] - The array with key of multiple data to create.
      * @param {string[] | LongString[]} [dataValues] - The array with value of the multiple data to record.
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `create-datas` operation
      */
-        createMultiData(
-            contract: string | Address,
-            sender: string | Address,
-            dataKeys: string[],
-            dataValues: string[] | LongString[],
-            currency: string | CurrencyID,
-        ) {
-            this.checkTwoArrayLength(dataKeys, dataValues, "dataKeys", "dataValues");
-            const items = dataKeys.map((_, idx) => new CreateDatasItem(
-                contract,
-                currency,
-                dataKeys[idx],
-                dataValues[idx]
-            ));
-            return new Operation(this.networkID, new CreateDatasFact(TS.new().UTC(), sender, items))
-        }
+    createMultiData(
+        contracts: string[] | Address[],
+        sender: string | Address,
+        dataKeys: string[],
+        dataValues: string[] | LongString[],
+        currency: string | CurrencyID,
+    ) {
+        this.checkTwoArrayLength(dataKeys, dataValues, "dataKeys", "dataValues");
+        this.checkTwoArrayLength(contracts.map((el)=>{return el.toString()}), dataKeys, "contracts", "dataKeys");
+        const items = dataKeys.map((_, idx) => new CreateDatasItem(
+            contracts[idx],
+            currency,
+            dataKeys[idx],
+            dataValues[idx]
+        ));
+        return new Operation(this.networkID, new CreateDatasFact(TS.new().UTC(), sender, items))
+    }
 
     /**
      * Generate `update-data` operation to update data with exist data key on the storage model.
@@ -144,6 +146,33 @@ export class Storage extends ContractGenerator {
         return new Operation(this.networkID, fact)
     }
 
+    /**
+     * Generate `update-datas` operation to update multiple data on the storage model.
+     * @param {string[] | Address[]} [contracts] - The array of contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string[]} [dataKeys] - The array with key of multiple data to update.
+     * @param {string[] | LongString[]} [dataValues] - The array with value of the multiple data to update.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `update-datas` operation
+     */
+        updateMultiData(
+            contracts: string[] | Address[],
+            sender: string | Address,
+            dataKeys: string[],
+            dataValues: string[] | LongString[],
+            currency: string | CurrencyID,
+        ) {
+            this.checkTwoArrayLength(dataKeys, dataValues, "dataKeys", "dataValues");
+            this.checkTwoArrayLength(contracts.map((el)=>{return el.toString()}), dataKeys, "contracts", "dataKeys");
+            const items = dataKeys.map((_, idx) => new UpdateDatasItem(
+                contracts[idx],
+                currency,
+                dataKeys[idx],
+                dataValues[idx]
+            ));
+            return new Operation(this.networkID, new UpdateDatasFact(TS.new().UTC(), sender, items))
+        }
+    
     /**
      * Generate `delete-data` operation to delete data on the storage model.
      * @param {string | Address} [contract] - The contract's address.
