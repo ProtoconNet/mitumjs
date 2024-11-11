@@ -33,7 +33,7 @@ async function getDataHistory(
     delegateIP: string | undefined,
     limit?: number, offset?: number, reverse?: true
 ) {
-    const apiPath = apiPathWithParams(`${url(api, contract)}/datacount/${dataKey}/history`, limit, offset, reverse);
+    const apiPath = apiPathWithParams(`${url(api, contract)}/datakey/${dataKey}/history`, limit, offset, reverse);
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
