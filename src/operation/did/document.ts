@@ -1,9 +1,8 @@
 import { HINT } from "../../alias"
-// import { Address } from "../../key"
 import { Hint } from "../../common"
 import { HintedObject, IBuffer, IHintedObject, LongString } from "../../types"
 // import { Config } from "../../node"
-// import { Assert, ECODE, MitumError } from "../../error"
+import { Assert, ECODE, MitumError } from "../../error"
 
 abstract class Authentication implements IBuffer, IHintedObject {
     private hint: Hint
@@ -40,6 +39,7 @@ export class AsymKeyAuth extends Authentication {
         this.authType = authType;
         this.controller = LongString.from(controller);
         this.publicKeyHex = LongString.from(publicKeyHex);
+        Assert.check(/^[0-9a-fA-F]+$/.test(publicKeyHex.toString()), MitumError.detail(ECODE.INVALID_FACT, `${publicKeyHex.toString()} is not a hexadecimal number`))
     }
 
     toBuffer(): Buffer {
@@ -146,8 +146,6 @@ export class Document implements IBuffer, IHintedObject {
     private hint: Hint;
     readonly context: LongString;
     readonly id: LongString;
-    readonly created: LongString;
-    readonly status: LongString;
     readonly authentication: (AsymKeyAuth | SocialLoginAuth)[];
     readonly verificationMethod: [];
     readonly service_id: LongString;
@@ -157,8 +155,6 @@ export class Document implements IBuffer, IHintedObject {
     constructor(
         context: string | LongString, 
         id: string | LongString, 
-        created: string | LongString,
-        status: string | LongString,
         authentication : (AsymKeyAuth | SocialLoginAuth)[],
         verificationMethod : [],
         service_id: string | LongString,
@@ -168,8 +164,6 @@ export class Document implements IBuffer, IHintedObject {
         this.hint = new Hint(HINT.DID.DOCUMENT);
         this.context = LongString.from(context);
         this.id = LongString.from(id);
-        this.created = LongString.from(created);
-        this.status = LongString.from(status);
         this.authentication = authentication;
         this.verificationMethod = verificationMethod;
         this.service_id = LongString.from(service_id);
@@ -181,8 +175,6 @@ export class Document implements IBuffer, IHintedObject {
         return Buffer.concat([
             this.context.toBuffer(),
             this.id.toBuffer(),
-            this.created.toBuffer(),
-            this.status.toBuffer(),
             Buffer.concat(this.authentication.map(el => el.toBuffer())),
             this.service_id.toBuffer(),
             this.service_type.toBuffer(),
@@ -195,8 +187,6 @@ export class Document implements IBuffer, IHintedObject {
             _hint: this.hint.toString(),
             "@context": this.context.toString(),
             id: this.id.toString(),
-            created: this.created.toString(),
-            status: this.status.toString(),
             authentication: this.authentication.map(el => el.toHintedObject()),
             verificationMethod: [],
             service: {

@@ -1,5 +1,5 @@
 import { RegisterModelFact } from "./register-model"
-import { CreateDidFact } from "./create-did"
+import { CreateFact } from "./create-did"
 import { MigrateDidFact, MigrateDidItem } from "./migrate-did"
 import { ReactivateDidFact } from "./reactive-did"
 import { DeactivateDidFact } from "./deactive-did"
@@ -36,8 +36,6 @@ type document = {
     _hint: string,
     "@context": string | LongString, 
     id: string | LongString, 
-    created: string | LongString,
-    status: string | LongString,
     authentication: (asymkeyAuth | socialLoginAuth)[],
     verificationMethod: [],
     service: {
@@ -61,10 +59,6 @@ export class DID extends ContractGenerator {
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | LongString} [didMethod] - The did method
-     * @param {string | LongString} [docContext] - The context of did document
-     * @param {string | LongString} [docAuthType] - The type of authentication of did document
-     * @param {string | LongString} [docSvcType] - The type of service of did document
-     * @param {string | LongString} [docSvcEndPoint] - The end point of service of did document
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `register-model` operation.
      */
@@ -72,10 +66,6 @@ export class DID extends ContractGenerator {
         contract: string | Address,
         sender: string | Address,
         didMethod: string,
-        docContext: string,
-        docAuthType: string,
-        docSvcType: string,
-        docSvcEndPoint: string,
         currency: string | CurrencyID,
     ) {
         return new Operation(
@@ -85,10 +75,6 @@ export class DID extends ContractGenerator {
                 sender,
                 contract,
                 didMethod,
-                docContext,
-                docAuthType,
-                docSvcType,
-                docSvcEndPoint,
                 currency
             )
         )
@@ -98,33 +84,37 @@ export class DID extends ContractGenerator {
      * Generate `create-did` operation to create new did.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
-     * @param {string | Address} [address] - !!
-     * @param {string} [publicKey] - The publicKey for the did to create. // Must be longer than 128 digits. If the length over 128, only the 128 characters from the end will be used.
+     * @param {document} [document] - DID document to be created when create new did.
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `create-did` operation
      */
     create(
         contract: string | Address,
         sender: string | Address,
-        address: string | Address,
-        authType: string,
-        publicKey: string,
-        serviceType: string,
-        serviceEndpoints: string,
+        document: document,
         currency: string | CurrencyID,
     ) {
-        const fact = new CreateDidFact(
+        const fact = new CreateFact(
             TS.new().UTC(),
             sender,
             contract,
-            address,
-            authType,
-            publicKey,
-            serviceType,
-            serviceEndpoints,
-            currency,
+            new Document(
+                document["@context"],
+                document.id,
+                document.authentication.map((el) => {
+                    if ("proof" in el) {
+                        return new SocialLoginAuth(el.id, el.controller, el.serviceEndpoint, el.proof.verificationMethod)
+                    } else {
+                        return new AsymKeyAuth(el.id, el.authType, el.controller, el.publicKeyHex)
+                    }
+                }),
+                document.verificationMethod,
+                document.service.id,
+                document.service.type,
+                document.service.service_end_point
+            ),
+            currency
         )
-
         return new Operation(this.networkID, fact)
     }
 
@@ -224,7 +214,6 @@ export class DID extends ContractGenerator {
     updateDIDDocument(
         contract: string | Address,
         sender: string | Address,
-        did: string,
         document: document,
         currency: string | CurrencyID,
     ) {
@@ -232,12 +221,10 @@ export class DID extends ContractGenerator {
             TS.new().UTC(),
             sender,
             contract,
-            did,
+            document.id.toString(),
             new Document(
                 document["@context"],
                 document.id,
-                document.created,
-                document.status,
                 document.authentication.map((el) => {
                     if ("proof" in el) {
                         return new SocialLoginAuth(el.id, el.controller, el.serviceEndpoint, el.proof.verificationMethod)

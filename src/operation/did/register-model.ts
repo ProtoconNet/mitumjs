@@ -9,20 +9,12 @@ import { ContractFact, FactJson } from "../base"
 
 export class RegisterModelFact extends ContractFact {
     readonly didMethod: LongString
-    readonly docContext: LongString
-    readonly docAuthType: LongString
-    readonly docSvcType: LongString
-    readonly docSvcEndPoint: LongString
 
     constructor(
         token: string, 
         sender: string | Address, 
         contract: string | Address,
         didMethod: string,
-        docContext: string,
-        docAuthType: string,
-        docSvcType: string,
-        docSvcEndPoint: string,
         currency: string | CurrencyID,
     ) {
         super(HINT.DID.REGISTER_MODEL.FACT, token, sender, contract, currency)
@@ -33,10 +25,6 @@ export class RegisterModelFact extends ContractFact {
         // )
 
         this.didMethod = LongString.from(didMethod)
-        this.docContext = LongString.from(docContext)
-        this.docAuthType = LongString.from(docAuthType)
-        this.docSvcType = LongString.from(docSvcType)
-        this.docSvcEndPoint = LongString.from(docSvcEndPoint)
         this._hash = this.hashing()
     }
 
@@ -44,10 +32,6 @@ export class RegisterModelFact extends ContractFact {
         return Buffer.concat([
             super.toBuffer(),
             this.didMethod.toBuffer(),
-            this.docContext.toBuffer(),
-            this.docAuthType.toBuffer(),
-            this.docSvcType.toBuffer(),
-            this.docSvcEndPoint.toBuffer(),
             this.currency.toBuffer(),
         ])
     }
@@ -56,10 +40,6 @@ export class RegisterModelFact extends ContractFact {
         return {
             ...super.toHintedObject(),
             didMethod: this.didMethod.toString(),
-            docContext: this.docContext.toString(),
-            docAuthType: this.docAuthType.toString(),
-            docSvcType: this.docSvcType.toString(),
-            docSvcEndPoint: this.docSvcEndPoint.toString(),
         }
     }
 
