@@ -81,9 +81,10 @@ export class DID extends ContractGenerator {
     }
     
     /**
-     * Generate `create-did` operation to create new did.
+     * Generate `create-did` operation to create new did for address.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
+     * @param {string | Address} [address] - The did's owner address.
      * @param {document} [document] - DID document to be created when create new did.
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `create-did` operation
@@ -91,6 +92,7 @@ export class DID extends ContractGenerator {
     create(
         contract: string | Address,
         sender: string | Address,
+        address: string | Address,
         document: document,
         currency: string | CurrencyID,
     ) {
@@ -98,6 +100,7 @@ export class DID extends ContractGenerator {
             TS.new().UTC(),
             sender,
             contract,
+            address,
             new Document(
                 document["@context"],
                 document.id,

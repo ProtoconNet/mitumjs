@@ -9,16 +9,18 @@ import { Document } from "./document"
 
 export class CreateFact extends ContractFact {
     readonly document: Document;
+    readonly address: Address;
 
     constructor(
         token: string, 
         sender: string | Address, 
         contract: string | Address,
+        address: string | Address,
         document: Document,
         currency: string | CurrencyID,
     ) {
         super(HINT.DID.CREATE_DID.FACT, token, sender, contract, currency);
-        
+        this.address = Address.from(address);
         this.document = document;
         this._hash = this.hashing();
     }
@@ -26,6 +28,7 @@ export class CreateFact extends ContractFact {
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
+            this.address.toBuffer(),
             this.document.toBuffer(),
             this.currency.toBuffer(),
         ])
@@ -34,6 +37,7 @@ export class CreateFact extends ContractFact {
     toHintedObject(): FactJson {
         return {
             ...super.toHintedObject(),
+            address: this.address.toString(),
             document: this.document.toHintedObject(),
         }
     }
