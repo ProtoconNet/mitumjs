@@ -4,7 +4,6 @@ import { CurrencyID } from "../../common"
 import { ContractFact, FactJson } from "../base"
 import { LongString } from "../../types"
 // import { Config } from "../../node"
-import { Assert, ECODE, MitumError } from "../../error"
 
 
 export class CreateFact extends ContractFact {
@@ -28,8 +27,7 @@ export class CreateFact extends ContractFact {
         this.publicKey = LongString.from(publicKey);
         this.serviceType = LongString.from(serviceType);
         this.serviceEndpoints = LongString.from(serviceEndpoints);
-        Assert.check(/^[0-9a-fA-F]+$/.test(publicKey.toString()), MitumError.detail(ECODE.INVALID_FACT, `${this.publicKey.toString()} is not a hexadecimal number`));
-
+        
         this._hash = this.hashing();
     }
 
