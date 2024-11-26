@@ -53,6 +53,43 @@ export class DID extends ContractGenerator {
     ) {
         super(networkID, api, delegateIP)
     }
+
+    writeAsymkeyAuth(
+        id: string,
+        authType: "Ed25519VerificationKey2018" | "EcdsaSecp256k1VerificationKey2019",
+        controller: string,
+        publicKeyHex: string,
+    ) {
+        return new AsymKeyAuth(id, authType, controller, publicKeyHex)
+    };
+
+    writeSocialLoginAuth(
+        id: string,
+        controller: string,
+        serviceEndpoint: string,
+        verificationMethod: string,
+    ) {
+        return new SocialLoginAuth(id, controller, serviceEndpoint, verificationMethod)
+    };
+
+    writeDocument(
+        didContext: string,
+        didID: string,
+        authentications: (SocialLoginAuth | AsymKeyAuth)[],
+        serivceID: string,
+        serviceType: string,
+        serviceEndPoint: string
+    ) {
+        return new Document(
+            didContext,
+            didID,
+            authentications,
+            [],
+            serivceID,
+            serviceType,
+            serviceEndPoint
+        )
+    };
     
     /**
      * Generate a `register-model` operation to register new did model on the contract.
@@ -81,10 +118,9 @@ export class DID extends ContractGenerator {
     }
     
     /**
-     * Generate `create-did` operation to create new did for address.
+     * Generate `create-did` operation to create new did.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
-     * @param {string | Address} [address] - The did's owner address.
      * @param {document} [document] - DID document to be created when create new did.
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `create-did` operation
@@ -92,30 +128,20 @@ export class DID extends ContractGenerator {
     create(
         contract: string | Address,
         sender: string | Address,
-        address: string | Address,
-        document: document,
+        authType: "EcdsaSecp256k1VerificationKey2019" | "Ed25519VerificationKey2018", 
+        publicKey: string,
+        serviceType: string,
+        serviceEndpoints: string,
         currency: string | CurrencyID,
     ) {
         const fact = new CreateFact(
             TS.new().UTC(),
             sender,
             contract,
-            address,
-            new Document(
-                document["@context"],
-                document.id,
-                document.authentication.map((el) => {
-                    if ("proof" in el) {
-                        return new SocialLoginAuth(el.id, el.controller, el.serviceEndpoint, el.proof.verificationMethod)
-                    } else {
-                        return new AsymKeyAuth(el.id, el.authType, el.controller, el.publicKeyHex)
-                    }
-                }),
-                document.verificationMethod,
-                document.service.id,
-                document.service.type,
-                document.service.service_end_point
-            ),
+            authType,
+            publicKey,
+            serviceType,
+            serviceEndpoints,
             currency
         )
         return new Operation(this.networkID, fact)

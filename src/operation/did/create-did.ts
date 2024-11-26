@@ -2,34 +2,44 @@ import { HINT } from "../../alias"
 import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { ContractFact, FactJson } from "../base"
-import { Document } from "./document"
+import { LongString } from "../../types"
 // import { Config } from "../../node"
-// import { Assert, ECODE, MitumError } from "../../error"
+import { Assert, ECODE, MitumError } from "../../error"
 
 
 export class CreateFact extends ContractFact {
-    readonly document: Document;
-    readonly address: Address;
+    readonly authType: LongString;
+    readonly publicKey: LongString;
+    readonly serviceType: LongString;
+    readonly serviceEndpoints: LongString;
 
     constructor(
         token: string, 
         sender: string | Address, 
         contract: string | Address,
-        address: string | Address,
-        document: Document,
+        authType: "EcdsaSecp256k1VerificationKey2019" | "Ed25519VerificationKey2018",
+        publicKey: string,
+        serviceType: string,
+        serviceEndpoints: string,
         currency: string | CurrencyID,
     ) {
         super(HINT.DID.CREATE_DID.FACT, token, sender, contract, currency);
-        this.address = Address.from(address);
-        this.document = document;
+        this.authType = LongString.from(authType);
+        this.publicKey = LongString.from(publicKey);
+        this.serviceType = LongString.from(serviceType);
+        this.serviceEndpoints = LongString.from(serviceEndpoints);
+        Assert.check(/^[0-9a-fA-F]+$/.test(publicKey.toString()), MitumError.detail(ECODE.INVALID_FACT, `${this.publicKey.toString()} is not a hexadecimal number`));
+
         this._hash = this.hashing();
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
-            this.address.toBuffer(),
-            this.document.toBuffer(),
+            this.authType.toBuffer(),
+            this.publicKey.toBuffer(),
+            this.serviceType.toBuffer(),
+            this.serviceEndpoints.toBuffer(),
             this.currency.toBuffer(),
         ])
     }
@@ -37,8 +47,10 @@ export class CreateFact extends ContractFact {
     toHintedObject(): FactJson {
         return {
             ...super.toHintedObject(),
-            address: this.address.toString(),
-            document: this.document.toHintedObject(),
+            authType: this.authType.toString(),
+            publicKey: this.publicKey.toString(),
+            serviceType: this.serviceType.toString(),
+            serviceEndpoints: this.serviceEndpoints.toString()
         }
     }
 
