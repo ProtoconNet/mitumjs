@@ -1,6 +1,6 @@
 {
-  "name": "@mitumjs/mitum-dmile",
-  "version": "1.0.3",
+  "name": "@mitumjs/mitumjs-account-abstraction",
+  "version": "1.0.0",
   "description": "framework for mitum network",
   "main": "dist/bundle.cjs.cjs",
   "module": "dist/bundle.esm.mjs",
@@ -17,9 +17,7 @@
   },
   "keywords": [
     "mitum",
-    "protocon",
-    "mitum-currency",
-    "mitum-dmile"
+    "mitum-account-abstraction"
   ],
   "author": "socialinfratech",
   "license": "GPL-3.0-or-later",
