@@ -32,6 +32,26 @@ export type OperationJson = {
     signs: FS[]
 }
 
+type AuthJson = {
+    contract: string,
+    authentication_id: string,
+    proof_data: string
+}
+
+type SettlementJson = {
+    op_sender: string,
+    proxy_payer: string
+}
+
+export type UserOperationJson = {
+    _hint: string,
+    fact: FactJson,
+    authentication: AuthJson,
+    settlement: SettlementJson,
+    hash: string,
+    signs: FS[]
+}
+
 export type SignOption = {
     node?: string
 }
