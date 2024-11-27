@@ -49,5 +49,9 @@ export default {
     UPDATE_HANDLER: {
         FACT: "mitum-extension-update-handler-operation-fact",
         OPERATION: "mitum-extension-update-handler-operation",
+    },
+    UPDATE_RECIPIENT: {
+        FACT: "mitum-extension-update-recipient-operation-fact",
+        OPERATION: "mitum-extension-update-recipient-operation",
     }
 }
