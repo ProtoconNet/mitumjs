@@ -50,7 +50,7 @@ export class UpdateDatasItem extends Item {
     }
 
     toString(): string {
-        return this.dataKey.toString()
+        return this.dataKey.toString() + this.contract.toString()
     }
 }
 
@@ -67,11 +67,12 @@ export class UpdateDatasFact extends OperationFact<UpdateDatasItem> {
                 )
             }
         )
-
-        Assert.check(
-            new Set(items.map(item => item.dataKey.toString())).size === items.length,
-            MitumError.detail(ECODE.INVALID_ITEMS, "duplicate dataKey found in items")
-        )
+        
+        // duplicated item check has already confirmed that contract-dataKey is unique.
+        // Assert.check(
+        //     new Set(items.map(item => item.dataKey.toString())).size === items.length,
+        //     MitumError.detail(ECODE.INVALID_ITEMS, "duplicate dataKey found in items")
+        // )
     }
 
     get operationHint() {
