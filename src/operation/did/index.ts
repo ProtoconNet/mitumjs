@@ -18,7 +18,7 @@ type asymkeyAuth = {
     id: string | LongString,
     authType: "Ed25519VerificationKey2018" | "EcdsaSecp256k1VerificationKey2019",
     controller: string | LongString,
-    publicKeyHex: string | LongString,
+    publicKey: string | LongString,
 }
 
 type socialLoginAuth = {
@@ -34,7 +34,9 @@ type socialLoginAuth = {
 
 type document = {
     _hint: string,
-    "@context": string | LongString, 
+    "@context": string | LongString,
+    status: string,
+    created: string,
     id: string | LongString, 
     authentication: (asymkeyAuth | socialLoginAuth)[],
     verificationMethod: [],
@@ -58,9 +60,9 @@ export class DID extends ContractGenerator {
         id: string,
         authType: "Ed25519VerificationKey2018" | "EcdsaSecp256k1VerificationKey2019",
         controller: string,
-        publicKeyHex: string,
+        publicKey: string,
     ) {
-        return new AsymKeyAuth(id, authType, controller, publicKeyHex)
+        return new AsymKeyAuth(id, authType, controller, publicKey)
     };
 
     writeSocialLoginAuth(
@@ -74,6 +76,8 @@ export class DID extends ContractGenerator {
 
     writeDocument(
         didContext: string,
+        status: string,
+        created: string,
         didID: string,
         authentications: (SocialLoginAuth | AsymKeyAuth)[],
         serivceID: string,
@@ -82,6 +86,8 @@ export class DID extends ContractGenerator {
     ) {
         return new Document(
             didContext,
+            status,
+            created,
             didID,
             authentications,
             [],
@@ -253,12 +259,14 @@ export class DID extends ContractGenerator {
             document.id.toString(),
             new Document(
                 document["@context"],
+                document.status,
+                document.created,
                 document.id,
                 document.authentication.map((el) => {
                     if ("proof" in el) {
                         return new SocialLoginAuth(el.id, el.controller, el.serviceEndpoint, el.proof.verificationMethod)
                     } else {
-                        return new AsymKeyAuth(el.id, el.authType, el.controller, el.publicKeyHex)
+                        return new AsymKeyAuth(el.id, el.authType, el.controller, el.publicKey)
                     }
                 }),
                 document.verificationMethod,
@@ -326,7 +334,7 @@ export class DID extends ContractGenerator {
      * - - - `id`: The did value,
      * - - - `type`: The type of authentication
      * - - - `controller`: The did value
-     * - - - `publicKeyHex`: The publickey used when did create, '04' is prefix
+     * - - - `publicKey`: The publickey used when did create,
      * - - `service`: object
      * - - - `id`: The did value
      * - - - `type`: The type of did service,

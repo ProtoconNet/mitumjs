@@ -2,7 +2,6 @@ import { HINT } from "../../alias"
 import { Hint } from "../../common"
 import { HintedObject, IBuffer, IHintedObject, LongString } from "../../types"
 // import { Config } from "../../node"
-import { Assert, ECODE, MitumError } from "../../error"
 
 abstract class Authentication implements IBuffer, IHintedObject {
     private hint: Hint
@@ -26,20 +25,19 @@ export class AsymKeyAuth extends Authentication {
     readonly id: LongString;
     readonly authType: "Ed25519VerificationKey2018" | "EcdsaSecp256k1VerificationKey2019";
     readonly controller: LongString;
-    readonly publicKeyHex: LongString;
+    readonly publicKey: LongString;
 
     constructor(
         id: string | LongString, 
         authType: "Ed25519VerificationKey2018" | "EcdsaSecp256k1VerificationKey2019", 
         controller: string | LongString,
-        publicKeyHex: string | LongString
+        publicKey: string | LongString
     ) {
         super(HINT.DID.AUTHENTICATION.ASYMMETRIC_KEY);
         this.id = LongString.from(id);
         this.authType = authType;
         this.controller = LongString.from(controller);
-        this.publicKeyHex = LongString.from(publicKeyHex);
-        Assert.check(/^[0-9a-fA-F]+$/.test(publicKeyHex.toString()), MitumError.detail(ECODE.INVALID_FACT, `${publicKeyHex.toString()} is not a hexadecimal number`))
+        this.publicKey = LongString.from(publicKey);
     }
 
     toBuffer(): Buffer {
@@ -48,7 +46,7 @@ export class AsymKeyAuth extends Authentication {
             this.id.toBuffer(),
             Buffer.from(this.authType),
             this.controller.toBuffer(),
-            this.publicKeyHex.toBuffer(),
+            this.publicKey.toBuffer(),
         ])
     }
 
@@ -58,7 +56,7 @@ export class AsymKeyAuth extends Authentication {
             id: this.id.toString(),
             authType: this.authType.toString(),
             controller: this.controller.toString(),
-            publicKeyHex: this.publicKeyHex.toString(),
+            publicKey: this.publicKey.toString(),
         }
     }
 }
@@ -145,6 +143,8 @@ export class Service implements IBuffer, IHintedObject {
 export class Document implements IBuffer, IHintedObject {
     private hint: Hint;
     readonly context: LongString;
+    readonly status: LongString;
+    readonly created: LongString;
     readonly id: LongString;
     readonly authentication: (AsymKeyAuth | SocialLoginAuth)[];
     readonly verificationMethod: [];
@@ -153,7 +153,9 @@ export class Document implements IBuffer, IHintedObject {
     readonly service_end_point: LongString;
     
     constructor(
-        context: string | LongString, 
+        context: string | LongString,
+        status: string | LongString,
+        created: string | LongString,
         id: string | LongString, 
         authentication : (AsymKeyAuth | SocialLoginAuth)[],
         verificationMethod : [],
@@ -163,6 +165,8 @@ export class Document implements IBuffer, IHintedObject {
     ) {
         this.hint = new Hint(HINT.DID.DOCUMENT);
         this.context = LongString.from(context);
+        this.status = LongString.from(status);
+        this.created = LongString.from(created);
         this.id = LongString.from(id);
         this.authentication = authentication;
         this.verificationMethod = verificationMethod;
@@ -175,6 +179,8 @@ export class Document implements IBuffer, IHintedObject {
         return Buffer.concat([
             this.context.toBuffer(),
             this.id.toBuffer(),
+            this.created.toBuffer(),
+            this.status.toBuffer(),
             Buffer.concat(this.authentication.map(el => el.toBuffer())),
             this.service_id.toBuffer(),
             this.service_type.toBuffer(),
@@ -187,6 +193,8 @@ export class Document implements IBuffer, IHintedObject {
             _hint: this.hint.toString(),
             "@context": this.context.toString(),
             id: this.id.toString(),
+            created: this.created.toString(),
+            status: this.status.toString(),
             authentication: this.authentication.map(el => el.toHintedObject()),
             verificationMethod: [],
             service: {
