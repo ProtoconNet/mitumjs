@@ -2,7 +2,7 @@ import base58 from "bs58"
 
 import { Item } from "./item"
 import { FactJson } from "./types"
-
+import { HINT } from "../../alias"
 import { Config } from "../../node"
 import { Address } from "../../key"
 import { SortFunc, sha3 } from "../../utils"
@@ -57,12 +57,14 @@ export abstract class OperationFact<T extends Item> extends Fact {
             Config.ITEMS_IN_FACT.satisfy(items.length),
             MitumError.detail(ECODE.INVALID_ITEMS, "length of items is out of range")
         )
-  
-        hint !== "mitum-nft-mint-operation-fact" ? Assert.check(
-            new Set(items.map(i => i.toString())).size === items.length,
-            MitumError.detail(ECODE.INVALID_ITEMS, "duplicate items found")
-        ) 
-        : null;
+        
+        if (hint !== HINT.NFT.MINT.FACT) {
+            Assert.check(
+                new Set(items.map(i => i.toString())).size === items.length,
+                MitumError.detail(ECODE.INVALID_ITEMS, "duplicate items found")
+            ) 
+        }
+
         this.items = items
 
         this._hash = this.hashing()
