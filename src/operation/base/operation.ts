@@ -18,8 +18,8 @@ export class Operation<T extends Fact> implements IBuffer, IHintedObject {
     readonly id: string
     readonly hint: Hint
     readonly fact: T
-    private _factSigns: FactSign[]
-    private _hash: Buffer
+    protected _factSigns: FactSign[]
+    protected _hash: Buffer
 
     constructor(networkID: string, fact: T) {
         this.id = networkID
