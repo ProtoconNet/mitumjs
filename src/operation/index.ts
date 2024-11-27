@@ -1,6 +1,7 @@
 import { SignOption, Operation as OP, Fact } from "./base"
 
 import { Currency, Account, Contract } from "./currency"
+import { AccountAbstraction } from "./accountAbstraction"
 import { DID } from "./did"
 import { Signer } from "./signer"
 
@@ -124,20 +125,20 @@ export class Operation extends Generator {
 			isOpFact(operation) || isHintedObject(operation), 
 			MitumError.detail(ECODE.INVALID_OPERATION, `input is neither in OP<Fact> nor HintedObject format`)
 		)
-		operation = isOpFact(operation) ? operation.toHintedObject() : operation;
+		const hintedOperation = isOpFact(operation) ? operation.toHintedObject() : operation
 		Assert.check(
-			operation.signs.length !== 0, 
+			hintedOperation.signs.length !== 0, 
 			MitumError.detail(ECODE.EMPTY_SIGN, `signature is required before sending the operation`)
 		)
 		Assert.check(
-			Config.OP_SIZE.satisfy(Buffer.byteLength(JSON.stringify(operation), 'utf8')),
+			Config.OP_SIZE.satisfy(Buffer.byteLength(JSON.stringify(hintedOperation), 'utf8')),
 			MitumError.detail(ECODE.OP_SIZE_EXCEEDED, `Operation size exceeds the allowed limit of ${Config.OP_SIZE.max} bytes.`)
 		)
 
 		const sendResponse = await getAPIData(() => 
 		api.send(
 			this.api,
-			operation, 
+			hintedOperation, 
 			this.delegateIP, 
 			headers
 		  )
@@ -236,6 +237,7 @@ export class OperationResponse extends Operation {
 export {
 	Currency, Account, Contract,
 	DID,
+	AccountAbstraction,
 	Signer,
 	Base,
 }
