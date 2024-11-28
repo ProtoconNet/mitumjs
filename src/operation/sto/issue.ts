@@ -55,6 +55,10 @@ export class IssueItem extends STOItem {
             partition: this.partition.toString(),
         }
     }
+
+    toString(): string {
+        return `${super.toString()}-${this.receiver.toString()}-${this.partition.toString()}`
+    }
 }
 
 export class IssueFact extends OperationFact<IssueItem> {

@@ -45,6 +45,10 @@ export class CreateSecurityTokenItem extends STOItem {
             default_partition: this.defaultPartition.toString(),
         }
     }
+
+    toString(): string {
+        return `${super.toString()}-${this.defaultPartition.toString()}`
+    }
 }
 
 export class CreateSecurityTokenFact extends OperationFact<CreateSecurityTokenItem> {

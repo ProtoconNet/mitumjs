@@ -57,7 +57,7 @@ export class RedeemItem extends STOItem {
     }
 
     toString(): string {
-        return this.tokenHolder.toString()
+        return `${super.toString()}-${this.tokenHolder.toString()}-${this.partition.toString()}`
     }
 }
 

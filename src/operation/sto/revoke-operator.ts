@@ -47,7 +47,7 @@ export class RevokeOperatorItem extends STOItem {
     }
 
     toString(): string {
-        return this.operator.toString()
+        return `${super.toString()}-${this.operator.toString()}-${this.partition.toString()}`
     }
 }
 

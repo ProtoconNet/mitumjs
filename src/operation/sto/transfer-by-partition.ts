@@ -72,7 +72,7 @@ export class TransferByPartitionItem extends STOItem {
     }
 
     toString(): string {
-        return `${this.tokenHolder.toString()}-${this.receiver.toString()}-${this.partition.toString()}`
+        return `${super.toString()}-${this.tokenHolder.toString()}-${this.receiver.toString()}-${this.partition.toString()}`
     }
 }
 
