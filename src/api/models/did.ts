@@ -16,13 +16,13 @@ async function getModel(
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
-async function getByPubKey(
+async function getByAccount(
     api: string | undefined, 
     contract: string | Address,
-    publicKey: string,
+    account: string,
     delegateIP: string | undefined
 ) {
-    const apiPath = `${url(api, contract)}/did/${publicKey}`;
+    const apiPath = `${url(api, contract)}/did/${account}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
@@ -38,6 +38,6 @@ async function getByDID(
 
 export default {
     getModel,
-    getByPubKey,
+    getByAccount,
     getByDID
 }
