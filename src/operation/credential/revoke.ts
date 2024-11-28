@@ -25,7 +25,7 @@ export class RevokeItem extends CredentialItem {
     }
 
     toString(): string {
-        return `${super.toString()}-${this.credentialID}`
+        return `${super.toString()}-${this.templateID}-${this.credentialID}`
     }
 }
 
@@ -35,7 +35,7 @@ export class RevokeFact extends OperationFact<RevokeItem> {
 
         Assert.check(
             new Set(items.map(it => it.toString())).size === items.length,
-            MitumError.detail(ECODE.INVALID_ITEMS, "duplicate credential id found in items")
+            MitumError.detail(ECODE.INVALID_ITEMS, `each item's combination of contract-templateID-credentialID must be unique`)
         )
 
         items.forEach(
@@ -46,7 +46,6 @@ export class RevokeFact extends OperationFact<RevokeItem> {
                 )
             }
         )
-
     }
 
     get operationHint() {
