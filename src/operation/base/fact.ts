@@ -58,11 +58,11 @@ export abstract class OperationFact<T extends Item> extends Fact {
             MitumError.detail(ECODE.INVALID_ITEMS, "length of items is out of range")
         )
   
-        hint !== "mitum-nft-mint-operation-fact" ? Assert.check(
+        Assert.check(
             new Set(items.map(i => i.toString())).size === items.length,
             MitumError.detail(ECODE.INVALID_ITEMS, "duplicate items found")
         ) 
-        : null;
+
         this.items = items
 
         this._hash = this.hashing()
