@@ -9,25 +9,25 @@ import { Assert, ECODE, MitumError } from "../../error"
 
 export class TransferItem extends NFTItem {
     readonly receiver: Address
-    readonly nft: Big
+    readonly nftIdx: Big
 
     constructor(
         contract: string | Address, 
         receiver: string | Address, 
-        nft: string | number | Big, 
+        nftIdx: string | number | Big, 
         currency: string | CurrencyID,
     ) {
         super(HINT.NFT.TRANSFER.ITEM, contract, currency)
 
         this.receiver = Address.from(receiver)
-        this.nft = Big.from(nft)
+        this.nftIdx = Big.from(nftIdx)
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
             this.receiver.toBuffer(),
-            this.nft.toBuffer("fill"),
+            this.nftIdx.toBuffer("fill"),
             this.currency.toBuffer(),
         ])
     }
@@ -36,12 +36,12 @@ export class TransferItem extends NFTItem {
         return {
             ...super.toHintedObject(),
             receiver: this.receiver.toString(),
-            nft_idx: this.nft.v,
+            nft_idx: this.nftIdx.v,
         }
     }
 
     toString(): string {
-        return `${super.toString()}-${this.nft.toString()}`
+        return `${super.toString()}-${this.nftIdx.toString()}`
     }
 }
 
