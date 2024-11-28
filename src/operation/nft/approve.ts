@@ -41,7 +41,7 @@ export class ApproveItem extends NFTItem {
     }
 
     toString(): string {
-        return `${super.toString()}-${this.approved.toString()}`
+        return `${super.toString()}-${this.nftIdx.v}-${this.approved.toString()}`
     }
 }
 
