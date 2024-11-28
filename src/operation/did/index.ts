@@ -1,6 +1,5 @@
 import { RegisterModelFact } from "./register-model"
 import { CreateFact } from "./create-did"
-import { MigrateDidFact, MigrateDidItem } from "./migrate-did"
 import { ReactivateDidFact } from "./reactive-did"
 import { DeactivateDidFact } from "./deactive-did"
 import { UpdateDocumentFact } from "./update_did_document"
@@ -10,15 +9,16 @@ import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
 import { isSuccessResponse  } from "../../utils"
-import { IP, TimeStamp as TS, URIString, LongString } from "../../types"
+import { IP, TimeStamp as TS, LongString } from "../../types"
 import { Assert, MitumError, ECODE } from "../../error"
+import { Key } from "../../key"
 
 type asymkeyAuth = {
     _hint: string,
     id: string | LongString,
     authType: "Ed25519VerificationKey2018" | "EcdsaSecp256k1VerificationKey2019",
     controller: string | LongString,
-    publicKey: string | LongString,
+    publicKey: string | Key,
 }
 
 type socialLoginAuth = {
@@ -124,17 +124,20 @@ export class DID extends ContractGenerator {
     }
     
     /**
-     * Generate `create-did` operation to create new did.
+     * Generate `create-did` operation to create new did and did document.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
-     * @param {document} [document] - DID document to be created when create new did.
+     * @param {"ECDSA"} [authType] - The encryption method to use for authentication.
+     * @param {publicKey} [publicKey] - The public key to use for authentication.
+     * @param {serviceType} [serviceType] - The serivce type.
+     * @param {serviceEndpoints} [serviceEndpoints] - The service end point.
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `create-did` operation
      */
     create(
         contract: string | Address,
         sender: string | Address,
-        authType: "EcdsaSecp256k1VerificationKey2019" | "Ed25519VerificationKey2018", 
+        authType: "ECDSA", //"ECDSA" | "EdDSA"
         publicKey: string,
         serviceType: string,
         serviceEndpoints: string,
@@ -151,49 +154,6 @@ export class DID extends ContractGenerator {
             currency
         )
         return new Operation(this.networkID, fact)
-    }
-
-    /**
-     * Generate `migrate-did` operation to migrate did with publicKey and tx id to the did model.
-     * @param {string | Address} [contract] - The contract's address.
-     * @param {string | Address} [sender] - The sender's address.
-     * @param {string[] | LongString[]} [publicKeys] - array with multiple publicKey to record.
-     * @param {string[] | LongString[]} [txIds] - array with multiple tx Id.
-     * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `migrate-did` operation
-     */
-    migrateDID(
-        contract: string | Address,
-        sender: string | Address,
-        publicKeys: string[] | LongString[],
-        txIds: string[] | LongString[],
-        currency: string | CurrencyID,
-    ) {
-        Assert.check(
-            publicKeys.length !== 0 && txIds.length !== 0, 
-            MitumError.detail(ECODE.INVALID_LENGTH, "The array must not be empty."),
-        )
-        Assert.check(
-            new Set(publicKeys.map(it => it.toString())).size === publicKeys.length,
-            MitumError.detail(ECODE.INVALID_ITEMS, "duplicated merkleRoot founded")
-        )
-        Assert.check(
-            new Set(txIds.map(it => it.toString())).size === txIds.length,
-            MitumError.detail(ECODE.INVALID_ITEMS, "duplicated txId founded")
-        )
-        Assert.check(
-            publicKeys.length === txIds.length, 
-            MitumError.detail(ECODE.INVALID_LENGTH, "The lengths of the publicKeys and txIds must be the same."),
-        )
-        return new Operation(
-            this.networkID,
-            new MigrateDidFact(
-                TS.new().UTC(),
-                sender,
-                publicKeys.map((publicKey, idx) => new MigrateDidItem(contract, currency, publicKey.toString(), txIds[idx].toString())
-                ),
-            ),
-        )
     }
 
     /**
@@ -298,21 +258,21 @@ export class DID extends ContractGenerator {
     }
     
     /**
-     * Get did by publickey.
+     * Get did by account address.
      * @async
      * @param {string | Address} [contract] - The contract's address.
-     * @param {string | LongString} [publicKey] - The publicKey, // Must be longer than 128 digits. If the length over 128, only the 128 characters from the end will be used.
+     * @param {string | LongString} [account] - The account address.
      * @returns `data` of `SuccessResponse` is did:
      * - `did`: The did value,
      */
-    async getDIDByPublicKey(
+    async getDIDByAddress(
         contract: string | Address,
-        publicKey: string,
+        account: string,
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
-        new URIString(publicKey, 'publicKey');
-        const response = await getAPIData(() => contractApi.did.getByPubKey(this.api, contract, publicKey, this.delegateIP));
+        Address.from(account);
+        const response = await getAPIData(() => contractApi.did.getByAccount(this.api, contract, account, this.delegateIP));
         if (isSuccessResponse(response) && response.data) {
             response.data = response.data.did ? {did: response.data.did} : null;
         }

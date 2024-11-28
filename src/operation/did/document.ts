@@ -1,6 +1,7 @@
 import { HINT } from "../../alias"
 import { Hint } from "../../common"
 import { HintedObject, IBuffer, IHintedObject, LongString } from "../../types"
+import { Key } from "../../key"
 // import { Config } from "../../node"
 
 abstract class Authentication implements IBuffer, IHintedObject {
@@ -25,19 +26,19 @@ export class AsymKeyAuth extends Authentication {
     readonly id: LongString;
     readonly authType: "Ed25519VerificationKey2018" | "EcdsaSecp256k1VerificationKey2019";
     readonly controller: LongString;
-    readonly publicKey: LongString;
+    readonly publicKey: Key;
 
     constructor(
         id: string | LongString, 
         authType: "Ed25519VerificationKey2018" | "EcdsaSecp256k1VerificationKey2019", 
         controller: string | LongString,
-        publicKey: string | LongString
+        publicKey: string | Key
     ) {
         super(HINT.DID.AUTHENTICATION.ASYMMETRIC_KEY);
         this.id = LongString.from(id);
         this.authType = authType;
         this.controller = LongString.from(controller);
-        this.publicKey = LongString.from(publicKey);
+        this.publicKey = Key.from(publicKey);
     }
 
     toBuffer(): Buffer {
