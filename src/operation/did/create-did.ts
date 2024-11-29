@@ -32,7 +32,6 @@ export class CreateFact extends ContractFact {
             throw MitumError.detail(ECODE.INVALID_FACT, "invalid authType");
         }
         
-        this.authType = LongString.from(authType);
         this.publicKey = Key.from(publicKey);
         this.serviceType = LongString.from(serviceType);
         this.serviceEndpoints = LongString.from(serviceEndpoints);
