@@ -5,6 +5,7 @@ export class LongString implements IBuffer, IString {
     private s: string
 
     constructor(s: string) {
+        Assert.check(typeof(s) === "string", MitumError.detail(ECODE.INVALID_TYPE, `${s} is not in string type`))
         Assert.check(s !== "", MitumError.detail(ECODE.EMPTY_STRING, "empty string"))
         this.s = s
     }
