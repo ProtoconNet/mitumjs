@@ -84,6 +84,8 @@ export const ECODE = {
     // DID Errors
     DID: {
         INVALID_DID: "EC_INVALID_DID",
+        INVALID_DOCUMENT: "EC_INVALID_DOCUMENT",
+        INVALID_AUTHENTICATION: "EC_INVALID_AUTHENTICATION"
     },
     // Transaction Errors
     TIME_OUT: "EC_TIME_OUT",

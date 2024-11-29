@@ -47,6 +47,55 @@ type document = {
     }
 }
 
+const isOfType = <T>(obj: unknown, keys: (keyof T)[]): obj is T =>
+    typeof obj === "object" && obj !== null && keys.every((key) => key in obj);
+
+const validateAuthentication = (auth: unknown, index: number): void => {
+    const baseKeys = ["_hint", "id", "authType", "controller"] as (keyof (asymkeyAuth | socialLoginAuth))[];
+    if (!isOfType<asymkeyAuth | socialLoginAuth>(auth, baseKeys)) {
+        throw MitumError.detail(ECODE.DID.INVALID_AUTHENTICATION, "invalid authentication type")
+    }
+
+    if ((auth as asymkeyAuth).authType === "Ed25519VerificationKey2018" || (auth as asymkeyAuth).authType === "EcdsaSecp256k1VerificationKey2019") {
+        const asymkeyAuthKeys = [...baseKeys, "publicKey"] as (keyof asymkeyAuth)[];
+        if (!isOfType<asymkeyAuth>(auth, asymkeyAuthKeys)) {
+            throw MitumError.detail(ECODE.DID.INVALID_AUTHENTICATION, `Asymkey authentication at index ${index} is missing required fields.`);
+        }
+    } else {
+        const socialLoginAuthKeys = [...baseKeys, "serviceEndpoint", "proof"] as (keyof socialLoginAuth)[];
+        if (!isOfType<socialLoginAuth>(auth, socialLoginAuthKeys)) {
+            throw MitumError.detail(ECODE.DID.INVALID_AUTHENTICATION, `Social login authentication at index ${index} is missing required fields.`);
+        }
+
+        const proofKeys = ["verificationMethod"] as (keyof socialLoginAuth["proof"])[];
+        if (!isOfType<socialLoginAuth["proof"]>(auth.proof, proofKeys)) {
+            throw MitumError.detail(ECODE.DID.INVALID_AUTHENTICATION, `Proof in social login authentication at index ${index} is invalid.`);
+        }
+    }
+}
+
+const validateDocument = (doc: unknown): void => {
+    if (typeof doc !== "object" || doc === null) {
+        throw MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "invalid document type")
+    }
+
+    const requiredKeys = ["_hint", "@context", "status", "created", "id", "authentication", "verificationMethod", "service"] as (keyof document)[];
+    if (!isOfType<document>(doc, requiredKeys)) {
+        throw MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "The document structure is invalid or missing required fields.");
+    }
+
+    if (!Array.isArray(doc.authentication)) {
+        throw MitumError.detail(ECODE.DID.INVALID_AUTHENTICATION, "The 'authentication' field must be an array.");
+    }
+
+    doc.authentication.forEach((auth, index) => validateAuthentication(auth, index));
+
+    const serviceKeys = ["id", "type", "service_end_point"] as (keyof document["service"])[];
+    if (!isOfType<document["service"]>(doc.service, serviceKeys)) {
+        throw MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "The 'service' structure is invalid or missing required fields.");
+    }
+}
+
 export class DID extends ContractGenerator {
     constructor(
         networkID: string,
@@ -212,6 +261,7 @@ export class DID extends ContractGenerator {
         document: document,
         currency: string | CurrencyID,
     ) {
+        validateDocument(document);
         const fact = new UpdateDocumentFact(
             TS.new().UTC(),
             sender,
