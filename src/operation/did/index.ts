@@ -74,28 +74,6 @@ const validateAuthentication = (auth: unknown, index: number): void => {
     }
 }
 
-const validateDocument = (doc: unknown): void => {
-    if (typeof doc !== "object" || doc === null) {
-        throw MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "invalid document type")
-    }
-
-    const requiredKeys = ["_hint", "@context", "status", "created", "id", "authentication", "verificationMethod", "service"] as (keyof document)[];
-    if (!isOfType<document>(doc, requiredKeys)) {
-        throw MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "The document structure is invalid or missing required fields.");
-    }
-
-    if (!Array.isArray(doc.authentication)) {
-        throw MitumError.detail(ECODE.DID.INVALID_AUTHENTICATION, "The 'authentication' field must be an array.");
-    }
-
-    doc.authentication.forEach((auth, index) => validateAuthentication(auth, index));
-
-    const serviceKeys = ["id", "type", "service_end_point"] as (keyof document["service"])[];
-    if (!isOfType<document["service"]>(doc.service, serviceKeys)) {
-        throw MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "The 'service' structure is invalid or missing required fields.");
-    }
-}
-
 export class DID extends ContractGenerator {
     constructor(
         networkID: string,
@@ -103,6 +81,54 @@ export class DID extends ContractGenerator {
         delegateIP?: string | IP,
     ) {
         super(networkID, api, delegateIP)
+    }
+
+    private validateDocument(doc: unknown): void {
+        if (typeof doc !== "object" || doc === null) {
+            throw MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "invalid document type")
+        }
+    
+        const requiredKeys = ["_hint", "@context", "status", "created", "id", "authentication", "verificationMethod", "service"] as (keyof document)[];
+        if (!isOfType<document>(doc, requiredKeys)) {
+            throw MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "The document structure is invalid or missing required fields.");
+        }
+    
+        if (!Array.isArray(doc.authentication)) {
+            throw MitumError.detail(ECODE.DID.INVALID_AUTHENTICATION, "The 'authentication' field must be an array.");
+        }
+    
+        doc.authentication.forEach((auth, index) => validateAuthentication(auth, index));
+    
+        const serviceKeys = ["id", "type", "service_end_point"] as (keyof document["service"])[];
+        if (!isOfType<document["service"]>(doc.service, serviceKeys)) {
+            throw MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "The 'service' structure is invalid or missing required fields.");
+        }
+    }
+
+    private validateDID(did:string, option?:boolean): void {
+        const parts = did.split(":");
+        if (parts.length !== 3) {
+            throw MitumError.detail(ECODE.DID.INVALID_DID, "Invalid did structure");
+        }
+   
+        if (parts[0] !== "did") {
+            throw MitumError.detail(ECODE.DID.INVALID_DID, "Invalid did structure");
+        }
+
+        if (option) {
+            const subparts = parts[2].split("#");
+            if (subparts.length !== 2) {
+                throw MitumError.detail(ECODE.DID.INVALID_DID, "Invalid authentication id");
+            } else {
+                Address.from(subparts[0]);
+            }
+        } else {
+            Address.from(parts[2]);
+        }
+
+        if (option && (did.match(/#/g) || []).length !== 1) {
+            throw MitumError.detail(ECODE.DID.INVALID_DID, "Invalid authentication id");
+        }
     }
 
     writeAsymkeyAuth(
@@ -219,6 +245,7 @@ export class DID extends ContractGenerator {
         did: string,
         currency: string | CurrencyID,
     ) {
+        this.validateDID(did);
         const fact = new DeactivateDidFact(
             TS.new().UTC(),
             sender,
@@ -244,6 +271,7 @@ export class DID extends ContractGenerator {
         did: string,
         currency: string | CurrencyID,
     ) {
+        this.validateDID(did);
         const fact = new ReactivateDidFact(
             TS.new().UTC(),
             sender,
@@ -261,7 +289,9 @@ export class DID extends ContractGenerator {
         document: document,
         currency: string | CurrencyID,
     ) {
-        validateDocument(document);
+        this.validateDocument(document);
+        this.validateDID(document.id.toString());
+        this.validateDID(document.service.id.toString());
         const fact = new UpdateDocumentFact(
             TS.new().UTC(),
             sender,
@@ -273,6 +303,7 @@ export class DID extends ContractGenerator {
                 document.created,
                 document.id,
                 document.authentication.map((el) => {
+                    this.validateDID(el.id.toString(), true);
                     if ("proof" in el) {
                         return new SocialLoginAuth(el.id, el.controller, el.serviceEndpoint, el.proof.verificationMethod)
                     } else {
@@ -356,6 +387,7 @@ export class DID extends ContractGenerator {
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
+        this.validateDID(did);
         const response = await getAPIData(() => contractApi.did.getByDID(
             this.api,
             contract,
