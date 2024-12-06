@@ -183,7 +183,7 @@ export class DID extends ContractGenerator {
     };
     
     /**
-     * Generate a `register-model` operation to register new did model on the contract.
+     * Generate a `register-model` operation to register new did registry model on the contract.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | LongString} [didMethod] - The did method
@@ -331,16 +331,12 @@ export class DID extends ContractGenerator {
     }
 
     /**
-     * Get information for did model.
+     * Get information for did-registry model.
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @returns `data` of `SuccessResponse` is information of did model:
      * - `_hint`: hint for did model design,
-     * - `didMethod`: The did method,
-     * - `docContext`: The context of did,
-     * - `docAuthType`: The type of authentication,
-     * - `docSvcType`: The type of did service,
-     * - `docSvcEndPoint`: The end point of did service
+     * - `didMethod`: The did method
      */
     async getModelInfo(contract: string | Address) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
