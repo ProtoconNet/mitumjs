@@ -70,7 +70,7 @@ export class AccountAbstraction extends Generator {
     setSettlement(
         userOperation: UserOperation<Fact> | HintedObject,
         opSender: string | Address,
-        proxyPayer: string | Address,
+        proxyPayer: string | Address | undefined,
     ): HintedObject {
         Assert.check(
 			isUserOp(userOperation) || isHintedObjectFromUserOp(userOperation), 
@@ -109,6 +109,7 @@ export class AccountAbstraction extends Generator {
         const signer = new Signer(this.networkID);
         const signedOp = signer.sign(privatekey, hintedUserOp);
         hintedUserOp.signs = signedOp.signs;
+        
         return this.FillUserOpHash(hintedUserOp as UserOperationJson)
     }
 
