@@ -17,6 +17,11 @@ async function getOperation(api: string | undefined, hash: string, delegateIP: s
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
+async function getMultiOperations(api: string | undefined, hashes: string[], delegateIP: string | undefined,) {
+    const apiPath = `${api}/block/operations/facts?hashes=${ hashes.join(",")}`;
+    return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
+}
+
 async function getBlockOperationsByHeight(
     api: string | undefined, 
     height: string | number | Big, 
@@ -53,7 +58,7 @@ export default {
     getOperations,
     getOperation,
     getBlockOperationsByHeight,
-    // getBlockOperationsByHash,
+    getMultiOperations,
     getAccountOperations,
     send
 }
