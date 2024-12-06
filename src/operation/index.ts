@@ -12,6 +12,7 @@ import { Generator, HintedObject, IP, SuccessResponse, ErrorResponse } from "../
 import { Assert, ECODE, MitumError } from "../error"
 import { isOpFact, isHintedObject } from "../utils/typeGuard"
 import { isSuccessResponse } from "../utils"
+import { isBase58Encoded } from "../utils/typeGuard"
 
 import * as Base from "./base"
 
@@ -78,6 +79,41 @@ export class Operation extends Generator {
 		return response
 	}
 
+	/**
+	 * Get multiple operations by array of fact hashes.
+	 * Returns excluding operations that have not yet been recorded.
+	 * @async
+	 * @param {string[]} [hashes] - Array of fact hashes, fact hash must be base58 encoded string with 44 length.
+	 * @returns The `data` of `SuccessResponse` is array of infomation of the operations:
+	 * - `_hint`: Hint for the operation,
+	 * - `hash`: Hash for the fact,
+	 * - `operation`: 
+	 * - - `hash`: Hash fot the operation,
+	 * - - `fact`: Object for fact, 
+	 * - - `signs`: Array for sign, 
+	 * - - `_hint`: Hint for operation type,
+	 * - `height`: Block height containing the operation,
+	 * - `confirmed_at`: Timestamp when the block was confirmed,
+	 * - `reason`: Reason for operation failure,
+	 * - `in_state`: Boolean indicating whether the operation was successful or not,
+	 * - `index`: Index of the operation in the block
+	 */
+	async getMultiOperations(hashes: string[]) {
+		Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
+		Assert.check(Config.FACT_HASHES.satisfy(hashes.length),
+			MitumError.detail(ECODE.INVALID_LENGTH, "length of hash array is out of range")
+		);
+		hashes.forEach((hash)=>{
+			Assert.check(isBase58Encoded(hash) && hash.length === 44,
+			MitumError.detail(ECODE.INVALID_FACT_HASH, "fact hash must be base58 encoded string with 44 length."))
+		});
+		const response = await getAPIData(() => api.getMultiOperations(this.api, hashes, this.delegateIP));
+		if (isSuccessResponse(response) && Array.isArray(response.data)) {
+			response.data = response.data.map((el)=>{return el._embedded})
+		};
+		
+		return response
+	}
 
 	/**
 	 * Sign the given operation using the provided private key or key pair.
