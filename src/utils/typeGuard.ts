@@ -15,3 +15,11 @@ export const isErrorResponse = (response: ErrorResponse | SuccessResponse): resp
 export const isSuccessResponse = (response: ErrorResponse | SuccessResponse): response is SuccessResponse => {
     return 'data' in response;
 }
+
+export const isBase58Encoded = (value: string): boolean => {
+    if (!value || typeof value !== 'string') {
+        return false;
+    }
+    const base58Chars = /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/;
+    return base58Chars.test(value);
+}
