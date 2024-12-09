@@ -1,7 +1,7 @@
 import { HINT } from "../../alias"
 import { Hint } from "../../common"
 import { HintedObject, IBuffer, IHintedObject, LongString } from "../../types"
-import { Key } from "../../key"
+import { Key, PubKey } from "../../key"
 // import { Config } from "../../node"
 
 abstract class Authentication implements IBuffer, IHintedObject {
@@ -38,7 +38,7 @@ export class AsymKeyAuth extends Authentication {
         this.id = LongString.from(id);
         this.authType = authType;
         this.controller = LongString.from(controller);
-        this.publicKey = Key.from(publicKey);
+        this.publicKey = new PubKey(publicKey, 100);
     }
 
     toBuffer(): Buffer {
@@ -47,7 +47,7 @@ export class AsymKeyAuth extends Authentication {
             this.id.toBuffer(),
             Buffer.from(this.authType),
             this.controller.toBuffer(),
-            this.publicKey.toBuffer(),
+            Buffer.from(this.publicKey.toString())
         ])
     }
 
