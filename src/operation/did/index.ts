@@ -5,13 +5,13 @@ import { DeactivateDidFact } from "./deactive-did"
 import { UpdateDocumentFact } from "./update_did_document"
 import { AsymKeyAuth, SocialLoginAuth, Document } from "./document"
 import { ContractGenerator, Operation } from "../base"
-import { Address } from "../../key"
+import { Address, Key } from "../../key"
 import { CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
 import { isSuccessResponse  } from "../../utils"
+import { validateDID } from "../../utils/typeGuard"
 import { IP, TimeStamp as TS, LongString } from "../../types"
 import { Assert, MitumError, ECODE } from "../../error"
-import { Key } from "../../key"
 
 type asymkeyAuth = {
     _hint: string,
@@ -115,30 +115,11 @@ export class DID extends ContractGenerator {
         }
     }
 
-    private validateDID(did:string, option?:boolean): void {
-        const parts = did.split(":");
-        if (parts.length !== 3) {
-            throw MitumError.detail(ECODE.DID.INVALID_DID, "Invalid did structure");
-        }
-   
-        if (parts[0] !== "did") {
-            throw MitumError.detail(ECODE.DID.INVALID_DID, "Invalid did structure");
-        }
-
-        if (option) {
-            const subparts = parts[2].split("#");
-            if (subparts.length !== 2) {
-                throw MitumError.detail(ECODE.DID.INVALID_DID, "Invalid authentication id");
-            } else {
-                Address.from(subparts[0]);
-            }
-        } else {
-            Address.from(parts[2]);
-        }
-
-        if (option && (did.match(/#/g) || []).length !== 1) {
-            throw MitumError.detail(ECODE.DID.INVALID_DID, "Invalid authentication id");
-        }
+    private isSenderDidOwner(sender: string | Address, did: string | LongString, id?: true) {
+        Assert.check(
+            sender.toString() === validateDID(did.toString(), id).toString(),
+            MitumError.detail(ECODE.DID.INVALID_DID, `The owner of did must match the sender(${sender.toString()}). check the did (${did.toString()})`)
+        );
     }
 
     writeAsymkeyAuth(
@@ -255,7 +236,7 @@ export class DID extends ContractGenerator {
         did: string,
         currency: string | CurrencyID,
     ) {
-        this.validateDID(did);
+        this.isSenderDidOwner(sender, did);
         const fact = new DeactivateDidFact(
             TS.new().UTC(),
             sender,
@@ -281,7 +262,7 @@ export class DID extends ContractGenerator {
         did: string,
         currency: string | CurrencyID,
     ) {
-        this.validateDID(did);
+        this.isSenderDidOwner(sender, did);
         const fact = new ReactivateDidFact(
             TS.new().UTC(),
             sender,
@@ -300,8 +281,9 @@ export class DID extends ContractGenerator {
         currency: string | CurrencyID,
     ) {
         this.validateDocument(document);
-        this.validateDID(document.id.toString());
-        this.validateDID(document.service.id.toString());
+        this.isSenderDidOwner(sender, document.id);
+        this.isSenderDidOwner(sender, document.service.id);
+
         const fact = new UpdateDocumentFact(
             TS.new().UTC(),
             sender,
@@ -313,8 +295,10 @@ export class DID extends ContractGenerator {
                 document.created,
                 document.id,
                 document.authentication.map((el) => {
-                    this.validateDID(el.id.toString(), true);
+                    this.isSenderDidOwner(sender, el.id, true);
+                    this.isSenderDidOwner(sender, el.controller);
                     if ("proof" in el) {
+                        validateDID(el.proof.verificationMethod.toString(), true);
                         return new SocialLoginAuth(el.id, el.controller, el.serviceEndpoint, el.proof.verificationMethod)
                     } else {
                         return new AsymKeyAuth(el.id, el.authType, el.controller, el.publicKey)
@@ -393,7 +377,7 @@ export class DID extends ContractGenerator {
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
-        this.validateDID(did);
+        validateDID(did);
         const response = await getAPIData(() => contractApi.did.getByDID(
             this.api,
             contract,
