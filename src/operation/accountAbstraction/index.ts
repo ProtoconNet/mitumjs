@@ -1,6 +1,6 @@
 import { Fact, UserOperation, Authentication, Settlement } from "../base"
 import { isUserOp, isHintedObjectFromUserOp } from "../../utils/typeGuard"
-import { Generator, HintedObject, IP, TimeStamp } from "../../types"
+import { Generator, HintedObject, IP } from "../../types"
 import { Key, KeyPair, Address } from "../../key"
 import { Assert, ECODE, MitumError } from "../../error"
 import base58 from "bs58"
@@ -53,8 +53,7 @@ export class AccountAbstraction extends Generator {
 		const hintedUserOp = isUserOp(userOperation) ? userOperation.toHintedObject() : userOperation;
         privateKey = Key.from(privateKey);
         const keypair = KeyPair.fromPrivateKey<KeyPair>(privateKey);
-        const now = TimeStamp.new();
-        const alterSign = keypair.sign(Buffer.concat([Buffer.from(this._networkID), Buffer.from(hintedUserOp.fact.hash), now.toBuffer()]));
+        const alterSign = keypair.sign(Buffer.from(base58.decode(hintedUserOp.fact.hash)));
         hintedUserOp.authentication.proof_data = base58.encode(alterSign);
         return hintedUserOp
     }
