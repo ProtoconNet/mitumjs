@@ -1,7 +1,6 @@
-import { UserOperationJson, Fact, UserOperation, Authentication, Settlement } from "../base"
+import { Fact, UserOperation, Authentication, Settlement } from "../base"
 import { isUserOp, isHintedObjectFromUserOp } from "../../utils/typeGuard"
-import { sha3 } from "../../utils"
-import { FullTimeStamp, Generator, HintedObject, IP, TimeStamp } from "../../types"
+import { Generator, HintedObject, IP, TimeStamp } from "../../types"
 import { Key, KeyPair, Address } from "../../key"
 import { Assert, ECODE, MitumError } from "../../error"
 import base58 from "bs58"
@@ -105,35 +104,8 @@ export class AccountAbstraction extends Generator {
 		)
 
 		const hintedUserOp = isUserOp(userOperation) ? userOperation.toHintedObject() : userOperation;
-        
         const signer = new Signer(this.networkID);
-        const signedOp = signer.sign(privatekey, hintedUserOp);
-        hintedUserOp.signs = signedOp.signs;
         
-        return this.FillUserOpHash(hintedUserOp as UserOperationJson)
-    }
-
-    private FillUserOpHash(userOperation: UserOperationJson) {
-        const { contract, authentication_id, proof_data, op_sender, proxy_payer } = {...userOperation.authentication, ...userOperation.settlement};
-        const auth = new Authentication(contract, authentication_id, proof_data);
-        const settlement = new Settlement(op_sender, proxy_payer);
-
-        const msg = Buffer.concat([
-            base58.decode(userOperation.fact.hash),
-            Buffer.concat(
-                userOperation.signs.map((s) =>
-                Buffer.concat([
-                    Buffer.from(s.signer),
-                    base58.decode(s.signature),
-                    new FullTimeStamp(s.signed_at).toBuffer("super"),
-                ])
-            )),
-            auth.toBuffer(),
-            settlement.toBuffer()
-        ])
-
-        userOperation.hash = base58.encode(sha3(msg));
-
-        return userOperation;
+        return signer.sign(privatekey, hintedUserOp);
     }
 }

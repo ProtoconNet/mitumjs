@@ -1,10 +1,10 @@
 import base58 from "bs58"
-import { OperationJson, GeneralFactSign, NodeFactSign, SignOption, Operation as OP, Fact } from "./base"
+import { UserOperationJson, Authentication, Settlement, OperationJson, GeneralFactSign, NodeFactSign, SignOption, Operation as OP, Fact } from "./base"
 import { sha3 } from "../utils"
 import { Key, KeyPair, NodeAddress } from "../key"
 import { Generator, HintedObject, FullTimeStamp, TimeStamp, IP } from "../types"
 import { Assert, ECODE, MitumError } from "../error"
-import { isOpFact, isHintedObject } from "../utils/typeGuard"
+import { isOpFact, isHintedObject, isHintedObjectFromUserOp} from "../utils/typeGuard"
 
 export class Signer extends Generator {
 
@@ -78,6 +78,10 @@ export class Signer extends Generator {
             Buffer.concat(factSigns),
         ])
 
+        if (isHintedObjectFromUserOp(operation as UserOperationJson)) {
+            return this.FillUserOpHash(operation as UserOperationJson);
+        } 
+
         operation.hash = base58.encode(sha3(msg))
 
         return operation
@@ -125,5 +129,29 @@ export class Signer extends Generator {
         operation.hash = base58.encode(sha3(msg))
 
         return operation
+    }
+
+    private FillUserOpHash(userOperation: UserOperationJson) {
+        const { contract, authentication_id, proof_data, op_sender, proxy_payer } = {...userOperation.authentication, ...userOperation.settlement};
+        const auth = new Authentication(contract, authentication_id, proof_data);
+        const settlement = new Settlement(op_sender, proxy_payer);
+
+        const msg = Buffer.concat([
+            base58.decode(userOperation.fact.hash),
+            Buffer.concat(
+                userOperation.signs.map((s) =>
+                Buffer.concat([
+                    Buffer.from(s.signer),
+                    base58.decode(s.signature),
+                    new FullTimeStamp(s.signed_at).toBuffer("super"),
+                ])
+            )),
+            auth.toBuffer(),
+            settlement.toBuffer()
+        ])
+
+        userOperation.hash = base58.encode(sha3(msg));
+
+        return userOperation;
     }
 }
