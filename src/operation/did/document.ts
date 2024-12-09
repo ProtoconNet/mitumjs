@@ -2,7 +2,7 @@ import { HINT } from "../../alias"
 import { Hint } from "../../common"
 import { HintedObject, IBuffer, IHintedObject, LongString } from "../../types"
 import { Key, PubKey } from "../../key"
-// import { Config } from "../../node"
+import { Assert, MitumError, ECODE } from "../../error"
 
 abstract class Authentication implements IBuffer, IHintedObject {
     private hint: Hint
@@ -60,6 +60,10 @@ export class AsymKeyAuth extends Authentication {
             publicKey: this.publicKey.toString(),
         }
     }
+
+    toString(): string {
+        return this.id.toString()
+    }
 }
 
 export class SocialLoginAuth extends Authentication {
@@ -106,6 +110,10 @@ export class SocialLoginAuth extends Authentication {
                 verificationMethod: this.proofMethod.toString()
             }
         }
+    }
+
+    toString(): string {
+        return this.id.toString()
     }
 }
 
@@ -169,6 +177,10 @@ export class Document implements IBuffer, IHintedObject {
         this.status = LongString.from(status);
         this.created = LongString.from(created);
         this.id = LongString.from(id);
+        Assert.check(
+            new Set(authentication.map(i => i.toString())).size === authentication.length,
+            MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "duplicate authentication id found in document")
+        )
         this.authentication = authentication;
         this.verificationMethod = verificationMethod;
         this.service_id = LongString.from(service_id);
