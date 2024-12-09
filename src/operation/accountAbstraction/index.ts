@@ -4,7 +4,6 @@ import { Generator, HintedObject, IP } from "../../types"
 import { Key, KeyPair, Address } from "../../key"
 import { Assert, ECODE, MitumError } from "../../error"
 import base58 from "bs58"
-import { Signer } from "../signer"
 
 export class AccountAbstraction extends Generator {
     constructor(
@@ -85,26 +84,5 @@ export class AccountAbstraction extends Generator {
         return {
             ...filledUO.toHintedObjectWithOutFact(hintedUserOp._hint, hintedUserOp.fact)
         }
-    }
-
-    /**
-     * Sign the given userOperation in JSON format using given private key.
-	 * @param {string | Key} [privatekey] - The private key used for signing.
-	 * @param {UserOperation<Fact> | HintedObject} [userOperation] - The operation to be signed.
-	 * @returns The signed user operation in JSON object (HintedObject).
-     */
-    sign(
-        privatekey: string | Key,
-        userOperation: UserOperation<Fact> | HintedObject,
-    ) {
-        Assert.check(
-			isUserOp(userOperation) || isHintedObjectFromUserOp(userOperation), 
-			MitumError.detail(ECODE.INVALID_USER_OPERATION, `Input must in UserOperation format`)
-		)
-
-		const hintedUserOp = isUserOp(userOperation) ? userOperation.toHintedObject() : userOperation;
-        const signer = new Signer(this.networkID);
-        
-        return signer.sign(privatekey, hintedUserOp);
     }
 }
