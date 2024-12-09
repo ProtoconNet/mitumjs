@@ -5,6 +5,7 @@ import { GeneralFactSign, NodeFactSign } from "./factsign"
 import { Operation } from "./operation"
 import { Hint } from "../../common"
 import { SortFunc } from "../../utils"
+import { validateDID } from "../../utils/typeGuard"
 import { Assert, ECODE, MitumError } from "../../error"
 import { Address, Key, KeyPair } from "../../key"
 import { HintedObject, IBuffer, IHintedObject, TimeStamp } from "../../types"
@@ -97,6 +98,10 @@ export class UserOperation<T extends Fact> extends Operation<T> {
         this.id = networkID;
         this.fact = fact;
 
+        if ("sender" in fact) {
+            this.isSenderDidOwner(fact.sender as string, auth.authenticationId, true);
+        };
+
         this.auth = auth;
         this.settlement = settlement;
 
@@ -156,6 +161,13 @@ export class UserOperation<T extends Fact> extends Operation<T> {
             ...operation,
             signs: factSigns.map(fs => fs.toHintedObject())
         }
+    }
+
+    private isSenderDidOwner(sender: string | Address, did: string, id?: true) {
+        Assert.check(
+            sender.toString() === validateDID(did.toString(), id).toString(),
+            MitumError.detail(ECODE.DID.INVALID_DID, `The owner of did must match the sender(${sender.toString()}). check the did (${did.toString()})`)
+        );
     }
 
 	/**
