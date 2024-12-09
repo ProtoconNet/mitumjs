@@ -3,7 +3,7 @@ import { UserOperationJson, Authentication, Settlement, OperationJson, GeneralFa
 import { sha3 } from "../utils"
 import { Key, KeyPair, NodeAddress } from "../key"
 import { Generator, HintedObject, FullTimeStamp, TimeStamp, IP } from "../types"
-import { Assert, ECODE, MitumError } from "../error"
+import { StringAssert, Assert, ECODE, MitumError } from "../error"
 import { isOpFact, isHintedObject, isHintedObjectFromUserOp} from "../utils/typeGuard"
 
 export class Signer extends Generator {
@@ -133,6 +133,20 @@ export class Signer extends Generator {
 
     private FillUserOpHash(userOperation: UserOperationJson) {
         const { contract, authentication_id, proof_data, op_sender, proxy_payer } = {...userOperation.authentication, ...userOperation.settlement};
+        
+        const userOperationFields = {
+            contract,
+            authentication_id,
+            proof_data,
+            op_sender,
+            proxy_payer,
+        };
+        
+        Object.entries(userOperationFields).forEach(([key, value]) => {
+            StringAssert.with(value, MitumError.detail(ECODE.INVALID_USER_OPERATION,
+                `Cannot sign the user operation: ${key} must not be empty.`)).empty().not().excute();
+        });
+        
         const auth = new Authentication(contract, authentication_id, proof_data);
         const settlement = new Settlement(op_sender, proxy_payer);
 

@@ -6,7 +6,7 @@ import { Operation } from "./operation"
 import { Hint } from "../../common"
 import { SortFunc } from "../../utils"
 import { validateDID } from "../../utils/typeGuard"
-import { Assert, ECODE, MitumError } from "../../error"
+import { Assert, ECODE, MitumError, StringAssert } from "../../error"
 import { Address, Key, KeyPair } from "../../key"
 import { HintedObject, IBuffer, IHintedObject, TimeStamp } from "../../types"
 import { FactJson } from "./types"
@@ -206,7 +206,18 @@ export class UserOperation<T extends Fact> extends Operation<T> {
     sign(
         privatekey: string | Key,
     ) {
-        Key.from(privatekey);
+        const userOperationFields = {
+            contract: this.auth.contract.toString(),
+            authentication_id : this.auth.authenticationId,
+            proof_data: this.auth.proofData,
+            op_sender: this.settlement.opSender.toString(),
+        };
+        
+        Object.entries(userOperationFields).forEach(([key, value]) => {
+            StringAssert.with(value, MitumError.detail(ECODE.INVALID_USER_OPERATION,
+                `Cannot sign the user operation: ${key} must not be empty.`)).empty().not().excute();
+        });
+
         const keypair = KeyPair.fromPrivateKey(privatekey);
         const now = TimeStamp.new();
 
