@@ -5,6 +5,7 @@ import { Address } from "../../key"
 import { SortFunc, hasOverlappingAddress } from "../../utils"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
+import { Config } from "../../node"
 
 export class UpdateHandlerFact extends Fact {
     readonly sender: Address
@@ -29,6 +30,9 @@ export class UpdateHandlerFact extends Fact {
         Assert.check(
             (this.handlers.length !== 0),
             MitumError.detail(ECODE.INVALID_FACT, "empty handlers"),
+        )
+        Assert.check(Config.CONTRACT_HANDLERS.satisfy(handlers.length),
+            MitumError.detail(ECODE.INVALID_LENGTH, "length of handlers array is out of range")
         )
         Assert.check(
             hasOverlappingAddress(this.handlers),
