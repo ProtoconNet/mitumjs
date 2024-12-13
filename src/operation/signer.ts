@@ -139,7 +139,6 @@ export class Signer extends Generator {
             authentication_id,
             proof_data,
             op_sender,
-            proxy_payer,
         };
         
         Object.entries(userOperationFields).forEach(([key, value]) => {
