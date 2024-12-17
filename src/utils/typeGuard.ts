@@ -6,6 +6,7 @@ import { Address } from "../key"
 export const isOpFact = (operation: any): operation is OP<Fact> => {
     return operation instanceof OP;
 }
+
 export const isHintedObject = (object: any): object is HintedObject => {
     return '_hint' in object && 'fact' in object && 'hash' in object;
 }
@@ -19,16 +20,17 @@ export const isHintedObjectFromUserOp = (object: any): object is HintedObject =>
         '_hint' in object &&
         'fact' in object &&
         'hash' in object &&
-        'authentication' in object &&
-        'settlement' in object
+        'extension' in object
     ) {
-        const { authentication, settlement } = object;
+        const { authentication, settlement, proxy_payer } = object.extension;
         return (
+            '_hint' in authentication &&
             'contract' in authentication &&
             'authentication_id' in authentication &&
             'proof_data' in authentication &&
+            '_hint' in settlement &&
             'op_sender' in settlement &&
-            'proxy_payer' in settlement
+            (proxy_payer ? '_hint' in proxy_payer && 'proxy_payer' in proxy_payer : true)
         );
     }
     return false;
