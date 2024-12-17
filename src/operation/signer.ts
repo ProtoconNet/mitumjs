@@ -1,5 +1,5 @@
 import base58 from "bs58"
-import { UserOperationJson, Authentication, Settlement, OperationJson, GeneralFactSign, NodeFactSign, SignOption, Operation as OP, Fact } from "./base"
+import { UserOperationJson, Authentication, ProxyPayer, Settlement, OperationJson, GeneralFactSign, NodeFactSign, SignOption, Operation as OP, Fact } from "./base"
 import { sha3 } from "../utils"
 import { Key, KeyPair, NodeAddress } from "../key"
 import { Generator, HintedObject, FullTimeStamp, TimeStamp, IP } from "../types"
@@ -132,39 +132,49 @@ export class Signer extends Generator {
     }
 
     private FillUserOpHash(userOperation: UserOperationJson) {
-        const { contract, authentication_id, proof_data, op_sender, proxy_payer } = {...userOperation.authentication, ...userOperation.settlement};
-        
-        const userOperationFields = {
-            contract,
-            authentication_id,
-            proof_data,
-            op_sender,
-        };
-        
-        Object.entries(userOperationFields).forEach(([key, value]) => {
-            StringAssert.with(value, MitumError.detail(ECODE.INVALID_USER_OPERATION,
-                `Cannot sign the user operation: ${key} must not be empty.`)).empty().not().excute();
-        });
-        
-        const auth = new Authentication(contract, authentication_id, proof_data);
-        const settlement = new Settlement(op_sender, proxy_payer);
-
+        const { extension } = userOperation;
+        const { authentication, settlement, proxy_payer } = extension;
+    
+        this.validateUserOpFields({ ...authentication, ...settlement, ...proxy_payer });
+    
+        const hintedExtension = (() => {
+            const auth = new Authentication(
+                authentication.contract,
+                authentication.authentication_id,
+                authentication.proof_data
+            ).toHintedObject();
+            const settlementObj = new Settlement(settlement.op_sender).toHintedObject();
+    
+            if (proxy_payer) {
+                const proxyPayerObj = new ProxyPayer(proxy_payer.proxy_payer).toHintedObject();
+                return { authentication: auth, proxy_payer: proxyPayerObj, settlement: settlementObj };
+            }
+    
+            return { authentication: auth, settlement: settlementObj };
+        })();
+    
         const msg = Buffer.concat([
+            Buffer.from(JSON.stringify(hintedExtension)),
             base58.decode(userOperation.fact.hash),
-            Buffer.concat(
-                userOperation.signs.map((s) =>
-                Buffer.concat([
-                    Buffer.from(s.signer),
-                    base58.decode(s.signature),
-                    new FullTimeStamp(s.signed_at).toBuffer("super"),
-                ])
-            )),
-            auth.toBuffer(),
-            settlement.toBuffer()
-        ])
-
+            Buffer.concat(userOperation.signs.map((s) => Buffer.concat([
+                Buffer.from(s.signer),
+                base58.decode(s.signature),
+                new FullTimeStamp(s.signed_at).toBuffer("super"),
+            ]))),
+        ]);
+    
         userOperation.hash = base58.encode(sha3(msg));
-
         return userOperation;
+    }
+
+    private validateUserOpFields(fields: Record<string, any>): void {
+        Object.entries(fields).forEach(([key, value]) => {
+            if (value !== undefined) {
+                StringAssert.with(
+                    value,
+                    MitumError.detail(ECODE.INVALID_USER_OPERATION, `Cannot sign the user operation: ${key} must not be empty.`)
+                ).empty().not().excute();
+            }
+        });
     }
 }
