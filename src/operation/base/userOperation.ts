@@ -4,26 +4,27 @@ import { Fact } from "./fact"
 import { GeneralFactSign, NodeFactSign } from "./factsign"
 import { Operation } from "./operation"
 import { Hint } from "../../common"
+import { HINT } from "../../alias"
 import { SortFunc } from "../../utils"
 import { validateDID } from "../../utils/typeGuard"
 import { Assert, ECODE, MitumError, StringAssert } from "../../error"
 import { Address, Key, KeyPair } from "../../key"
-import { HintedObject, IBuffer, IHintedObject, TimeStamp } from "../../types"
-import { FactJson } from "./types"
+import { HintedObject, HintedExtensionObject, IHintedObject, TimeStamp } from "../../types"
 
 type FactSign = GeneralFactSign | NodeFactSign
-// type SigType = "FactSign" | "NodeFactSign" | null
 
-export class Authentication implements IBuffer, IHintedObject {
+export class Authentication implements IHintedObject {
     readonly contract: Address;
     readonly authenticationId: string;
     readonly proofData: string;
- 
+    private hint: Hint;
+    
     constructor(
         contract: string | Address, 
         authenticationId: string, 
         proofData : string | undefined,
     ) {
+        this.hint = new Hint(HINT.CURRENCY.EXTENSION.AUTHENTICATION);
         this.contract = Address.from(contract);
         this.authenticationId = authenticationId;
         if (proofData) {
@@ -35,16 +36,9 @@ export class Authentication implements IBuffer, IHintedObject {
         this.proofData = proofData ? proofData : "";
     }
 
-    toBuffer(): Buffer {
-        return Buffer.concat([
-            this.contract.toBuffer(),
-            Buffer.from(this.authenticationId),
-            Buffer.from(this.proofData),
-        ])
-    }
-
     toHintedObject(): HintedObject {
         return {
+            _hint: this.hint.toString(),
             contract: this.contract.toString(),
             authentication_id: this.authenticationId,
             proof_data: this.proofData,
@@ -52,29 +46,40 @@ export class Authentication implements IBuffer, IHintedObject {
     }
 }
 
-export class Settlement implements IBuffer, IHintedObject {
-    readonly opSender: Address | "";
-    readonly proxyPayer: Address | "";
+export class ProxyPayer implements IHintedObject {
+    readonly proxyPayer: Address;
+    private hint: Hint;
  
     constructor(
-        opSender: string | Address | undefined,
-        proxyPayer: string | Address | undefined,
+        proxyPayer: string | Address,
     ) {
-        this.opSender = opSender ? Address.from(opSender) : "";
-        this.proxyPayer = proxyPayer ? Address.from(proxyPayer) : "";
-    }
-
-    toBuffer(): Buffer {
-        return Buffer.concat([
-            Buffer.from(this.opSender.toString()),
-            Buffer.from(this.proxyPayer.toString()),
-        ])
+        this.hint = new Hint(HINT.CURRENCY.EXTENSION.PROXY_PAYER);
+        this.proxyPayer = Address.from(proxyPayer);
     }
 
     toHintedObject(): HintedObject {
         return {
-            op_sender: this.opSender.toString(),
+            _hint: this.hint.toString(),
             proxy_payer: this.proxyPayer.toString(),
+        }
+    }
+}
+
+export class Settlement implements IHintedObject {
+    readonly opSender: Address | "";
+    private hint: Hint;
+ 
+    constructor(
+        opSender: string | Address | undefined,
+    ) {
+        this.hint = new Hint(HINT.CURRENCY.EXTENSION.SETTLEMENT);
+        this.opSender = opSender ? Address.from(opSender) : "";
+    }
+
+    toHintedObject(): HintedObject {
+        return {
+            _hint: this.hint.toString(),
+            op_sender: this.opSender.toString(),
         }
     }
 }
@@ -85,6 +90,7 @@ export class UserOperation<T extends Fact> extends Operation<T> {
     readonly hint: Hint
     readonly fact: T
     protected auth: Authentication
+    protected proxyPayer: null | ProxyPayer
     protected settlement: Settlement
     protected _factSigns: FactSign[]
     protected _hash: Buffer
@@ -92,6 +98,7 @@ export class UserOperation<T extends Fact> extends Operation<T> {
         networkID: string,
         fact: T, 
         auth: Authentication,
+        proxyPayer: null | ProxyPayer,
         settlement: Settlement
     ) {
         super(networkID, fact);
@@ -103,6 +110,7 @@ export class UserOperation<T extends Fact> extends Operation<T> {
         };
 
         this.auth = auth;
+        this.proxyPayer = proxyPayer;
         this.settlement = settlement;
 
         this.hint = new Hint(fact.operationHint);
@@ -122,10 +130,9 @@ export class UserOperation<T extends Fact> extends Operation<T> {
         this._factSigns = this._factSigns.sort(SortFunc);
 
         return Buffer.concat([
+            Buffer.from(JSON.stringify(this.toHintedExtension())),
             this.fact.hash,
             Buffer.concat(this._factSigns.map((fs) => fs.toBuffer())),
-            this.auth.toBuffer(),
-            this.settlement.toBuffer()
         ])
     }
 
@@ -133,11 +140,18 @@ export class UserOperation<T extends Fact> extends Operation<T> {
         const operation = {
             _hint: this.hint.toString(),
             fact: this.fact.toHintedObject(),
-            authentication: this.auth.toHintedObject(),
-            settlement: this.settlement.toHintedObject(),
+            extension: this.proxyPayer ? 
+            {
+                authentication: this.auth.toHintedObject(),
+                proxy_payer: this.proxyPayer.toHintedObject(),
+                settlement: this.settlement.toHintedObject(),
+            } :
+            {
+                authentication: this.auth.toHintedObject(),
+                settlement: this.settlement.toHintedObject(),
+            },
             hash: this._hash.length === 0 ? "" : base58.encode(this._hash)
         }
-
         const factSigns = this._factSigns.length === 0 ? [] : this._factSigns.sort(SortFunc);
 
         return {
@@ -146,21 +160,17 @@ export class UserOperation<T extends Fact> extends Operation<T> {
         }
     }
 
-    toHintedObjectWithOutFact(_hint: string | undefined, fact: FactJson): HintedObject {
-        const operation = {
-            _hint: _hint,
-            fact: fact,
-            authentication: this.auth.toHintedObject(),
-            settlement: this.settlement.toHintedObject(),
-            hash: this._hash.length === 0 ? "" : base58.encode(this._hash)
-        }
-
-        const factSigns = this._factSigns.length === 0 ? [] : this._factSigns.sort(SortFunc);
-
-        return {
-            ...operation,
-            signs: factSigns.map(fs => fs.toHintedObject())
-        }
+    private toHintedExtension(): HintedExtensionObject {
+        return this.proxyPayer ? 
+            {
+                authentication: this.auth.toHintedObject(),
+                proxy_payer: this.proxyPayer.toHintedObject(),
+                settlement: this.settlement.toHintedObject(),
+            } :
+            {
+                authentication: this.auth.toHintedObject(),
+                settlement: this.settlement.toHintedObject(),
+            }
     }
 
     private isSenderDidOwner(sender: string | Address, did: string, id?: true) {
@@ -186,16 +196,21 @@ export class UserOperation<T extends Fact> extends Operation<T> {
     /**
      * Updates the settlement details of a userOperation.
      * @param {string | Address} opSender - The opseration sender's address (Bundler's address).
+     * @returns void.
+     **/
+    setSettlement(opSender: string | Address): void {
+        Address.from(opSender);
+        this.settlement = new Settlement(opSender);
+    }
+
+    /**
+     * Updates the proxy payer details of a userOperation.
      * @param {string | Address} proxyPayer - The proxy payer's address. (address of CA)
      * @returns void.
      **/
-    setSettlement(
-        opSender: string | Address,
-        proxyPayer: string | Address | undefined,
-    ): void {
-        Address.from(opSender);
-        if (proxyPayer !== undefined) {Address.from(proxyPayer)};
-        this.settlement = new Settlement(opSender, proxyPayer ? proxyPayer : "");
+    setProxyPayer(proxyPayer: string | Address): void {
+        Address.from(proxyPayer);
+        this.proxyPayer = new ProxyPayer(proxyPayer);
     }
 
     /**
@@ -203,9 +218,7 @@ export class UserOperation<T extends Fact> extends Operation<T> {
 	 * @param {string | Key} [privatekey] - The private key used for signing.
 	 * @returns void.
      */
-    sign(
-        privatekey: string | Key,
-    ) {
+    sign(privatekey: string | Key) {
         const userOperationFields = {
             contract: this.auth.contract.toString(),
             authentication_id : this.auth.authenticationId,
