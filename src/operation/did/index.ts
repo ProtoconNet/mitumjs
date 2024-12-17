@@ -1,7 +1,5 @@
 import { RegisterModelFact } from "./register-model"
 import { CreateFact } from "./create-did"
-import { ReactivateDidFact } from "./reactive-did"
-import { DeactivateDidFact } from "./deactive-did"
 import { UpdateDocumentFact } from "./update_did_document"
 import { AsymKeyAuth, SocialLoginAuth, Document } from "./document"
 import { ContractGenerator, Operation } from "../base"
@@ -35,8 +33,6 @@ type socialLoginAuth = {
 type document = {
     _hint: string,
     "@context": string | LongString,
-    status: string,
-    created: string,
     id: string | LongString, 
     authentication: (asymkeyAuth | socialLoginAuth)[],
     verificationMethod: [],
@@ -98,7 +94,7 @@ export class DID extends ContractGenerator {
             throw MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "invalid document type")
         }
     
-        const requiredKeys = ["_hint", "@context", "status", "created", "id", "authentication", "verificationMethod", "service"] as (keyof document)[];
+        const requiredKeys = ["_hint", "@context", "id", "authentication", "verificationMethod", "service"] as (keyof document)[];
         if (!isOfType<document>(doc, requiredKeys)) {
             throw MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "The document structure is invalid or missing required fields.");
         }
@@ -142,8 +138,6 @@ export class DID extends ContractGenerator {
 
     writeDocument(
         didContext: string,
-        status: string,
-        created: string,
         didID: string,
         authentications: (SocialLoginAuth | AsymKeyAuth)[],
         serivceID: string,
@@ -152,8 +146,6 @@ export class DID extends ContractGenerator {
     ) {
         return new Document(
             didContext,
-            status,
-            created,
             didID,
             authentications,
             [],
@@ -223,58 +215,15 @@ export class DID extends ContractGenerator {
     }
 
     /**
-     * Generate `deactivate-did` operation to deactivate the did.
+     * Generate `update-did-document` operation to update the did document.
+     * `document` must comply with document type
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
-     * @param {string} [did] - The did to deactivate.
+     * @param {document} [document] - The did document to be updated.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `deactivate-did` operation
+     * @returns `update-did-document` operation
      */
-    deactivate(
-        contract: string | Address,
-        sender: string | Address,
-        did: string,
-        currency: string | CurrencyID,
-    ) {
-        this.isSenderDidOwner(sender, did);
-        const fact = new DeactivateDidFact(
-            TS.new().UTC(),
-            sender,
-            contract,
-            did,
-            currency,
-        )
-
-        return new Operation(this.networkID, fact)
-    }
-
-    /**
-     * Generate `reactivate-did` operation to reactivate the did.
-     * @param {string | Address} [contract] - The contract's address.
-     * @param {string | Address} [sender] - The sender's address.
-     * @param {string} [did] - The did to reactivate.
-     * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `reactivate-did` operation
-     */
-    reactivate(
-        contract: string | Address,
-        sender: string | Address,
-        did: string,
-        currency: string | CurrencyID,
-    ) {
-        this.isSenderDidOwner(sender, did);
-        const fact = new ReactivateDidFact(
-            TS.new().UTC(),
-            sender,
-            contract,
-            did,
-            currency,
-        )
-
-        return new Operation(this.networkID, fact)
-    }
-
-    updateDIDDocument(
+    updateDocument(
         contract: string | Address,
         sender: string | Address,
         document: document,
@@ -291,8 +240,6 @@ export class DID extends ContractGenerator {
             document.id.toString(),
             new Document(
                 document["@context"],
-                document.status,
-                document.created,
                 document.id,
                 document.authentication.map((el) => {
                     this.isSenderDidOwner(sender, el.id, true);
@@ -336,7 +283,7 @@ export class DID extends ContractGenerator {
      * @returns `data` of `SuccessResponse` is did:
      * - `did`: The did value,
      */
-    async getDIDByAddress(
+    async getDID(
         contract: string | Address,
         account: string,
     ) {
@@ -359,8 +306,6 @@ export class DID extends ContractGenerator {
      * - `did_document`: object
      * - - `'@context'`: The context of did,
      * - - `id`: The did value,
-     * - - `created`: The fact hash of create-did operation,
-     * - - `status`: 0 means deactive, 1 means active,
      * - - `authentication`: object,
      * - - - `id`: The did value,
      * - - - `type`: The type of authentication
@@ -371,7 +316,7 @@ export class DID extends ContractGenerator {
      * - - - `type`: The type of did service,
      * - - - `service_end_point`: The end point of did service,
      */
-    async getDDocByDID(
+    async getDocument(
         contract: string | Address,
         did: string,
     ) {

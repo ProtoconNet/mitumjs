@@ -152,8 +152,6 @@ export class Service implements IBuffer, IHintedObject {
 export class Document implements IBuffer, IHintedObject {
     private hint: Hint;
     readonly context: LongString;
-    readonly status: LongString;
-    readonly created: LongString;
     readonly id: LongString;
     readonly authentication: (AsymKeyAuth | SocialLoginAuth)[];
     readonly verificationMethod: [];
@@ -163,8 +161,6 @@ export class Document implements IBuffer, IHintedObject {
     
     constructor(
         context: string | LongString,
-        status: string | LongString,
-        created: string | LongString,
         id: string | LongString, 
         authentication : (AsymKeyAuth | SocialLoginAuth)[],
         verificationMethod : [],
@@ -174,8 +170,6 @@ export class Document implements IBuffer, IHintedObject {
     ) {
         this.hint = new Hint(HINT.DID.DOCUMENT);
         this.context = LongString.from(context);
-        this.status = LongString.from(status);
-        this.created = LongString.from(created);
         this.id = LongString.from(id);
         Assert.check(
             new Set(authentication.map(i => i.toString())).size === authentication.length,
@@ -192,8 +186,6 @@ export class Document implements IBuffer, IHintedObject {
         return Buffer.concat([
             this.context.toBuffer(),
             this.id.toBuffer(),
-            this.created.toBuffer(),
-            this.status.toBuffer(),
             Buffer.concat(this.authentication.map(el => el.toBuffer())),
             this.service_id.toBuffer(),
             this.service_type.toBuffer(),
@@ -206,8 +198,6 @@ export class Document implements IBuffer, IHintedObject {
             _hint: this.hint.toString(),
             "@context": this.context.toString(),
             id: this.id.toString(),
-            created: this.created.toString(),
-            status: this.status.toString(),
             authentication: this.authentication.map(el => el.toHintedObject()),
             verificationMethod: [],
             service: {
