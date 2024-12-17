@@ -1,4 +1,4 @@
-import { Fact, UserOperation, Authentication, Settlement } from "../base"
+import { Fact, UserOperation, Authentication, ProxyPayer, Settlement } from "../base"
 import { isUserOp, isHintedObjectFromUserOp } from "../../utils/typeGuard"
 import { Generator, HintedObject, IP } from "../../types"
 import { Key, KeyPair, Address } from "../../key"
@@ -30,7 +30,8 @@ export class AccountAbstraction extends Generator {
             this.networkID,
             fact,
             new Authentication(contract, authentication_id, undefined),
-            new Settlement(undefined, undefined)
+            null,
+            new Settlement(undefined),
         );
     }
 
@@ -53,36 +54,88 @@ export class AccountAbstraction extends Generator {
         privateKey = Key.from(privateKey);
         const keypair = KeyPair.fromPrivateKey<KeyPair>(privateKey);
         const alterSign = keypair.sign(Buffer.from(base58.decode(hintedUserOp.fact.hash)));
-        hintedUserOp.authentication.proof_data = base58.encode(alterSign);
+        hintedUserOp.extension.authentication.proof_data = base58.encode(alterSign);
         return hintedUserOp
     }
 
     /**
      * Updates the settlement details of a userOperation and returns a new hinted object of user operation.
-     * @param {UserOperation<Fact> | HintedObject} userOperation - The user operation to update settlment,
-     * @param {string | Address} opSender - The opseration sender's address (Bundler's address).
-     * @param {string | Address} proxyPayer - The proxy payer's address. (address of CA)
+     * @param {UserOperation<Fact> | HintedObject} userOperation - The user operation to update settlement.
+     * @param {string | Address} opSender - The operation sender's address (Bundler's address).
      * @returns {HintedObject} A new hinted object representing the updated user operation.
      **/
     setSettlement(
         userOperation: UserOperation<Fact> | HintedObject,
-        opSender: string | Address,
-        proxyPayer: string | Address | undefined,
+        opSender: string | Address
     ): HintedObject {
-        Assert.check(
-			isUserOp(userOperation) || isHintedObjectFromUserOp(userOperation), 
-			MitumError.detail(ECODE.INVALID_USER_OPERATION, `Input must in UserOperation format`)
-		);
-        const hintedUserOp = isUserOp(userOperation) ? userOperation.toHintedObject() : userOperation;
-        const { contract, authentication_id, proof_data } = hintedUserOp.authentication;
-        const filledUO =  new UserOperation(
-            this.networkID,
-            hintedUserOp.fact,
-            new Authentication(contract, authentication_id, proof_data),
-            new Settlement(opSender, proxyPayer)
+        const hintedUserOp = this.getHintedUserOperation(userOperation);
+
+        const { authentication, proxy_payer } = hintedUserOp.extension;
+
+        return this.buildHintedObject(
+            hintedUserOp,
+            {
+                authentication: this.createAuthentication(authentication),
+                settlement: new Settlement(opSender).toHintedObject(),
+                ...(proxy_payer && { proxy_payer: new ProxyPayer(proxy_payer.proxy_payer).toHintedObject() })
+            }
         );
+    }
+
+    /**
+     * Updates the proxy payer details of a userOperation and returns a new hinted object of user operation.
+     * @param {UserOperation<Fact> | HintedObject} userOperation - The user operation to update proxy payer.
+     * @param {string | Address} proxyPayer - The proxy payer's address. (address of CA)
+     * @returns {HintedObject} A new hinted object representing the updated user operation.
+     **/
+    setProxyPayer(
+        userOperation: UserOperation<Fact> | HintedObject,
+        proxyPayer: string | Address
+    ): HintedObject {
+        const hintedUserOp = this.getHintedUserOperation(userOperation);
+
+        const { authentication, settlement } = hintedUserOp.extension;
+
+        return this.buildHintedObject(
+            hintedUserOp,
+            {
+                authentication: this.createAuthentication(authentication),
+                proxy_payer: new ProxyPayer(proxyPayer).toHintedObject(),
+                settlement: new Settlement(settlement.op_sender).toHintedObject(),
+            }
+        );
+    }
+
+    /** Private method to validate and convert userOperation to HintedObject */
+    private getHintedUserOperation(userOperation: UserOperation<Fact> | HintedObject): HintedObject {
+        Assert.check(
+            isUserOp(userOperation) || isHintedObjectFromUserOp(userOperation),
+            MitumError.detail(ECODE.INVALID_USER_OPERATION, `Input must be in UserOperation format`)
+        );
+
+        return isUserOp(userOperation) ? userOperation.toHintedObject() : userOperation;
+    }
+
+    /** Private method to create an Authentication object */
+    private createAuthentication(authentication: any): HintedObject {
+        return new Authentication(
+            authentication.contract,
+            authentication.authentication_id,
+            authentication.proof_data
+        ).toHintedObject();
+    }
+
+    /** Private method to build a HintedObject with the updated extension */
+    private buildHintedObject(
+        hintedUserOp: HintedObject,
+        extension: { [key: string]: HintedObject }
+    ): HintedObject {
         return {
-            ...filledUO.toHintedObjectWithOutFact(hintedUserOp._hint, hintedUserOp.fact)
-        }
+            _hint: hintedUserOp._hint,
+            fact: hintedUserOp.fact,
+            extension,
+            hash: "",
+            signs: []
+        };
     }
 }
