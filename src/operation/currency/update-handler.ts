@@ -26,11 +26,7 @@ export class UpdateHandlerFact extends Fact {
         this.currency = CurrencyID.from(currency)
         this.handlers = handlers.map(a => Address.from(a))
         this._hash = this.hashing()
-        
-        Assert.check(
-            (this.handlers.length !== 0),
-            MitumError.detail(ECODE.INVALID_FACT, "empty handlers"),
-        )
+
         Assert.check(Config.CONTRACT_HANDLERS.satisfy(handlers.length),
             MitumError.detail(ECODE.INVALID_LENGTH, "length of handlers array is out of range")
         )
