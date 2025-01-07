@@ -20,7 +20,7 @@ export class UpdateDocumentFact extends ContractFact {
         document: Document,
         currency: string | CurrencyID,
     ) {
-        super(HINT.DID.UPDATE_DID_DOCUMENT.FACT, token, sender, contract, currency);
+        super(HINT.AUTH_DID.UPDATE_DID_DOCUMENT.FACT, token, sender, contract, currency);
         
         this.did = LongString.from(did);
         this.document = document;
@@ -45,7 +45,7 @@ export class UpdateDocumentFact extends ContractFact {
     }
 
     get operationHint() {
-        return HINT.DID.UPDATE_DID_DOCUMENT.OPERATION
+        return HINT.AUTH_DID.UPDATE_DID_DOCUMENT.OPERATION
     }
 }
 

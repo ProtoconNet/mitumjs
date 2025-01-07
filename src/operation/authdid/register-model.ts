@@ -17,7 +17,7 @@ export class RegisterModelFact extends ContractFact {
         didMethod: string,
         currency: string | CurrencyID,
     ) {
-        super(HINT.DID.REGISTER_MODEL.FACT, token, sender, contract, currency)
+        super(HINT.AUTH_DID.REGISTER_MODEL.FACT, token, sender, contract, currency)
         
         // Assert.check(
         //     Config.DMILE.PROJECT.satisfy(project.toString().length),
@@ -44,7 +44,7 @@ export class RegisterModelFact extends ContractFact {
     }
 
     get operationHint() {
-        return HINT.DID.REGISTER_MODEL.OPERATION
+        return HINT.AUTH_DID.REGISTER_MODEL.OPERATION
     }
 }
 

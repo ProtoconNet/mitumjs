@@ -2,7 +2,7 @@ import { SignOption, Operation as OP, Fact } from "./base"
 
 import { Currency, Account, Contract } from "./currency"
 import { AccountAbstraction } from "./accountAbstraction"
-import { DID } from "./did"
+import { AuthDID } from "./authdid"
 import { Signer } from "./signer"
 
 import { Config } from "../node"
@@ -274,7 +274,7 @@ export class OperationResponse extends Operation {
 
 export {
 	Currency, Account, Contract,
-	DID,
+	AuthDID,
 	AccountAbstraction,
 	Signer,
 	Base,

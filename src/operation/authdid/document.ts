@@ -34,7 +34,7 @@ export class AsymKeyAuth extends Authentication {
         controller: string | LongString,
         publicKey: string | Key
     ) {
-        super(HINT.DID.AUTHENTICATION.ASYMMETRIC_KEY);
+        super(HINT.AUTH_DID.AUTHENTICATION.ASYMMETRIC_KEY);
         this.id = LongString.from(id);
         this.authType = authType;
         this.controller = LongString.from(controller);
@@ -80,7 +80,7 @@ export class SocialLoginAuth extends Authentication {
         serviceEndpoint: string | LongString,
         proofMethod: string | LongString
     ) {
-        super(HINT.DID.AUTHENTICATION.SOCIAL_LOGIN);
+        super(HINT.AUTH_DID.AUTHENTICATION.SOCIAL_LOGIN);
         this.id = LongString.from(id);
         this.authType = "VerifiableCredential";
         this.controller = LongString.from(controller);
@@ -168,12 +168,12 @@ export class Document implements IBuffer, IHintedObject {
         service_type: string | LongString,
         service_end_point: string | LongString
     ) {
-        this.hint = new Hint(HINT.DID.DOCUMENT);
+        this.hint = new Hint(HINT.AUTH_DID.DOCUMENT);
         this.context = LongString.from(context);
         this.id = LongString.from(id);
         Assert.check(
             new Set(authentication.map(i => i.toString())).size === authentication.length,
-            MitumError.detail(ECODE.DID.INVALID_DOCUMENT, "duplicate authentication id found in document")
+            MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, "duplicate authentication id found in document")
         )
         this.authentication = authentication;
         this.verificationMethod = verificationMethod;

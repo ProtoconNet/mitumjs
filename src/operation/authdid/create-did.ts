@@ -23,7 +23,7 @@ export class CreateFact extends ContractFact {
         serviceEndpoints: string,
         currency: string | CurrencyID,
     ) {
-        super(HINT.DID.CREATE_DID.FACT, token, sender, contract, currency);
+        super(HINT.AUTH_DID.CREATE_DID.FACT, token, sender, contract, currency);
         if (authType === "ECDSA") {
             this.authType = LongString.from("EcdsaSecp256k1VerificationKey2019");
         } else if (authType === "EdDSA") {
@@ -60,6 +60,6 @@ export class CreateFact extends ContractFact {
     }
 
     get operationHint() {
-        return HINT.DID.CREATE_DID.OPERATION
+        return HINT.AUTH_DID.CREATE_DID.OPERATION
     }
 }

@@ -1,8 +1,8 @@
 import CURRENCY from "./currency"
-import DID from "./did"
+import AUTH_DID from "./authdid"
 
 export default {
     FACT_SIGN: "base-fact-sign",
     CURRENCY,
-    DID
+    AUTH_DID
 }

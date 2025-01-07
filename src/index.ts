@@ -6,7 +6,7 @@ import {
     Account, Currency, Contract,
     Operation,
     Signer,
-    DID,
+    AuthDID,
     AccountAbstraction,
 } from "./operation"
 
@@ -19,7 +19,7 @@ export class Mitum extends Generator {
     private _block: Block
     private _operation: Operation
     private _signer: Signer
-    private _did: DID
+    private _authdid: AuthDID
     private _accountAbstraction: AccountAbstraction
 
     public ECODE: Object
@@ -39,7 +39,7 @@ export class Mitum extends Generator {
         this._signer = new Signer(this.networkID, this.api)
 
         this._contract = new Contract(this.networkID, this.api, this.delegateIP)
-        this._did = new DID(this.networkID, this.api, this.delegateIP)
+        this._authdid = new AuthDID(this.networkID, this.api, this.delegateIP)
         this._accountAbstraction = new AccountAbstraction(this.networkID, this.api, this.delegateIP)
 
         this.ECODE = ECODE;
@@ -58,7 +58,7 @@ export class Mitum extends Generator {
         this._operation = new Operation(this.networkID, this.api, this.delegateIP)
 
         this._contract = new Contract(this.networkID, this.api, this.delegateIP)
-        this._did = new DID(this.networkID, this.api, this.delegateIP)
+        this._authdid = new AuthDID(this.networkID, this.api, this.delegateIP)
         this._accountAbstraction = new AccountAbstraction(this.networkID, this.api, this.delegateIP)
 
         this._utils = new Utils();
@@ -92,8 +92,8 @@ export class Mitum extends Generator {
         return this._contract
     }
 
-    get did(): DID {
-        return this._did
+    get authdid(): AuthDID {
+        return this._authdid
     }
 
     get aa(): AccountAbstraction {
