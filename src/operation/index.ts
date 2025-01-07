@@ -9,6 +9,7 @@ import { KYC } from "./kyc"
 import { TimeStamp } from "./timestamp"
 import { Token } from "./token"
 import { Point } from "./point"
+import { Storage } from "./storage"
 import { Signer } from "./signer"
 
 import { Config } from "../node"
@@ -286,6 +287,7 @@ export {
 	TimeStamp,
 	Token,
 	Point,
+	Storage,
 	Signer,
 	Base,
 }
