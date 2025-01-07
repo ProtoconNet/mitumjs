@@ -470,6 +470,7 @@ export class DAO extends ContractGenerator {
      * @param {string} [proposalID] - The proposal ID.
      * @returns `data` of `SuccessResponse` is information about the DAO proposal:
      * - `_hint`: Hint for the dao proposal state value,
+     * - `reason`: Indicates the reason if the propose was canceled before voting,
      * - `status`: Proposal status - Proposed (0), Canceled (1), PreSnapped (2), PostSnapped (3), Completed (4), Rejected (5), Executed (6), NilStatus (7),
      * - `proposal`: [BizProposal] or [CryptoProposal],
      * - `policy`: [Policy]
