@@ -55,21 +55,21 @@ export const isBase58Encoded = (value: string): boolean => {
 export const validateDID = (did:string, id?:boolean): Address => {
     const parts = did.split(":");
     if (parts.length !== 3) {
-        throw MitumError.detail(ECODE.DID.INVALID_DID, "Invalid did structure");
+        throw MitumError.detail(ECODE.AUTH_DID.INVALID_DID, "Invalid did structure");
     }
 
     if (parts[0] !== "did") {
-        throw MitumError.detail(ECODE.DID.INVALID_DID, "Invalid did structure");
+        throw MitumError.detail(ECODE.AUTH_DID.INVALID_DID, "Invalid did structure");
     }
 
     if (id && (did.match(/#/g) || []).length !== 1) {
-        throw MitumError.detail(ECODE.DID.INVALID_DID, "Invalid authentication id");
+        throw MitumError.detail(ECODE.AUTH_DID.INVALID_DID, "Invalid authentication id");
     }
 
     if (id) {
         const subparts = parts[2].split("#");
         if (subparts.length !== 2) {
-            throw MitumError.detail(ECODE.DID.INVALID_DID, "Invalid authentication id");
+            throw MitumError.detail(ECODE.AUTH_DID.INVALID_DID, "Invalid authentication id");
         } else {
             return Address.from(subparts[0]);
         }
