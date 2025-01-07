@@ -96,7 +96,7 @@ export class Mitum extends Generator {
         return this._did
     }
 
-    get accountAbstraction(): AccountAbstraction {
+    get aa(): AccountAbstraction {
         return this._accountAbstraction
     }
 
