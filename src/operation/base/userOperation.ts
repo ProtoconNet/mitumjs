@@ -10,6 +10,7 @@ import { validateDID } from "../../utils/typeGuard"
 import { Assert, ECODE, MitumError, StringAssert } from "../../error"
 import { Address, Key, KeyPair } from "../../key"
 import { HintedObject, HintedExtensionObject, IHintedObject, TimeStamp } from "../../types"
+import { FactJson } from "./types"
 
 type FactSign = GeneralFactSign | NodeFactSign
 
@@ -84,6 +85,34 @@ export class Settlement implements IHintedObject {
     }
 }
 
+class RestoredFact extends Fact {
+    readonly _hash: Buffer;
+    readonly factJson: FactJson;
+    readonly sender: Address;
+
+    constructor(factJson: FactJson) {
+        const token_seed = Buffer.from(factJson.token, "base64").toString("utf8");
+        const parts = factJson._hint.split('-');
+        super(parts.slice(0, parts.length - 1).join('-'), token_seed);
+
+        this.factJson = factJson;
+        this.sender = new Address(factJson.sender);
+        this._hash = factJson.hash ? this.hashing() : Buffer.from([]);
+    }
+
+    get operationHint(): string {
+        const parts = this.factJson._hint.split('-');
+        return parts.slice(0, parts.length - 2).join('-');
+    }
+
+    toHintedObject(): FactJson {
+        return this.factJson;
+    }
+
+    hashing(): Buffer {
+        return this.factJson.hash ? Buffer.from(base58.decode(this.factJson.hash)) : Buffer.from([]);
+    }
+}
 
 export class UserOperation<T extends Fact> extends Operation<T> {
     readonly id: string
@@ -96,26 +125,31 @@ export class UserOperation<T extends Fact> extends Operation<T> {
     protected _hash: Buffer
     constructor(
         networkID: string,
-        fact: T, 
+        fact: T | FactJson,
         auth: Authentication,
         proxyPayer: null | ProxyPayer,
         settlement: Settlement
     ) {
-        super(networkID, fact);
+        super(networkID, (fact instanceof Fact ? fact : UserOperation.restoreFactFromJson<T>(fact)) as T);
         this.id = networkID;
-        this.fact = fact;
+        this.fact = (fact instanceof Fact ? fact : UserOperation.restoreFactFromJson<T>(fact)) as T;
 
         if ("sender" in fact) {
-            this.isSenderDidOwner(fact.sender as string, auth.authenticationId, true);
+            this.isSenderDidOwner(fact.sender, auth.authenticationId, true);
         };
 
         this.auth = auth;
         this.proxyPayer = proxyPayer;
         this.settlement = settlement;
 
-        this.hint = new Hint(fact.operationHint);
+        this.hint = new Hint(this.fact.operationHint);
         this._factSigns = [];
-        this._hash = Buffer.from([]);
+        this._hash = this.hashing();
+    }
+
+    static restoreFactFromJson<T extends Fact>(factJson: FactJson): T {
+        const fact = new RestoredFact(factJson);
+        return fact as unknown as T;
     }
 
     get hash() {
