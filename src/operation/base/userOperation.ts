@@ -6,7 +6,7 @@ import { Operation } from "./operation"
 import { Hint } from "../../common"
 import { HINT } from "../../alias"
 import { SortFunc } from "../../utils"
-import { validateDID } from "../../utils/typeGuard"
+import { validateDID, isFactJson } from "../../utils/typeGuard"
 import { Assert, ECODE, MitumError, StringAssert } from "../../error"
 import { Address, Key, KeyPair } from "../../key"
 import { HintedObject, HintedExtensionObject, IHintedObject, TimeStamp } from "../../types"
@@ -130,9 +130,9 @@ export class UserOperation<T extends Fact> extends Operation<T> {
         proxyPayer: null | ProxyPayer,
         settlement: Settlement
     ) {
-        super(networkID, (fact instanceof Fact ? fact : UserOperation.restoreFactFromJson<T>(fact)) as T);
+        super(networkID, (!isFactJson(fact) ? fact : UserOperation.restoreFactFromJson<T>(fact)) as T);
         this.id = networkID;
-        this.fact = (fact instanceof Fact ? fact : UserOperation.restoreFactFromJson<T>(fact)) as T;
+        this.fact = (!isFactJson(fact) ? fact : UserOperation.restoreFactFromJson<T>(fact)) as T;
 
         if ("sender" in fact) {
             this.isSenderDidOwner(fact.sender, auth.authenticationId, true);
