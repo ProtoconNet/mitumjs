@@ -4,6 +4,7 @@ import { Generator, HintedObject, IP } from "../../types"
 import { Key, KeyPair, Address } from "../../key"
 import { Assert, ECODE, MitumError } from "../../error"
 import base58 from "bs58"
+import { FactJson } from "../base"
 
 export class AccountAbstraction extends Generator {
     constructor(
@@ -16,13 +17,13 @@ export class AccountAbstraction extends Generator {
     
     /**
      * Creates a `UserOperation` for account abstraction.
-     * @param {Fact} fact - The operation fact.
+     * @param {Fact | FactJson} fact - The operation fact or fact property (json) of HintedObject of operation.
      * @param {string | Address} contract - The did contract address.
      * @param {string} authentication_id - The authentication ID for the did contract.
      * @returns {UserOperation<Fact>} - The created `UserOperation` instance.
      */
     createUserOperation(
-        fact: Fact,
+        fact: Fact | FactJson,
         contract: string | Address, 
         authentication_id: string,
     ): UserOperation<Fact>  {
