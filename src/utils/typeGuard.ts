@@ -1,4 +1,4 @@
-import { Operation as OP, Fact, UserOperation } from "../operation/base"
+import { Operation as OP, Fact, UserOperation, FactJson } from "../operation/base"
 import { MitumError, ECODE } from "../error"
 import { ErrorResponse, SuccessResponse, HintedObject } from "../types" 
 import { Address } from "../key"
@@ -76,4 +76,18 @@ export const validateDID = (did:string, id?:boolean): Address => {
     } else {
         return Address.from(parts[2]);
     }
+}
+
+// export const isFactInstance = (obj: unknown): obj is Fact => {
+//     return obj instanceof Fact;
+// }
+
+export const isFactJson = (obj: unknown): obj is FactJson => {
+    return (
+        typeof obj === "object" &&
+        obj !== null &&
+        "_hint" in obj &&
+        "token" in obj &&
+        "hash" in obj
+    );
 }
