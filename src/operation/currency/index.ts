@@ -17,8 +17,8 @@ import api, { getAPIData } from "../../api"
 import { Amount, CurrencyID } from "../../common"
 import { Big, Generator, IP, TimeStamp } from "../../types"
 import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG } from "../../key"
-import { StringAssert, Assert, ECODE, MitumError } from "../../error"
-import { isSuccessResponse  } from "../../utils"
+import { StringAssert, Assert, ArrayAssert, ECODE, MitumError } from "../../error"
+import { isSuccessResponse } from "../../utils"
 import { Config } from "../../node"
 import { SUFFIX } from "../../alias"
 
@@ -249,6 +249,33 @@ export class Currency extends Generator {
                 [
                     new WithdrawItem(target, [new Amount(currency, amount)])
                 ],
+            ),
+        )
+    }
+
+    /**
+     * Generate a `withdraw` operation with multiple items for withdrawing currency from multiple contract accounts.
+     * Only the owner account of the contract can execute the operation.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string[] | Address[]} [targets] - The array of target contract account's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The withdrawal amount.
+     * @returns `withdraw`operation
+     */
+    multiWithdraw(
+        sender: string | Address,
+        targets: string[] | Address[],
+        currency: string | CurrencyID,
+        amount: string | number | Big,
+    ) { 
+        ArrayAssert.check(targets, "targets").rangeLength(Config.ITEMS_IN_FACT);
+        const items = targets.map((target) => { return new WithdrawItem(target, [new Amount(currency, amount)])});
+        return new Operation(
+            this.networkID,
+            new WithdrawFact(
+                TimeStamp.new().UTC(),
+                sender,                
+                items,
             ),
         )
     }
@@ -776,7 +803,7 @@ export class Contract extends KeyG {
      */
     async getContractInfo(address: string | Address) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
-       Address.from(address);
+        Address.from(address);
         const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
         if (isSuccessResponse(response)) {
             response.data = response.data? response.data : null;
