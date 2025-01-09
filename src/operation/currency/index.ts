@@ -653,7 +653,7 @@ export class Account extends KeyG {
     }
 }
 
-export class Contract extends Generator {
+export class Contract extends KeyG {
     constructor(
         networkID: string,
         api?: string | IP,
@@ -696,6 +696,35 @@ export class Contract extends Generator {
                             [new Amount(currency, amount)],
                         )
                     ],
+                ),
+            ),
+        }
+    }
+
+    /**
+     * Generate `n` number of key pairs and the corresponding `create-contract-account` operation with multiple items.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {number} [n] - The number of account to create.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @returns An object containing the wallet (key pairs) and the `create-contract-account` operation with multiple items.
+     */
+    createBatchWallet(
+        sender: string | Address,
+        n: number,
+        currency: string | CurrencyID,
+        amount: string | number | Big,
+    ): { wallet: AccountType[], operation: Operation<CreateContractAccountFact> } {
+        const keyArray = this.keys(n);
+        const items = keyArray.map((ks) => new CreateContractAccountItem(new Keys([new PubKey(ks.publickey,100)], 100),[new Amount(currency, amount)]));
+        return {
+            wallet: keyArray,
+            operation: new Operation(
+                this.networkID,
+                new CreateContractAccountFact(
+                    TimeStamp.new().UTC(),
+                    sender,
+                    items
                 ),
             ),
         }
