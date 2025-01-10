@@ -45,7 +45,7 @@ export class ApproveAllItem extends NFTItem {
     }
 }
 
-export class ApproveAlleFact extends OperationFact<ApproveAllItem> {
+export class ApproveAllFact extends OperationFact<ApproveAllItem> {
     constructor(token: string, sender: string | Address, items: ApproveAllItem[]) {
         super(HINT.NFT.APPROVE_ALL.FACT, token, sender, items)
 

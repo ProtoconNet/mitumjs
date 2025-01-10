@@ -2,7 +2,7 @@ import { RegisterModelFact } from "./register-model"
 import { UpdateModelConfigFact } from "./update-model-config"
 import { MintItem, MintFact } from "./mint"
 import { ApproveItem, ApproveFact } from "./approve"
-import { ApproveAllItem, ApproveAlleFact } from "./approve-all"
+import { ApproveAllItem, ApproveAllFact } from "./approve-all"
 import { TransferItem, TransferFact } from "./transfer"
 import { AddSignatureItem, AddSignatureFact } from "./add-signature"
 
@@ -260,6 +260,41 @@ export class NFT extends ContractGenerator {
 
         return new Operation(this.networkID, fact)
     }
+
+    /**
+     * Generate `transfer` operation with multiple itmes to transfer NFTs from one address to another.
+     * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string[] | Address[]} [receiver] - The array of address of the receiver of the NFT.
+     * @param {string[] | number[] | Big[]} [nftIdx] - The array of index of the NFT (Indicate the order of minted).
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `transfer` operation with multiple items.
+     */
+    multiTransfer(
+        contract: string | Address | string[] | Address[],
+        sender: string | Address,
+        receiver: string[] | Address[],
+        nftIdx: string[] | number[] | Big[],
+        currency: string | CurrencyID,
+    ) {
+
+        ArrayAssert.check(receiver, "receiver").rangeLength(Config.ITEMS_IN_FACT).sameLength(nftIdx, "nftIdx")
+        const contractsArray = convertToArray(contract, receiver.length);
+
+        const items = Array.from({ length: receiver.length }).map((_, idx) => new TransferItem(
+            contractsArray[idx],
+            receiver[idx],
+            nftIdx[idx],
+            currency,
+        ));
+
+        return new Operation(this.networkID, new TransferFact(
+            TimeStamp.new().UTC(),
+            sender,
+            items
+        ))
+    }
+    
     
     /**
      * Generate `approve` operation to approve NFT to another account (approved).
@@ -299,7 +334,7 @@ export class NFT extends ContractGenerator {
      * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
      * @param {string | Address} [sender] - The address of the sender of the NFT.
      * @param {string[] | Address[]} [approved] - The array of address being granted approval to manage the NFT.
-     * @param {string[] | number[]} [nftIdx] - The index of the NFT (Indicate the order of minted).
+     * @param {string[] | number[] | Big[]} [nftIdx] - The index of the NFT (Indicate the order of minted).
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `approve` operation with multiple items.
      */
@@ -307,7 +342,7 @@ export class NFT extends ContractGenerator {
         contract: string | Address | string[] | Address[],
         sender: string | Address,
         approved: string[] | Address[],
-        nftIdx: string[] | number[],
+        nftIdx: string[] | number[] | Big[],
         currency: string | CurrencyID,
     ) {
         ArrayAssert.check(approved, "approved").rangeLength(Config.ITEMS_IN_FACT).sameLength(nftIdx, "nftIdx")
@@ -348,7 +383,7 @@ export class NFT extends ContractGenerator {
     ) {
         return new Operation(
             this.networkID,
-            new ApproveAlleFact(
+            new ApproveAllFact(
                 TimeStamp.new().UTC(),
                 sender,
                 [
@@ -362,7 +397,43 @@ export class NFT extends ContractGenerator {
             ),
         )
     }
-    
+
+    /**
+     * Generate `approve-all` operation with multiple items to grant or revoke approval for an account to manage all NFTs of the sender.
+     * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
+     * @param {string | Address} [sender] - The address of the sender giving or revoking approval.
+     * @param {string | Address} [approved] - The address being granted or denied approval to manage all NFTs.
+     * @param {"allow" | "cancel"} [mode] - The mode indicating whether to allow or cancel the approval.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `approve-all` operation with multiple items.
+     */
+    multiApproveAll(
+        contract: string | Address | string[] | Address[],
+        sender: string | Address,
+        approved: string[] | Address[],
+        mode: "allow" | "cancel",
+        currency: string | CurrencyID,
+    ) {
+        ArrayAssert.check(approved, "approved").rangeLength(Config.ITEMS_IN_FACT);
+        const contractsArray = convertToArray(contract, approved.length);
+
+        const items = Array.from({ length: approved.length }).map((_, idx) => new ApproveAllItem(
+            contractsArray[idx],
+            approved[idx],
+            mode,
+            currency,
+        ));
+
+        return new Operation(
+            this.networkID,
+            new ApproveAllFact(
+                TimeStamp.new().UTC(),
+                sender,
+                items
+            ),
+        )
+    }
+
     /**
      * Generate `add-signature` operation to signs an NFT as creator of the artwork.
      * @param {string | Address} [contract] - The contract's address.
