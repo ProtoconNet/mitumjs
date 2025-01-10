@@ -50,7 +50,6 @@ export class CreateDatasItem extends Item {
     }
 
     toString(): string {
-        // return this.dataKey.toString() + this.contract.toString() + this.dataValue.toString()
         return this.dataKey.toString() + this.contract.toString()
     }
 }

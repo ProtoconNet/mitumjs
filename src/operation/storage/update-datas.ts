@@ -67,12 +67,6 @@ export class UpdateDatasFact extends OperationFact<UpdateDatasItem> {
                 )
             }
         )
-        
-        // duplicated item check has already confirmed that contract-dataKey is unique.
-        // Assert.check(
-        //     new Set(items.map(item => item.dataKey.toString())).size === items.length,
-        //     MitumError.detail(ECODE.INVALID_ITEMS, "duplicate dataKey found in items")
-        // )
     }
 
     get operationHint() {
