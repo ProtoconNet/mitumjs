@@ -3,10 +3,10 @@ import { ContractFact, FactJson } from "../base"
 import { HINT } from "../../alias"
 import { Config } from "../../node"
 import { Address } from "../../key"
-import { SortFunc, hasOverlappingAddress } from "../../utils"
+import { SortFunc } from "../../utils"
 import { CurrencyID } from "../../common"
 import { Big, LongString } from "../../types"
-import { Assert, ECODE, MitumError } from "../../error"
+import { Assert, ECODE, MitumError, ArrayAssert } from "../../error"
 
 export class UpdateModelConfigFact extends ContractFact {
     readonly name: LongString
@@ -36,15 +36,9 @@ export class UpdateModelConfigFact extends ContractFact {
             MitumError.detail(ECODE.INVALID_FACT, "royalty out of range"),
         )
 
-        Assert.check(
-            Config.NFT.ADDRESS_IN_MINTER_WHITELIST.satisfy(this.minterWhitelist.length),
-            MitumError.detail(ECODE.INVALID_FACT, "whitelist length out of range"),
-        )
-
-        Assert.check(
-            hasOverlappingAddress(this.minterWhitelist),
-            MitumError.detail(ECODE.INVALID_FACT, "duplicate address found in whitelist"),
-        )
+        ArrayAssert.check(this.minterWhitelist, "whitelist")
+            .rangeLength(Config.NFT.ADDRESS_IN_MINTER_WHITELIST)
+            .noDuplicates()
 
         this.minterWhitelist.forEach(
             account => Assert.check(

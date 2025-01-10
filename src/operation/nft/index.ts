@@ -14,7 +14,7 @@ import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp } from "../../types"
-import { Assert, ECODE, MitumError } from "../../error"
+import { ArrayAssert, Assert, ECODE, MitumError } from "../../error"
 import { isSuccessResponse } from "../../utils"
 import { Config } from "../../node"
 
@@ -37,17 +37,6 @@ export class NFT extends ContractGenerator {
         delegateIP?: string | IP,
     ) {
         super(networkID, api, delegateIP)
-    }
-
-    private checkArrayLength(array: string[] | Address[] | LongString[], expectedLength: number, arrayName: string) {
-        Assert.check(
-            Array.isArray(array),
-            MitumError.detail(ECODE.INVALID_TYPE, `the ${arrayName} must be in array type`)
-        );
-        Assert.check(
-            array.length === expectedLength,
-            MitumError.detail(ECODE.INVALID_LENGTH, `length of ${arrayName} must be ${expectedLength}, but got ${array.length}`)
-        );
     }
 
     /**
@@ -157,11 +146,10 @@ export class NFT extends ContractGenerator {
     }
     
     /**
-     * Generate `mint` operation with multiple item for minting N number of NFT and assigns it to a receiver.
+     * Generate `mint` operation with multiple item for minting multiple NFT and assigns it to a receiver.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | Address} [receivers] - The array of address of the receiver of the newly minted NFT.
-     * @param {number} [n] - The number of NFT to be minted.
      * @param {string | LongString} [uri] - The array of URI for the NFTs to mint.
      * @param {string | LongString} [hash] - The array of hash for the NFT to mint.
      * @param {string | CurrencyID} [currency] - The currency ID.
@@ -172,21 +160,14 @@ export class NFT extends ContractGenerator {
         contract: string | Address,
         sender: string | Address,
         receivers: string[] | Address[],
-        n: number,
         uri: string[] | LongString[],
         hash: string[] | LongString[],
         currency: string | CurrencyID,
         creator: string | Address,
     ) {
-        Assert.check(
-            Config.ITEMS_IN_FACT.satisfy(n),
-            MitumError.detail(ECODE.INVALID_ITEMS, "n is out of range")
-        )
-        this.checkArrayLength(receivers, n, "receivers");
-        this.checkArrayLength(uri, n, "uri");
-        this.checkArrayLength(hash, n, "hash");
+        ArrayAssert.check(receivers, "receivers").rangeLength(Config.ITEMS_IN_FACT).sameLength(uri, "uri").sameLength(hash, "hash");
 
-        const items = Array.from({ length: n }).map((_, idx) => new MintItem(
+        const items = Array.from({ length: receivers.length }).map((_, idx) => new MintItem(
             contract,
             receivers[idx],
             hash[idx],
