@@ -11,8 +11,7 @@ export const privateKeyToPublicKey = (
       throw MitumError.detail(ECODE.INVALID_TYPE, "Expected Buffer or string as argument");
     }
 
-    privateKey =
-      privateKey.slice(0, 2) === "0x" ? privateKey.slice(2) : privateKey;
+    privateKey = privateKey.slice(0, 2) === "0x" ? privateKey.slice(2) : privateKey;
     privateBuf = Buffer.from(privateKey, "hex");
   } else {
     privateBuf = privateKey;
