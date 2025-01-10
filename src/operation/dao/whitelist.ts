@@ -2,8 +2,8 @@ import { HINT } from "../../alias"
 import { Hint } from "../../common"
 import { Config } from "../../node"
 import { Address } from "../../key"
-import { Assert, ECODE, MitumError } from "../../error"
-import { SortFunc, hasOverlappingAddress } from "../../utils"
+import { ArrayAssert } from "../../error"
+import { SortFunc } from "../../utils"
 import { Bool, HintedObject, IBuffer, IHintedObject } from "../../types"
 
 export class Whitelist implements IBuffer, IHintedObject {
@@ -16,15 +16,7 @@ export class Whitelist implements IBuffer, IHintedObject {
         this.active = Bool.from(active)
         this.accounts = accounts ? accounts.map(a => Address.from(a)) : []
 
-        Assert.check(
-            Config.DAO.ADDRESS_IN_WHITELIST.satisfy(accounts.length),
-            MitumError.detail(ECODE.DAO.INVALID_WHITELIST, "whitelist length out of range"),
-        )
-
-        Assert.check(
-            hasOverlappingAddress(accounts),
-            MitumError.detail(ECODE.DAO.INVALID_WHITELIST, "duplicate account found in whitelist")
-        )
+        ArrayAssert.check(accounts, "whitelist").rangeLength(Config.DAO.ADDRESS_IN_WHITELIST).noDuplicates()
     }
 
     toBuffer(): Buffer {
