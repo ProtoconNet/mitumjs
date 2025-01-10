@@ -30,3 +30,16 @@ export const calculateAllowance = (response: SuccessResponse, owner: string | Ad
     }
     
 }
+
+export const convertToArray = (contracts: string | Address | string[] | Address[], length: number): string[] | Address[] => {
+    if (typeof contracts === "string") {
+        return Array(length).fill(contracts);
+    } else if (Array.isArray(contracts)) {
+        if (contracts.length !== length) {
+            throw MitumError.detail(ECODE.INVALID_LENGTH, `length of contracts must be the same as length of the other array.`);
+        }
+        return contracts;
+    } else {
+        throw MitumError.detail(ECODE.INVALID_TYPE, `contracts must be a string or an array.`);
+    }
+}
