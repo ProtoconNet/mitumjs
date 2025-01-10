@@ -262,7 +262,7 @@ export class NFT extends ContractGenerator {
     }
     
     /**
-     * Generate `approve` operation to approves NFT to another account (approved).
+     * Generate `approve` operation to approve NFT to another account (approved).
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The address of the sender of the NFT.
      * @param {string | Address} [approved] - The address being granted approval to manage the NFT.
@@ -290,6 +290,42 @@ export class NFT extends ContractGenerator {
                         currency,
                     )
                 ]
+            )
+        )
+    }
+
+    /**
+     * Generate `approve` operation with multiple items to approve NFT to another account (approved).
+     * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
+     * @param {string | Address} [sender] - The address of the sender of the NFT.
+     * @param {string[] | Address[]} [approved] - The array of address being granted approval to manage the NFT.
+     * @param {string[] | number[]} [nftIdx] - The index of the NFT (Indicate the order of minted).
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `approve` operation with multiple items.
+     */
+    multiApprove(
+        contract: string | Address | string[] | Address[],
+        sender: string | Address,
+        approved: string[] | Address[],
+        nftIdx: string[] | number[],
+        currency: string | CurrencyID,
+    ) {
+        ArrayAssert.check(approved, "approved").rangeLength(Config.ITEMS_IN_FACT).sameLength(nftIdx, "nftIdx")
+        const contractsArray = convertToArray(contract, approved.length);
+
+        const items = Array.from({ length: approved.length }).map((_, idx) => new ApproveItem(
+            contractsArray[idx],
+            approved[idx],
+            nftIdx[idx],
+            currency,
+        ));
+
+        return new Operation(
+            this.networkID,
+            new ApproveFact(
+                TimeStamp.new().UTC(),
+                sender,
+                items
             )
         )
     }
