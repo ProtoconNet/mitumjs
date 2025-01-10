@@ -190,10 +190,24 @@ export class ArrayAssert {
         return this;
     }
 
+    sameLength(array2: any[], arrayName2: string) {
+        this.validateType();
+
+        if (!Array.isArray(array2)) {
+            throw MitumError.detail(ECODE.INVALID_TYPE, `the ${arrayName2} must be in array type`);
+        }
+
+        if (this.array.length !== array2.length) {
+            throw MitumError.detail(ECODE.INVALID_LENGTH, `The lengths of the ${this.arrayName} and ${arrayName2} must be the same.`);
+        }
+
+        return this;
+    }
+
     noDuplicates() {
         this.validateType();
 
-        const uniqueItems = new Set(this.array);
+        const uniqueItems = new Set(this.array.map((el) => {return el.toString()}));
         if (uniqueItems.size !== this.array.length) {
             throw MitumError.detail(ECODE.INVALID_LENGTH, `${this.arrayName} cannot contain duplicate elements`);
         }
