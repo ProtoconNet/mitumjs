@@ -555,7 +555,7 @@ export class Account extends KeyG {
      */
     async touch(
         privatekey: string | Key,
-        wallet: { wallet: AccountType, operation: Operation<TransferFact> }
+        wallet: { wallet: AccountType | AccountType[], operation: Operation<TransferFact> }
     ) {
         const op = wallet.operation;
         op.sign(privatekey);
