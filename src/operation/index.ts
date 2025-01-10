@@ -16,7 +16,7 @@ import { Config } from "../node"
 import { operation as api, getAPIData } from "../api"
 import { Key, KeyPair } from "../key"
 import { Generator, HintedObject, IP, SuccessResponse, ErrorResponse } from "../types"
-import { Assert, ECODE, MitumError } from "../error"
+import { Assert, ECODE, MitumError, ArrayAssert } from "../error"
 import { isOpFact, isHintedObject } from "../utils/typeGuard"
 import { isSuccessResponse } from "../utils"
 import { isBase58Encoded } from "../utils/typeGuard"
@@ -107,9 +107,9 @@ export class Operation extends Generator {
 	 */
 	async getMultiOperations(hashes: string[]) {
 		Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
-		Assert.check(Config.FACT_HASHES.satisfy(hashes.length),
-			MitumError.detail(ECODE.INVALID_LENGTH, "length of hash array is out of range")
-		);
+		ArrayAssert.check(hashes, "hashes")
+			.noDuplicates()
+			.rangeLength(Config.FACT_HASHES);
 		hashes.forEach((hash)=>{
 			Assert.check(isBase58Encoded(hash) && hash.length === 44,
 			MitumError.detail(ECODE.INVALID_FACT_HASH, "fact hash must be base58 encoded string with 44 length."))
