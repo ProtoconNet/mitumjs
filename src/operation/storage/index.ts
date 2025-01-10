@@ -11,6 +11,7 @@ import { contractApi, getAPIData } from "../../api"
 import { IP, TimeStamp as TS, URIString, LongString } from "../../types"
 import { Assert, MitumError, ECODE, ArrayAssert } from "../../error"
 import { Config } from "../../node"
+import { convertToArray } from "../../utils"
 
 export class Storage extends ContractGenerator {
     constructor(
@@ -78,7 +79,7 @@ export class Storage extends ContractGenerator {
 
     /**
      * Generate `create-datas` operation to create multiple data on the storage model.
-     * @param {string[] | Address[]} [contracts] - The array of contract's address.
+     * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string[]} [dataKeys] - The array with key of multiple data to create.
      * @param {string[] | LongString[]} [dataValues] - The array with value of the multiple data to record.
@@ -86,7 +87,7 @@ export class Storage extends ContractGenerator {
      * @returns `create-datas` operation
      */
     createMultiData(
-        contracts: string[] | Address[],
+        contract: string | Address | string[] | Address[],
         sender: string | Address,
         dataKeys: string[],
         dataValues: string[] | LongString[],
@@ -94,10 +95,11 @@ export class Storage extends ContractGenerator {
     ) {
         ArrayAssert.check(dataKeys, "dataKeys")
             .rangeLength(Config.ITEMS_IN_FACT)
-            .sameLength(contracts, "contracts")
             .sameLength(dataValues, "dataValues");
+
+        const contractsArray = convertToArray(contract, dataKeys.length);
         const items = dataKeys.map((_, idx) => new CreateDatasItem(
-            contracts[idx],
+            contractsArray[idx],
             currency,
             dataKeys[idx],
             dataValues[idx]
@@ -136,7 +138,7 @@ export class Storage extends ContractGenerator {
 
     /**
      * Generate `update-datas` operation to update multiple data on the storage model.
-     * @param {string[] | Address[]} [contracts] - The array of contract's address.
+     * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string[]} [dataKeys] - The array with key of multiple data to update.
      * @param {string[] | LongString[]} [dataValues] - The array with value of the multiple data to update.
@@ -144,7 +146,7 @@ export class Storage extends ContractGenerator {
      * @returns `update-datas` operation
      */
         updateMultiData(
-            contracts: string[] | Address[],
+            contract: string | Address | string[] | Address[],
             sender: string | Address,
             dataKeys: string[],
             dataValues: string[] | LongString[],
@@ -152,10 +154,11 @@ export class Storage extends ContractGenerator {
         ) {
             ArrayAssert.check(dataKeys, "dataKeys")
                 .rangeLength(Config.ITEMS_IN_FACT)
-                .sameLength(contracts, "contracts")
                 .sameLength(dataValues, "dataValues");
+                
+            const contractsArray = convertToArray(contract, dataKeys.length);
             const items = dataKeys.map((_, idx) => new UpdateDatasItem(
-                contracts[idx],
+                contractsArray[idx],
                 currency,
                 dataKeys[idx],
                 dataValues[idx]
