@@ -9,7 +9,8 @@ import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
 import { IP, TimeStamp as TS, URIString, LongString } from "../../types"
-import { Assert, MitumError, ECODE } from "../../error"
+import { Assert, MitumError, ECODE, ArrayAssert } from "../../error"
+import { Config } from "../../node"
 
 export class Storage extends ContractGenerator {
     constructor(
@@ -18,21 +19,6 @@ export class Storage extends ContractGenerator {
         delegateIP?: string | IP,
     ) {
         super(networkID, api, delegateIP)
-    }
-
-    private checkTwoArrayLength(array1: string[] | LongString[], array2: string[] | LongString[], arrayName1: string, arrayName2: string) {
-        Assert.check(
-            Array.isArray(array1),
-            MitumError.detail(ECODE.INVALID_TYPE, `the ${arrayName1} must be in array type`)
-        );
-        Assert.check(
-            Array.isArray(array2),
-            MitumError.detail(ECODE.INVALID_TYPE, `the ${arrayName2} must be in array type`)
-        );
-        Assert.check(
-            array1.length === array2.length,
-            MitumError.detail(ECODE.INVALID_LENGTH, `the lengths of two arrays ${arrayName1}, ${arrayName2} are not the same`)
-        );
     }
 
     /**
@@ -106,8 +92,10 @@ export class Storage extends ContractGenerator {
         dataValues: string[] | LongString[],
         currency: string | CurrencyID,
     ) {
-        this.checkTwoArrayLength(dataKeys, dataValues, "dataKeys", "dataValues");
-        this.checkTwoArrayLength(contracts.map((el)=>{return el.toString()}), dataKeys, "contracts", "dataKeys");
+        ArrayAssert.check(dataKeys, "dataKeys")
+            .rangeLength(Config.ITEMS_IN_FACT)
+            .sameLength(contracts, "contracts")
+            .sameLength(dataValues, "dataValues");
         const items = dataKeys.map((_, idx) => new CreateDatasItem(
             contracts[idx],
             currency,
@@ -162,8 +150,10 @@ export class Storage extends ContractGenerator {
             dataValues: string[] | LongString[],
             currency: string | CurrencyID,
         ) {
-            this.checkTwoArrayLength(dataKeys, dataValues, "dataKeys", "dataValues");
-            this.checkTwoArrayLength(contracts.map((el)=>{return el.toString()}), dataKeys, "contracts", "dataKeys");
+            ArrayAssert.check(dataKeys, "dataKeys")
+                .rangeLength(Config.ITEMS_IN_FACT)
+                .sameLength(contracts, "contracts")
+                .sameLength(dataValues, "dataValues");
             const items = dataKeys.map((_, idx) => new UpdateDatasItem(
                 contracts[idx],
                 currency,
