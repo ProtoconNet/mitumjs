@@ -145,26 +145,26 @@ export class Storage extends ContractGenerator {
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `update-datas` operation
      */
-        updateMultiData(
-            contract: string | Address | string[] | Address[],
-            sender: string | Address,
-            dataKeys: string[],
-            dataValues: string[] | LongString[],
-            currency: string | CurrencyID,
-        ) {
-            ArrayAssert.check(dataKeys, "dataKeys")
-                .rangeLength(Config.ITEMS_IN_FACT)
-                .sameLength(dataValues, "dataValues");
-                
-            const contractsArray = convertToArray(contract, dataKeys.length);
-            const items = dataKeys.map((_, idx) => new UpdateDatasItem(
-                contractsArray[idx],
-                currency,
-                dataKeys[idx],
-                dataValues[idx]
-            ));
-            return new Operation(this.networkID, new UpdateDatasFact(TS.new().UTC(), sender, items))
-        }
+    updateMultiData(
+        contract: string | Address | string[] | Address[],
+        sender: string | Address,
+        dataKeys: string[],
+        dataValues: string[] | LongString[],
+        currency: string | CurrencyID,
+    ) {
+        ArrayAssert.check(dataKeys, "dataKeys")
+            .rangeLength(Config.ITEMS_IN_FACT)
+            .sameLength(dataValues, "dataValues");
+            
+        const contractsArray = convertToArray(contract, dataKeys.length);
+        const items = dataKeys.map((_, idx) => new UpdateDatasItem(
+            contractsArray[idx],
+            currency,
+            dataKeys[idx],
+            dataValues[idx]
+        ));
+        return new Operation(this.networkID, new UpdateDatasFact(TS.new().UTC(), sender, items))
+    }
     
     /**
      * Generate `delete-data` operation to delete data on the storage model.
