@@ -15,7 +15,7 @@ import { CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp } from "../../types"
 import { ArrayAssert, Assert, ECODE, MitumError } from "../../error"
-import { isSuccessResponse } from "../../utils"
+import { isSuccessResponse, convertToArray } from "../../utils"
 import { Config } from "../../node"
 
 type collectionData = {
@@ -147,7 +147,7 @@ export class NFT extends ContractGenerator {
     
     /**
      * Generate `mint` operation with multiple item for minting multiple NFT and assigns it to a receiver.
-     * @param {string | Address} [contract] - The contract's address.
+     * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | Address} [receivers] - The array of address of the receiver of the newly minted NFT.
      * @param {string | LongString} [uri] - The array of URI for the NFTs to mint.
@@ -157,7 +157,7 @@ export class NFT extends ContractGenerator {
      * @returns `mint` operation.
      */
     multiMint(
-        contract: string | Address,
+        contract: string | Address | string[] | Address[],
         sender: string | Address,
         receivers: string[] | Address[],
         uri: string[] | LongString[],
@@ -166,9 +166,10 @@ export class NFT extends ContractGenerator {
         creator: string | Address,
     ) {
         ArrayAssert.check(receivers, "receivers").rangeLength(Config.ITEMS_IN_FACT).sameLength(uri, "uri").sameLength(hash, "hash");
+        const contractsArray = convertToArray(contract, receivers.length);
 
         const items = Array.from({ length: receivers.length }).map((_, idx) => new MintItem(
-            contract,
+            contractsArray[idx],
             receivers[idx],
             hash[idx],
             uri[idx],
