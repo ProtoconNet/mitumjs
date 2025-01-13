@@ -1,5 +1,6 @@
 import { Address } from "../key";
 import { SuccessResponse } from "../types"
+import { ECODE, MitumError } from "../error"
 
 export const calculateAllowance = (response: SuccessResponse, owner: string | Address, approved: string | Address) => {
     interface AllowanceItem {
@@ -25,7 +26,7 @@ export const calculateAllowance = (response: SuccessResponse, owner: string | Ad
         }
         return {'amount': amount};
     } else {
-        throw new Error(`Unknown error orccur: token policy or policy.approve_list does not exist`);
+        throw MitumError.detail(ECODE.UNKNOWN, `Unknown error orccur: token policy or policy.approve_list does not exist`);
     }
     
 }
