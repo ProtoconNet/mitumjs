@@ -9,7 +9,8 @@ import { CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
 import { isSuccessResponse  } from "../../utils"
 import { IP, TimeStamp as TS, URIString, LongString } from "../../types"
-import { Assert, MitumError, ECODE } from "../../error"
+import { Assert, MitumError, ECODE, ArrayAssert } from "../../error"
+import { Config } from "../../node"
 
 export class DID extends ContractGenerator {
     constructor(
@@ -99,22 +100,8 @@ export class DID extends ContractGenerator {
         txIds: string[] | LongString[],
         currency: string | CurrencyID,
     ) {
-        Assert.check(
-            publicKeys.length !== 0 && txIds.length !== 0, 
-            MitumError.detail(ECODE.INVALID_LENGTH, "The array must not be empty."),
-        )
-        Assert.check(
-            new Set(publicKeys.map(it => it.toString())).size === publicKeys.length,
-            MitumError.detail(ECODE.INVALID_ITEMS, "duplicated merkleRoot founded")
-        )
-        Assert.check(
-            new Set(txIds.map(it => it.toString())).size === txIds.length,
-            MitumError.detail(ECODE.INVALID_ITEMS, "duplicated txId founded")
-        )
-        Assert.check(
-            publicKeys.length === txIds.length, 
-            MitumError.detail(ECODE.INVALID_LENGTH, "The lengths of the publicKeys and txIds must be the same."),
-        )
+        ArrayAssert.check(publicKeys, "publicKeys").rangeLength(Config.ITEMS_IN_FACT).noDuplicates().sameLength(txIds, "txIds");
+        ArrayAssert.check(txIds, "txIds").noDuplicates();
         return new Operation(
             this.networkID,
             new MigrateDidFact(
