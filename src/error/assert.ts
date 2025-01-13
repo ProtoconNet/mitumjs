@@ -126,3 +126,96 @@ export class StringAssert {
         }
     }
 }
+
+export class ArrayAssert {
+    private array: any[];
+    private arrayName: string;
+    private validType: boolean = false;
+
+    constructor(array: any[], arrayName: string) {
+        this.array = array;
+        this.arrayName = arrayName;
+    }
+
+    private validateType() {
+        if (this.validType) return;
+
+        if (!Array.isArray(this.array)) {
+            throw MitumError.detail(ECODE.INVALID_TYPE, `the ${this.arrayName} must be in array type`);
+        }
+
+        this.validType = true;
+    }
+
+    notEmpty() {
+        this.validateType();
+
+        if (this.array.length === 0) {
+            throw MitumError.detail(ECODE.INVALID_LENGTH, `${this.arrayName} cannot be an empty array`);
+        }
+
+        return this;
+    }
+
+    exactLength(length: number) {
+        this.validateType();
+
+        if (this.array.length !== length) {
+            throw MitumError.detail(ECODE.INVALID_LENGTH, `the length of ${this.arrayName} must be ${length}, but got ${this.array.length}`)
+        }
+
+        return this;
+    }
+
+    rangeLength(rangeConfig: RangeConfig) {
+        this.validateType();
+
+        Assert.check(
+            rangeConfig.satisfy(this.array.length),
+            MitumError.detail(
+                ECODE.INVALID_LENGTH,
+                `The length of ${this.arrayName} must be between ${rangeConfig.min} and ${rangeConfig.max}, but got ${this.array.length}`
+            )
+        );
+        return this;
+    }
+
+    maxLength(max: number) {
+        this.validateType();
+
+        if (this.array.length > max) {
+            throw MitumError.detail(ECODE.INVALID_LENGTH, `the length of ${this.arrayName} must not exceed ${max}`);
+        }
+
+        return this;
+    }
+
+    sameLength(array2: any[], arrayName2: string) {
+        this.validateType();
+
+        if (!Array.isArray(array2)) {
+            throw MitumError.detail(ECODE.INVALID_TYPE, `the ${arrayName2} must be in array type`);
+        }
+
+        if (this.array.length !== array2.length) {
+            throw MitumError.detail(ECODE.INVALID_LENGTH, `The lengths of the ${this.arrayName} and ${arrayName2} must be the same.`);
+        }
+
+        return this;
+    }
+
+    noDuplicates() {
+        this.validateType();
+
+        const uniqueItems = new Set(this.array.map((el) => {return el.toString()}));
+        if (uniqueItems.size !== this.array.length) {
+            throw MitumError.detail(ECODE.INVALID_LENGTH, `${this.arrayName} cannot contain duplicate elements`);
+        }
+
+        return this;
+    }
+
+    static check(array: any[], arrayName: string) {
+        return new ArrayAssert(array, arrayName);
+    }
+}
