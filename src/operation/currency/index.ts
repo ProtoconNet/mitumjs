@@ -18,7 +18,7 @@ import { Amount, CurrencyID } from "../../common"
 import { Big, Generator, IP, TimeStamp } from "../../types"
 import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG } from "../../key"
 import { StringAssert, Assert, ArrayAssert, ECODE, MitumError } from "../../error"
-import { isSuccessResponse  } from "../../utils"
+import { isSuccessResponse } from "../../utils"
 import { Config } from "../../node"
 import { SUFFIX } from "../../alias"
 
@@ -242,6 +242,33 @@ export class Currency extends Generator {
                 [
                     new WithdrawItem(target, [new Amount(currency, amount)])
                 ],
+            ),
+        )
+    }
+
+    /**
+     * Generate a `withdraw` operation with multiple items for withdrawing currency from multiple contract accounts.
+     * Only the owner account of the contract can execute the operation.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string[] | Address[]} [targets] - The array of target contract account's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The withdrawal amount.
+     * @returns `withdraw`operation
+     */
+    multiWithdraw(
+        sender: string | Address,
+        targets: string[] | Address[],
+        currency: string | CurrencyID,
+        amount: string | number | Big,
+    ) { 
+        ArrayAssert.check(targets, "targets").rangeLength(Config.ITEMS_IN_FACT);
+        const items = targets.map((target) => { return new WithdrawItem(target, [new Amount(currency, amount)])});
+        return new Operation(
+            this.networkID,
+            new WithdrawFact(
+                TimeStamp.new().UTC(),
+                sender,                
+                items,
             ),
         )
     }
@@ -528,7 +555,7 @@ export class Account extends KeyG {
      */
     async touch(
         privatekey: string | Key,
-        wallet: { wallet: AccountType, operation: Operation<TransferFact> }
+        wallet: { wallet: AccountType | AccountType[], operation: Operation<TransferFact> }
     ) {
         const op = wallet.operation;
         op.sign(privatekey);
@@ -646,7 +673,7 @@ export class Account extends KeyG {
     }
 }
 
-export class Contract extends Generator {
+export class Contract extends KeyG {
     constructor(
         networkID: string,
         api?: string | IP,
@@ -689,6 +716,35 @@ export class Contract extends Generator {
                             [new Amount(currency, amount)],
                         )
                     ],
+                ),
+            ),
+        }
+    }
+    
+    /**
+     * Generate `n` number of key pairs and the corresponding `create-contract-account` operation with multiple items.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {number} [n] - The number of account to create.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
+     * @returns An object containing the wallet (key pairs) and the `create-contract-account` operation with multiple items.
+     */
+    createBatchWallet(
+        sender: string | Address,
+        n: number,
+        currency: string | CurrencyID,
+        amount: string | number | Big,
+    ): { wallet: AccountType[], operation: Operation<CreateContractAccountFact> } {
+        const keyArray = this.keys(n);
+        const items = keyArray.map((ks) => new CreateContractAccountItem(new Keys([new PubKey(ks.publickey,100)], 100),[new Amount(currency, amount)]));
+        return {
+            wallet: keyArray,
+            operation: new Operation(
+                this.networkID,
+                new CreateContractAccountFact(
+                    TimeStamp.new().UTC(),
+                    sender,
+                    items
                 ),
             ),
         }
@@ -799,7 +855,7 @@ export class Contract extends Generator {
      */
     async touch(
         privatekey: string | Key,
-        wallet: { wallet: AccountType, operation: Operation<CreateContractAccountFact> }
+        wallet: { wallet: AccountType | AccountType[], operation: Operation<CreateContractAccountFact> }
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         const op = wallet.operation
