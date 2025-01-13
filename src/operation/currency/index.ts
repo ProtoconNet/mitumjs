@@ -328,7 +328,6 @@ export class Account extends KeyG {
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @param {string | number | Big} [amount] - The initial amount. (to be paid by the sender)
      * @param {string} [seed] - (Optional) The seed for deterministic key generation. If not provided, a random key pair will be generated.
-     * @param {string | number | Big} [weight] - (Optional) The weight for the public key. If not provided, the default value is 100.
      * @returns An object containing the wallet(key pair) and the `transfer` operation.
      */
     createWallet(
@@ -336,10 +335,9 @@ export class Account extends KeyG {
         currency: string | CurrencyID,
         amount: string | number | Big,
         seed?: string,
-        weight?: string | number | Big,
     ): { wallet: AccountType, operation: Operation<TransferFact> } {
         const kp = seed ? KeyPair.fromSeed(seed, "mitum") : KeyPair.random("mitum")
-        const ks = new Keys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
+        const ks = new Keys([new PubKey(kp.publicKey, 100)], 100)
 
         return {
             wallet: {
