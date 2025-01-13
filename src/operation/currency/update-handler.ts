@@ -2,9 +2,9 @@ import { Fact, FactJson } from "../base"
 
 import { HINT } from "../../alias"
 import { Address } from "../../key"
-import { SortFunc, hasOverlappingAddress } from "../../utils"
+import { SortFunc } from "../../utils"
 import { CurrencyID } from "../../common"
-import { Assert, ECODE, MitumError } from "../../error"
+import { ArrayAssert } from "../../error"
 import { Config } from "../../node"
 
 export class UpdateHandlerFact extends Fact {
@@ -26,14 +26,10 @@ export class UpdateHandlerFact extends Fact {
         this.currency = CurrencyID.from(currency)
         this.handlers = handlers.map(a => Address.from(a))
         this._hash = this.hashing()
-
-        Assert.check(Config.CONTRACT_HANDLERS.satisfy(handlers.length),
-            MitumError.detail(ECODE.INVALID_LENGTH, "length of handlers array is out of range")
-        )
-        Assert.check(
-            hasOverlappingAddress(this.handlers),
-            MitumError.detail(ECODE.INVALID_FACT, "duplicate address found in handlers"),
-        )
+        
+        ArrayAssert.check(handlers, "handlers")
+            .rangeLength(Config.CONTRACT_HANDLERS)
+            .noDuplicates();
     }
 
     toBuffer(): Buffer {

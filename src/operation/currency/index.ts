@@ -17,7 +17,7 @@ import api, { getAPIData } from "../../api"
 import { Amount, CurrencyID } from "../../common"
 import { Big, Generator, IP, TimeStamp } from "../../types"
 import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG } from "../../key"
-import { StringAssert, Assert, ECODE, MitumError } from "../../error"
+import { StringAssert, Assert, ArrayAssert, ECODE, MitumError } from "../../error"
 import { isSuccessResponse  } from "../../utils"
 import { Config } from "../../node"
 import { SUFFIX } from "../../alias"
@@ -205,14 +205,7 @@ export class Currency extends Generator {
         currency: string | CurrencyID,
         amounts: string[] | number[] | Big[],
     ) {
-        Assert.check(
-            receivers.length !== 0 && amounts.length !== 0, 
-            MitumError.detail(ECODE.INVALID_LENGTH, "The array must not be empty."),
-        )
-        Assert.check(
-            receivers.length === amounts.length, 
-            MitumError.detail(ECODE.INVALID_LENGTH, "The lengths of the receivers and amounts must be the same."),
-        )
+        ArrayAssert.check(receivers, "receivers").rangeLength(Config.ITEMS_IN_FACT).noDuplicates().sameLength(amounts, "amounts");
         return new Operation(
             this.networkID,
             new TransferFact(
