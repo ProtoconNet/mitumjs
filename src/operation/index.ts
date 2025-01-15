@@ -83,7 +83,7 @@ export class Operation extends Generator {
 	 * Get multiple operations by array of fact hashes.
 	 * Returns excluding operations that have not yet been recorded.
 	 * @async
-	 * @param {string[]} [hashes] - Array of fact hashes, fact hash must be base58 encoded string with 44 length.
+	 * @param {string[]} [hashes] - Array of fact hashes, fact hash must be base58 encoded string with 43 or 44 length.
 	 * @returns The `data` of `SuccessResponse` is array of infomation of the operations:
 	 * - `_hint`: Hint for the operation,
 	 * - `hash`: Hash for the fact,
@@ -104,8 +104,8 @@ export class Operation extends Generator {
 			.noDuplicates()
 			.rangeLength(Config.FACT_HASHES);
 		hashes.forEach((hash)=>{
-			Assert.check(isBase58Encoded(hash) && hash.length === 44,
-			MitumError.detail(ECODE.INVALID_FACT_HASH, "fact hash must be base58 encoded string with 44 length."))
+			Assert.check(isBase58Encoded(hash) && (hash.length === 44 || hash.length === 43),
+			MitumError.detail(ECODE.INVALID_FACT_HASH, "fact hash must be base58 encoded string with 43 or 44 length."))
 		});
 		const response = await getAPIData(() => api.getMultiOperations(this.api, hashes, this.delegateIP));
 		if (isSuccessResponse(response) && Array.isArray(response.data)) {
