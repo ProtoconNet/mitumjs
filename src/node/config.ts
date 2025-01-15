@@ -62,7 +62,7 @@ export const Config = {
 	AMOUNTS_IN_ITEM: getRangeConfig(1, 10),
 	ITEMS_IN_FACT: getRangeConfig(1, 100),
 	OP_SIZE: getRangeConfig(1, 262144),
-	FACT_HASHES: getRangeConfig(1, 44),
+	FACT_HASHES: getRangeConfig(1, 40),
 	KEY: {
 		MITUM: {
 			PRIVATE: getRangeConfig(67),
