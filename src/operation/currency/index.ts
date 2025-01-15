@@ -252,17 +252,17 @@ export class Currency extends Generator {
      * @param {string | Address} [sender] - The sender's address.
      * @param {string[] | Address[]} [targets] - The array of target contract account's address.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @param {string | number | Big} [amount] - The withdrawal amount.
+     * @param {string | number | Big} [amounts] - The array of withdrawal amount.
      * @returns `withdraw`operation
      */
     multiWithdraw(
         sender: string | Address,
         targets: string[] | Address[],
         currency: string | CurrencyID,
-        amount: string | number | Big,
+        amounts: string[] | number[] | Big[],
     ) { 
-        ArrayAssert.check(targets, "targets").rangeLength(Config.ITEMS_IN_FACT);
-        const items = targets.map((target) => { return new WithdrawItem(target, [new Amount(currency, amount)])});
+        ArrayAssert.check(targets, "targets").rangeLength(Config.ITEMS_IN_FACT).sameLength(amounts, "amounts");
+        const items = targets.map((el, idx) => { return new WithdrawItem(el, [new Amount(currency, amounts[idx])])});
         return new Operation(
             this.networkID,
             new WithdrawFact(
@@ -720,7 +720,7 @@ export class Contract extends KeyG {
             ),
         }
     }
-
+    
     /**
      * Generate `n` number of key pairs and the corresponding `create-contract-account` operation with multiple items.
      * @param {string | Address} [sender] - The sender's address.
@@ -855,7 +855,7 @@ export class Contract extends KeyG {
      */
     async touch(
         privatekey: string | Key,
-        wallet: { wallet: AccountType, operation: Operation<CreateContractAccountFact> }
+        wallet: { wallet: AccountType | AccountType[], operation: Operation<CreateContractAccountFact> }
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         const op = wallet.operation
