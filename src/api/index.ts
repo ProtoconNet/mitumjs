@@ -7,7 +7,7 @@ import operation from "./operation"
 import models from "./models"
 
 import { SuccessResponse, ErrorResponse } from "../types"
-import { assignCodeFromErrorMessage } from "../error"
+import { assignCodeFromErrorMessage, ECODE, MitumError } from "../error"
 
 const currency = models.currency
 const contractApi = models.contract
@@ -65,7 +65,7 @@ export async function getAPIData(f: () => Promise<AxiosResponse>, _links? : bool
             };
             return parsedError;
         } else {
-            throw new Error(`Unknown error orccur!\n${error}`);
+            throw MitumError.detail(ECODE.UNKNOWN, `Unknown error orccur!\n${error}`);
         }
     }
 }
