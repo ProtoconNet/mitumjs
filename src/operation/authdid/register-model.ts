@@ -18,11 +18,6 @@ export class RegisterModelFact extends ContractFact {
         currency: string | CurrencyID,
     ) {
         super(HINT.AUTH_DID.REGISTER_MODEL.FACT, token, sender, contract, currency)
-        
-        // Assert.check(
-        //     Config.DMILE.PROJECT.satisfy(project.toString().length),
-        //     MitumError.detail(ECODE.INVALID_FACT, `project length out of range, should be between ${Config.DMILE.PROJECT.min} to ${Config.DMILE.PROJECT.max}`),
-        // )
 
         this.didMethod = LongString.from(didMethod)
         this._hash = this.hashing()
