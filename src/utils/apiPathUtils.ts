@@ -1,8 +1,9 @@
+import { ECODE, MitumError } from "../error"
 export const delegateUri = (delegateIP: string) => `${delegateIP}?uri=`
 
 const validatePositiveInteger = (val: any, name: string) => {
     if (!Number.isSafeInteger(val) || val < 0) {
-        throw new Error(`${name} must be a integer >= 0`)
+        throw MitumError.detail(ECODE.INVALID_FLOAT, `${name} must be a integer >= 0`)
     }
 }
 
@@ -21,7 +22,9 @@ export const apiPathWithParams = (apiPath: string, limit?: number, offset?: numb
         query2 = `offset=${offset}`;
     }
     if (reverse !== undefined) {
-        if (reverse !== true) {throw new Error("reverse must be true(bool)")}
+        if (reverse !== true) {
+            throw MitumError.detail(ECODE.INVALID_TYPE, "reverse must be true(bool)");
+        }
         query3 = `reverse=1`;
     }
     const query = [query1, query2, query3].filter(str => str !== undefined).join("&");
@@ -33,7 +36,7 @@ export const apiPathWithHashParams = (apiPath: string, factHash?:string, limit?:
 
     if (factHash !== undefined) {
         if (typeof(factHash) !== "string") {
-            {throw new Error("factHash must be a string")}
+            throw MitumError.detail(ECODE.INVALID_TYPE, "factHash must be a string");
         }
         hash = `facthash=${factHash}`;
     }
@@ -46,7 +49,9 @@ export const apiPathWithHashParams = (apiPath: string, factHash?:string, limit?:
         query2 = `offset=${offset}`;
     }
     if (reverse !== undefined) {
-        if (reverse !== true) {throw new Error("reverse must be true(bool)")}
+        if (reverse !== true) {
+            throw MitumError.detail(ECODE.INVALID_TYPE, "reverse must be true(bool)");
+        }
         query3 = `reverse=1`;
     }
     const query = [hash, query1, query2, query3].filter(str => str !== undefined).join("&");
@@ -60,14 +65,18 @@ export const apiPathWithParamsExt = (apiPath: string, limit?: number, offset?: [
         query1 = `limit=${limit}`;
     }
     if (offset !== undefined) {
-        if (!isNumberTuple(offset)) {throw new Error("offset must be a tuple with number")}
+        if (!isNumberTuple(offset)) {
+            throw MitumError.detail(ECODE.INVALID_TYPE, "offset must be a tuple with number");
+        }
 
         validatePositiveInteger(offset[0], "offset element");
         validatePositiveInteger(offset[1], "offset element");
         query2 = `offset=${offset[0]},${offset[1]}`;
     }
     if (reverse !== undefined) {
-        if (reverse !== true) {throw new Error("reverse must be true(bool)")}
+        if (reverse !== true) {
+            throw MitumError.detail(ECODE.INVALID_TYPE, "reverse must be true(bool)");
+        }
         query3 = `reverse=1`;
     }
     const query = [query1, query2, query3].filter(str => str !== undefined).join("&");

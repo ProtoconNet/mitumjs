@@ -229,7 +229,7 @@ export class OperationResponse extends Operation {
 
 		const validatePositiveInteger = (val: any, name: string) => {
 			if (!Number.isSafeInteger(val) || val <= 0) {
-				throw new Error(`${name} must be a positive integer`)
+				throw MitumError.detail(ECODE.INVALID_FLOAT, `${name} must be a positive integer`);
 			}
 		}
 		validatePositiveInteger(maxTimeout, "timeout");
@@ -237,11 +237,11 @@ export class OperationResponse extends Operation {
 	
 		if (maxTimeout <= timeoutInterval) {
 			if (interval === undefined) {
-				throw new Error("default interval is 1000, so timeout must be greater than that.");
+				throw MitumError.detail(ECODE.INVALID_FLOAT, "default interval is 1000, so timeout must be greater than that.");
 			} else if (timeout === undefined) {
-				throw new Error("default timeout is 10000, so interval must be less than that.");
+				throw MitumError.detail(ECODE.INVALID_FLOAT, "default timeout is 10000, so interval must be less than that.");
 			} else {
-				throw new Error("timeout must be larger than interval.");
+				throw MitumError.detail(ECODE.INVALID_FLOAT, "timeout must be larger than interval.");
 			}
 		}
 

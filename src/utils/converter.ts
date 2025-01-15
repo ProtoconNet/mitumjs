@@ -1,4 +1,5 @@
 import { getPublicKey } from "@noble/secp256k1"
+import { ECODE, MitumError } from "../error"
 
 export const privateKeyToPublicKey = (
   privateKey: string | Buffer
@@ -7,7 +8,7 @@ export const privateKeyToPublicKey = (
 
   if (!Buffer.isBuffer(privateKey)) {
     if (typeof privateKey !== "string") {
-      throw new Error("Expected Buffer or string as argument");
+      throw MitumError.detail(ECODE.INVALID_TYPE, "Expected Buffer or string as argument");
     }
 
     privateKey =
