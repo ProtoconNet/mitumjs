@@ -2,8 +2,11 @@ import { RegisterModelFact } from "./register-model"
 import { MintFact } from "./mint"
 import { BurnFact } from "./burn"
 import { TransferFact } from "./transfer"
+import { TransfersFact, TransfersItem } from "./transfers"
 import { ApproveFact } from "./approve"
+import { ApprovesFact, ApprovesItem } from "./approves"
 import { TransferFromFact } from "./transfer-from"
+import { TransfersFromFact, TransfersFromItem } from "./transfers-from"
 
 import { ContractGenerator, Operation } from "../base"
 
@@ -12,8 +15,10 @@ import { CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
 import { Big, IP, LongString, TimeStamp } from "../../types"
 import { calculateAllowance } from "../../utils/contractUtils"
-import { isSuccessResponse } from "../../utils"
-import { Assert, ECODE, MitumError } from "../../error"
+import { isSuccessResponse, convertToArray } from "../../utils"
+import { Assert, MitumError, ECODE, ArrayAssert } from "../../error"
+import { Config } from "../../node"
+
 export class Point extends ContractGenerator {
     constructor(
         networkID: string,
@@ -143,6 +148,42 @@ export class Point extends ContractGenerator {
     }
 
     /**
+     * Generate an `transfers` operation with multi items to transfer points from the sender to a receiver.
+     * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string[] | Address[]} [receiver] - The array of receiver's address.
+     * @param {string[] | number[] | Big[]} [amount] - The array of amounts to transfer.
+     * @returns `transfers` operation with multi items.
+     */
+    multiTransfer(
+        contract: string | Address | string[] | Address[],
+        sender: string | Address,
+        currency: string | CurrencyID,
+        receiver: string[] | Address[],
+        amount: string[] | number[] | Big[],
+    ) {
+        ArrayAssert.check(receiver, "receiver").rangeLength(Config.ITEMS_IN_FACT).sameLength(amount, "amount");
+
+        const contractsArray = convertToArray(contract, receiver.length);
+        const items = Array.from({ length: receiver.length }).map((_, idx) => new TransfersItem(
+            contractsArray[idx],
+            receiver[idx],
+            amount[idx],
+            currency,
+        ));
+
+        return new Operation(
+            this.networkID,
+            new TransfersFact(
+                TimeStamp.new().UTC(),
+                sender,
+                items
+            )
+        )
+    }
+
+    /**
      * Generate a `transfer-from` operation for transferring points from target account to receiver.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
@@ -175,6 +216,48 @@ export class Point extends ContractGenerator {
     }
 
     /**
+     * Generate a `transfers-from` operation with multi item to transfer points from targets account to receivers.
+     * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string[] | Address[]} [receiver] - The array of receiver's addresses.
+     * @param {string[] | Address[]} [target] - The array of target account's addresses.
+     * @param {string[] | number[] | Big[]} [amount] - The array of amounts to transfer.
+     * @returns `transfer-from` operation.
+     */
+    multiTransferFrom(
+        contract: string | Address | string[] | Address[],
+        sender: string | Address,
+        currency: string | CurrencyID,
+        receiver: string[] | Address[],
+        target: string[] | Address[],
+        amount: string[] | number[] | Big[],
+    ) {
+        ArrayAssert.check(receiver, "receiver")
+            .rangeLength(Config.ITEMS_IN_FACT)
+            .sameLength(amount, "amount")
+            .sameLength(target, "target");
+        
+        const contractsArray = convertToArray(contract, receiver.length);
+        const items = Array.from({ length: receiver.length }).map((_, idx) => new TransfersFromItem(
+            contractsArray[idx],
+            receiver[idx],
+            target[idx],
+            amount[idx],
+            currency,
+        ));
+    
+        return new Operation(
+            this.networkID,
+            new TransfersFromFact(
+                TimeStamp.new().UTC(),
+                sender,
+                items
+            )
+        )
+    }
+
+    /**
      * Generate an `approve` operation for approving certain amount points to approved account.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
@@ -199,6 +282,42 @@ export class Point extends ContractGenerator {
                 currency,
                 approved,
                 amount,
+            )
+        )
+    }
+
+    /**
+     * Generate an `approves` operation with multi items to approve certain amount points to approved account.
+     * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @param {string[] | Address[]} [approved] - The array of addresses to approve.
+     * @param {string[] | number[] | Big[]} [amount] - The array amounts to approve.
+     * @returns `approves` operation with multi item
+     */
+    multiApprove(
+        contract: string | Address | string[] | Address[],
+        sender: string | Address,
+        currency: string | CurrencyID,
+        approved: string[] | Address[],
+        amount: string[] | number[] | Big[],
+    ) {
+        ArrayAssert.check(approved, "approved").rangeLength(Config.ITEMS_IN_FACT).sameLength(amount, "amount");
+
+        const contractsArray = convertToArray(contract, approved.length);
+        const items = Array.from({ length: approved.length }).map((_, idx) => new ApprovesItem(
+            contractsArray[idx],
+            approved[idx],
+            amount[idx],
+            currency,
+        ));
+
+        return new Operation(
+            this.networkID,
+            new ApprovesFact(
+                TimeStamp.new().UTC(),
+                sender,
+                items
             )
         )
     }
