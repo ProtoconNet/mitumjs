@@ -118,41 +118,77 @@ export class AuthDID extends ContractGenerator {
         );
     }
 
+    /**
+     * Creates an AsymKeyAuth object with the provided authentication details.
+     * @param {string} id - The unique identifier for the authentication.
+     * @param {"EcdsaSecp256k1VerificationKey2019"} authType - The type of the asymmetric key used for verification.
+     * @param {string} controller - The controller responsible for the authentication.
+     * @param {string} publicKey - The public key associated with the authentication.
+     * @returns {object} An asymkeyAuth object.
+     */
     writeAsymkeyAuth(
         id: string,
-        authType: "Ed25519VerificationKey2018" | "EcdsaSecp256k1VerificationKey2019",
+        authType: "EcdsaSecp256k1VerificationKey2019",
         controller: string,
         publicKey: string,
     ) {
-        return new AsymKeyAuth(id, authType, controller, publicKey)
+        const auth = new AsymKeyAuth(id, authType, controller, publicKey);
+        return auth.toHintedObject() as asymkeyAuth;
     };
 
+    /**
+     * Creates a SocialLoginAuth object with the provided authentication details.
+     * @param {string} id - The unique identifier for the authentication.
+     * @param {string} controller - The controller responsible for the authentication.
+     * @param {string} serviceEndpoint - The endpoint URL for the social login service.
+     * @param {string} verificationMethod - The verification method used for authentication.
+     * @returns {object} A socialLoginAuth object.
+     */
     writeSocialLoginAuth(
         id: string,
         controller: string,
         serviceEndpoint: string,
         verificationMethod: string,
     ) {
-        return new SocialLoginAuth(id, controller, serviceEndpoint, verificationMethod)
+        const auth = new SocialLoginAuth(id, controller, serviceEndpoint, verificationMethod);
+        return auth.toHintedObject() as socialLoginAuth;
     };
 
+    /**
+     * Creates a DID Document with the provided context, DID ID, authentications, and service details.
+     * Use return value of this method for updateDocument()
+     * @param {string} didContext - The context for the DID document.
+     * @param {string} didID - The unique identifier for the DID.
+     * @param {(asymkeyAuth | socialLoginAuth)[]} authentications - An array of authentication objects. 
+     *        Each object must be either an instance of `asymkeyAuth` or `socialLoginAuth`.
+     * @param {string} serviceID - The identifier for the associated service.
+     * @param {string} serviceType - The type of the service (e.g., `LinkedDataProof`, `BlockchainService`).
+     * @param {string} serviceEndPoint - The endpoint URL of the service.
+     * @returns {object} A hinted object representation of the created DID Document. Use it for updateDocument().
+     */
     writeDocument(
         didContext: string,
         didID: string,
-        authentications: (SocialLoginAuth | AsymKeyAuth)[],
-        serivceID: string,
+        authentications: (asymkeyAuth | socialLoginAuth)[],
+        serviceID: string,
         serviceType: string,
         serviceEndPoint: string
     ) {
-        return new Document(
+        const document = new Document(
             didContext,
             didID,
-            authentications,
+            authentications.map((auth) =>
+                "proof" in auth
+                    ? (validateDID(auth.proof.verificationMethod.toString(), true),
+                       new SocialLoginAuth(auth.id, auth.controller, auth.serviceEndpoint, auth.proof.verificationMethod))
+                    : new AsymKeyAuth(auth.id, auth.authType, auth.controller, auth.publicKey)
+            ),
             [],
-            serivceID,
+            serviceID,
             serviceType,
             serviceEndPoint
-        )
+        );
+        return document.toHintedObject() as document;
     };
     
     /**
