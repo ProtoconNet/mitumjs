@@ -1,6 +1,6 @@
 {
   "name": "@mitumjs/mitumjs-account-abstraction",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "framework for mitum network",
   "main": "dist/bundle.cjs.cjs",
   "module": "dist/bundle.esm.mjs",
