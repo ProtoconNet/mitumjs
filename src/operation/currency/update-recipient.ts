@@ -2,9 +2,9 @@ import { Fact, FactJson } from "../base"
 
 import { HINT } from "../../alias"
 import { Address } from "../../key"
-import { SortFunc, hasOverlappingAddress } from "../../utils"
+import { SortFunc } from "../../utils"
 import { CurrencyID } from "../../common"
-import { Assert, ECODE, MitumError } from "../../error"
+import { ArrayAssert } from "../../error"
 import { Config } from "../../node"
 
 export class UpdateRecipientFact extends Fact {
@@ -27,14 +27,9 @@ export class UpdateRecipientFact extends Fact {
         this.recipients = recipients.map(a => Address.from(a))
         this._hash = this.hashing()
         
-		Assert.check(Config.CONTRACT_RECIPIENTS.satisfy(recipients.length),
-			MitumError.detail(ECODE.INVALID_LENGTH, "length of recipients array is out of range")
-		);
-
-        Assert.check(
-            hasOverlappingAddress(this.recipients),
-            MitumError.detail(ECODE.INVALID_FACT, "duplicate address found in recipients"),
-        )
+        ArrayAssert.check(recipients, "recipients")
+            .rangeLength(Config.CONTRACT_RECIPIENTS)
+            .noDuplicates();
     }
 
     toBuffer(): Buffer {
