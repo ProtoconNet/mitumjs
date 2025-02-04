@@ -244,6 +244,12 @@ export const DCODE = {
         description: "The private key does not match the address or node sign required or the signatures for the multiSig account do not meet the threshold",
         subject: ""
     },
+    IV_ALTERSIGN: {
+        code: "D202",
+        keyword: ["Invalid user signing"],
+        description: "Alternative signature for account abstraction operation is not valid",
+        subject: ""
+    },    
     // Related to authorization
     NO_AUTH: {
         code: "D301",
@@ -255,6 +261,12 @@ export const DCODE = {
         code: "D302",
         keyword: ["Contract account not allowed"],
         description: "A contract account cannot be used as sender, receiver etc.",
+        subject: ""
+    },
+    IV_AUTH_TYPE: {
+        code: "D303",
+        keyword: ["Invalid Auth Type"],
+        description: "Occurs when there is a problem with authentication_id in the account abstraction operation.(If verificationMethod of social_login authentication is another social_login)",
         subject: ""
     },
     // Insufficient balance
