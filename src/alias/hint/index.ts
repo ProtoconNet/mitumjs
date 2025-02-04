@@ -8,6 +8,7 @@ import TIMESTAMP from "./timestamp"
 import TOKEN from "./token"
 import POINT from "./point"
 import STORAGE from "./storage"
+import PAYMENT from "./payment"
 
 export default {
     FACT_SIGN: "base-fact-sign",
@@ -20,5 +21,6 @@ export default {
     TIMESTAMP,
     TOKEN,
     POINT,
-    STORAGE
+    STORAGE,
+    PAYMENT
 }
