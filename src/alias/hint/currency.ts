@@ -49,5 +49,10 @@ export default {
     UPDATE_HANDLER: {
         FACT: "mitum-extension-update-handler-operation-fact",
         OPERATION: "mitum-extension-update-handler-operation",
+    },
+    EXTENSION: {
+        AUTHENTICATION: "mitum-extension-base-authentication",
+        PROXY_PAYER: "mitum-extension-base-proxy-payer",
+        SETTLEMENT: "mitum-extension-base-settlement"
     }
 }

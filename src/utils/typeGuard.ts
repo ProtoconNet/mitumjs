@@ -8,6 +8,27 @@ export const isHintedObject = (object: any): object is HintedObject => {
     return '_hint' in object && 'fact' in object && 'hash' in object;
 }
 
+export const isHintedObjectFromUserOp = (object: any): object is HintedObject => {
+    if (
+        '_hint' in object &&
+        'fact' in object &&
+        'hash' in object &&
+        'extension' in object
+    ) {
+        const { authentication, settlement, proxy_payer } = object.extension;
+        return (
+            '_hint' in authentication &&
+            'contract' in authentication &&
+            'authentication_id' in authentication &&
+            'proof_data' in authentication &&
+            '_hint' in settlement &&
+            'op_sender' in settlement &&
+            (proxy_payer ? '_hint' in proxy_payer && 'proxy_payer' in proxy_payer : true)
+        );
+    }
+    return false;
+};
+
 export const isErrorResponse = (response: ErrorResponse | SuccessResponse): response is ErrorResponse => {
     return 'error_code' in response;
 }
