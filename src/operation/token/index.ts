@@ -122,7 +122,7 @@ export class Token extends ContractGenerator {
      * Generate an `transfer` operation for transferring tokens from the sender to a receiver.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
-     * @param {string | CurrencyID} [currency - The currency ID.
+     * @param {string | CurrencyID} [currency] - The currency ID.
      * @param {string | Address} [receiver] - The receiver's address.
      * @param {string | number | Big} [amount] - The amount to transfer.
      * @returns `transfer` operation.
