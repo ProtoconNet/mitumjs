@@ -7,7 +7,7 @@ import {
     NFT,
     DAO, KYC, STO,
     TimeStamp, Credential,
-    Token, Point, Storage,
+    Token, Point, Storage, Payment,
     Operation,
     Signer,
 } from "./operation"
@@ -31,6 +31,7 @@ export class Mitum extends Generator {
     private _token: Token
     private _point: Point
     private _storage: Storage
+    private _payment: Payment
 
     public ECODE: Object
     public PCODE: Object
@@ -58,6 +59,7 @@ export class Mitum extends Generator {
         this._token = new Token(this.networkID, this.api, this.delegateIP)
         this._point = new Point(this.networkID, this.api, this.delegateIP)
         this._storage = new Storage(this.networkID, this.api, this.delegateIP)
+        this._payment = new Payment(this.networkID, this.api, this.delegateIP)
 
         this.ECODE = ECODE;
         this.PCODE = PCODE;
@@ -84,6 +86,7 @@ export class Mitum extends Generator {
         this._token = new Token(this.networkID, this.api, this.delegateIP)
         this._point = new Point(this.networkID, this.api, this.delegateIP)
         this._storage = new Storage(this.networkID, this.api, this.delegateIP)
+        this._payment = new Payment(this.networkID, this.api, this.delegateIP)
 
         this._utils = new Utils();
     }
@@ -150,6 +153,10 @@ export class Mitum extends Generator {
 
     get storage(): Storage {
         return this._storage
+    }
+
+    get payment(): Payment {
+        return this._payment
     }
 
     get utils(): Utils {
