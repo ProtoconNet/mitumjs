@@ -8,6 +8,7 @@ import timestamp from "./timestamp"
 import token from "./token"
 import point from "./point"
 import storage from "./storage"
+import payment from "./payment"
 
 export default {
     currency,
@@ -20,6 +21,7 @@ export default {
         timestamp,
         token,
         point,
-        storage
+        storage,
+        payment
     },
 }
