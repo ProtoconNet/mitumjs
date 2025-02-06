@@ -1,0 +1,82 @@
+import { FactJson } from "../base"
+import { PaymentFact } from "./fact"
+import { Big } from "../../types"
+import { HINT } from "../../alias"
+import { Address } from "../../key"
+import { CurrencyID } from "../../common"
+import { Assert, ECODE, MitumError } from "../../error"
+
+export class DepositFact extends PaymentFact {
+    readonly amount: Big;
+    readonly transfer_limit: Big;
+    readonly start_time: Big;
+    readonly end_time: Big;
+    readonly duration: Big;
+
+    constructor(
+        token: string,
+        sender: string | Address,
+        contract: string | Address,
+        currency: string | CurrencyID,
+        amount: string | number,
+        transfer_limit: string | number,
+        start_time: string | number,
+        end_time: string | number,
+        duration: string | number
+    ) {
+        super(HINT.PAYMENT.DEPOSIT.FACT, token, sender, contract, currency)
+        this.amount = Big.from(amount);
+        this.transfer_limit = Big.from(transfer_limit);
+        this.start_time = Big.from(start_time);
+        this.end_time = Big.from(end_time);
+        this.duration = Big.from(duration);
+
+        if (this.start_time.v !== 0 && this.end_time.v !== 0 && this.duration.v !== 0) {
+            Assert.check(
+                this.start_time.v < this.end_time.v,
+                MitumError.detail(ECODE.INVALID_FACT, "end_time must be greater than start_time"),
+            )
+    
+            Assert.check(
+                this.duration.v < this.end_time.v - this.start_time.v,
+                MitumError.detail(ECODE.INVALID_FACT, "duration must be less than (end_time - start_time)"),
+            )
+        }
+
+        if (this.transfer_limit.v === 0 && this.start_time.v === 0 && this.end_time.v === 0 && this.duration.v === 0) {
+            Assert.check(
+                this.amount.overZero(),
+                MitumError.detail(ECODE.INVALID_FACT, "if (transfer_limit, start_time, end_time, duration) are (0,0,0,0), then amount must be over zero"),
+            );
+        }
+        
+        this._hash = this.hashing();
+    }
+
+    toBuffer(): Buffer {
+        return Buffer.concat([
+            super.toBuffer(),
+            this.amount.toBuffer(),
+            this.transfer_limit.toBuffer(),
+            this.start_time.toBuffer("fill"),
+            this.end_time.toBuffer("fill"),
+            this.duration.toBuffer("fill"),
+            this.currency.toBuffer(),
+        ])
+    }
+
+    toHintedObject(): FactJson {
+        return {
+            ...super.toHintedObject(),
+            amount: this.amount.toString(),
+            transfer_limit: this.transfer_limit.toString(),
+            start_time: this.start_time.v,
+            end_time: this.end_time.v,
+            duration: this.duration.v,
+        }
+    }
+
+    get operationHint() {
+        return HINT.PAYMENT.DEPOSIT.OPERATION
+    }
+}
