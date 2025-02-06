@@ -7,9 +7,9 @@ export default {
         FACT: "mitum-payment-deposit-operation-fact",
         OPERATION: "mitum-payment-deposit-operation",
     },
-    UPDATE_ACCOUNT_INFO: {
-        FACT: "mitum-payment-update-account-info-fact-operation-fact",
-        OPERATION: "mitum-payment-update-account-info-fact-operation",
+    WITHDRAW: {
+        FACT: "mitum-payment-withdraw-operation-fact",
+        OPERATION: "mitum-payment-withdraw-operation",
     },
     TRANSFER: {
         FACT: "mitum-payment-transfer-operation-fact",
