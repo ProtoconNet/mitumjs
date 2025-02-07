@@ -2,6 +2,7 @@ import { RegisterModelFact } from "./resgister-model"
 import { DepositFact } from "./deposit"
 import { TransferFact } from "./transfer"
 import { WithdrawFact } from "./withdraw"
+import { UpdateFact } from "./update-account-setting"
 import { ContractGenerator, Operation } from "../base"
 
 import { Address } from "../../key"
@@ -45,10 +46,7 @@ export class Payment extends ContractGenerator {
     /**
      * Generate `deposit` operation to deposit currency to a payment model with configurable transfer settings.
      * 
-     * - If `amount > 0` and any transfer settings is set (`!= 0`), both the deposit and transfer settings are updated together.
-     * - If `amount > 0` and all transfer settings (`transfer_limit`, `start_time`, `end_time`, `duration`) are `0`, only the amount is added without modifying currenct conditions.
-     * - If `amount == 0`, only the transfer settings are updated without adding funds.
-     *
+     * amount > 0 && end_time > start_time && duration <= (end_time - start_time)
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | number | Big} [amount] - The amount to deposit.
@@ -83,6 +81,43 @@ export class Payment extends ContractGenerator {
 
         return new Operation(this.networkID, fact);
     }
+
+    /**
+     * Generate `update-account-setting` operation to update transfer setting.
+     * 
+     * end_time > start_time && duration <= (end_time - start_time)
+     * @param {string | Address} [contract] - The contract's address.
+     * @param {string | Address} [sender] - The sender's address.
+     * @param {string | number} [transfer_limit] - The maximum amount that can be sent in a single transaction.
+     * @param {string | number | Big} [start_time] - The start time when a transfer becomes possible.
+     * @param {string | number | Big} [end_time] - The end time after which a transfer is no longer allowed.
+     * @param {string | number | Big} [duration] - The cooldown period (in seconds) after the last transfer, during which further transfers are blocked.
+     * @param {string | CurrencyID} [currency] - The currency ID.
+     * @returns `update-account-setting` operation
+     */
+    updateSetting(
+        contract: string | Address,
+        sender: string | Address,
+        transfer_limit: string | number,
+        start_time: string | number,
+        end_time: string | number,
+        duration: string | number,
+        currency: string | CurrencyID,
+    ) {
+        const fact = new UpdateFact(
+            TS.new().UTC(),
+            sender,
+            contract,
+            currency,
+            transfer_limit,
+            start_time,
+            end_time,
+            duration
+        );
+
+        return new Operation(this.networkID, fact);
+    }
+
 
     /**
      * Generate an `transfer` operation for transferring certain currency from the deposit to a receiver.

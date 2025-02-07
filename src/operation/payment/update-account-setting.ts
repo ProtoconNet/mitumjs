@@ -6,8 +6,7 @@ import { Address } from "../../key"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
 
-export class DepositFact extends PaymentFact {
-    readonly amount: Big;
+export class UpdateFact extends PaymentFact {
     readonly transfer_limit: Big;
     readonly start_time: Big;
     readonly end_time: Big;
@@ -18,24 +17,16 @@ export class DepositFact extends PaymentFact {
         sender: string | Address,
         contract: string | Address,
         currency: string | CurrencyID,
-        amount: string | number,
         transfer_limit: string | number,
         start_time: string | number,
         end_time: string | number,
         duration: string | number
     ) {
-        super(HINT.PAYMENT.DEPOSIT.FACT, token, sender, contract, currency)
-        this.amount = Big.from(amount);
+        super(HINT.PAYMENT.UPDATE_ACCOUNT_SETTING.FACT, token, sender, contract, currency)
         this.transfer_limit = Big.from(transfer_limit);
         this.start_time = Big.from(start_time);
         this.end_time = Big.from(end_time);
         this.duration = Big.from(duration);
-
-
-        Assert.check(
-            this.amount.overZero(),
-            MitumError.detail(ECODE.INVALID_FACT, "amount must be greater 0"),
-        )
 
         Assert.check(
             this.start_time.v < this.end_time.v,
@@ -46,14 +37,13 @@ export class DepositFact extends PaymentFact {
             this.duration.v < this.end_time.v - this.start_time.v,
             MitumError.detail(ECODE.INVALID_FACT, "duration must be less than (end_time - start_time)"),
         )
-  
+
         this._hash = this.hashing();
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
-            this.amount.toBuffer(),
             this.transfer_limit.toBuffer(),
             this.start_time.toBuffer("fill"),
             this.end_time.toBuffer("fill"),
@@ -65,7 +55,6 @@ export class DepositFact extends PaymentFact {
     toHintedObject(): FactJson {
         return {
             ...super.toHintedObject(),
-            amount: this.amount.toString(),
             transfer_limit: this.transfer_limit.toString(),
             start_time: this.start_time.v,
             end_time: this.end_time.v,
@@ -74,6 +63,6 @@ export class DepositFact extends PaymentFact {
     }
 
     get operationHint() {
-        return HINT.PAYMENT.DEPOSIT.OPERATION
+        return HINT.PAYMENT.UPDATE_ACCOUNT_SETTING.OPERATION
     }
 }
