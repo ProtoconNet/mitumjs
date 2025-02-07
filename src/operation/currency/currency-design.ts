@@ -2,7 +2,6 @@ import { HINT } from "../../alias"
 import { Address } from "../../key"
 import { Hint, CurrencyID } from "../../common"
 import { Big, Float, HintedObject, IBuffer, IHintedObject } from "../../types"
-import { Assert, ECODE, MitumError } from "../../error"
 
 export class CurrencyDesign implements IBuffer, IHintedObject {
     private static hint: Hint = new Hint(HINT.CURRENCY.DESIGN)
@@ -26,9 +25,6 @@ export class CurrencyDesign implements IBuffer, IHintedObject {
         this.policy = policy
         this.totalSupply = Big.from(initialSupply)
         this.decimal = Big.from(decimal)
-        Assert.check(0 < this.decimal.big, 
-            MitumError.detail(ECODE.CURRENCY.INVALID_CURRENCY_DESIGN, "decimal number must not be set to 0 or below")
-        )
     }
 
     toBuffer(): Buffer {
