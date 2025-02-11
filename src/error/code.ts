@@ -257,7 +257,7 @@ export const DCODE = {
         description: "Alternative signature for account abstraction operation is not valid",
         subject: ""
     },    
-    // Related to authorization
+    // Related to permission
     NO_AUTH: {
         code: "D301",
         keyword: ["Account not authorized"],
@@ -274,6 +274,12 @@ export const DCODE = {
         code: "D303",
         keyword: ["Invalid Auth Type"],
         description: "Occurs when there is a problem with authentication_id in the account abstraction operation.(If verificationMethod of social_login authentication is another social_login)",
+        subject: ""
+    },
+    CA_RESTRICTED: {
+        code: "D304",
+        keyword: ["Contract account restricted"],
+        description: "Contract account with contract_account_status.balance_status is 1, the owner cannot withdraw.",
         subject: ""
     },
     // Insufficient balance
