@@ -259,6 +259,12 @@ export const DCODE = {
         description: "Occurs when there is a problem with authentication_id in the account abstraction operation.(If verificationMethod of social_login authentication is another social_login)",
         subject: ""
     },
+    CA_RESTRICTED: {
+        code: "D304",
+        keyword: ["Contract account restricted"],
+        description: "Contract account with contract_account_status.balance_status is 1, the owner cannot withdraw.",
+        subject: ""
+    },
     // Insufficient balance
     INSUFF_BAL: {
         code: "D401",
