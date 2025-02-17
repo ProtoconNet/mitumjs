@@ -89,7 +89,7 @@ export class KeyG extends Generator {
 	 * - `publickey`: public key,
 	 * - `address`: address,
      * - `phrase`: phrases made up of 12 mnemonic words,
-     * - `path`: derivation path for HD wallet. Default set to "m/44'/1'/0'/0/0"
+     * - `path`: derivation path for HD wallet. Default set to "m/44'/815'/0'/0/0". 815 is a coin type for imFact.
      */
     hdKey(): HDAccount {
         const hdwallet = KeyPair.hdRandom("mitum");
@@ -122,7 +122,7 @@ export class KeyG extends Generator {
 	 * - `publickey`: public key,
 	 * - `address`: address
      * - `phrase`: phrases made up of 12 mnemonic words,
-     * - `path`: derivation path for HD wallet, default set to "m/44'/1'/0'/0/0"
+     * - `path`: derivation path for HD wallet, default set to "m/44'/815'/0'/0/0". 815 is a coin type for imFact.
      */
     fromPhrase(phrase: string, path?: string): HDAccount {
         const hdwallet = KeyPair.fromPhrase(phrase, path);

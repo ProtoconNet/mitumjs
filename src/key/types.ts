@@ -17,4 +17,4 @@ export type HDAccount = Account & {
     path : string | null
 }
 
-export const defaultPath = "m/44'/1'/0'/0/0";
+export const defaultPath = "m/44'/815'/0'/0/0";
