@@ -5,8 +5,8 @@ import { Wallet, HDNodeWallet } from "ethers"
 
 import { hmac } from "@noble/hashes/hmac"
 import { sha256 as nobleSha256 } from "@noble/hashes/sha256"
+import { utf8ToBytes } from "@noble/hashes/utils";
 import * as secp256k1 from "@noble/secp256k1"
-import * as crypto from "crypto";
 import { ec as EC } from "elliptic";
 
 import { Key } from "./pub"
@@ -77,7 +77,7 @@ export abstract class BaseKeyPair {
         const ec = new EC("secp256k1");
         const key = ec.keyFromPrivate(this.privateKey.noSuffix, "hex");
 
-        const msgHash = crypto.createHash("sha256").update(msg).digest();
+        const msgHash = nobleSha256(typeof msg === "string" ? utf8ToBytes(msg) : msg);
         const signature = key.sign(msgHash);
     
         const r = Buffer.from(signature.r.toArray());
