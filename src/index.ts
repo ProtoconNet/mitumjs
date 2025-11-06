@@ -11,6 +11,7 @@ import {
     Operation,
     Signer,
 } from "./operation"
+import { BrowserProvider } from "./providers"
 
 export class Mitum extends Generator {
     private _node: Node
@@ -214,3 +215,4 @@ export class Mitum extends Generator {
 }
 
 export default Mitum
+export { BrowserProvider }
