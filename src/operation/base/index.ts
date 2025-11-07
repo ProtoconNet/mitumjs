@@ -1,5 +1,5 @@
 import { Item } from "./item"
-import { Operation } from "./operation"
+import { BaseOperation } from "./operation"
 import { Authentication, ProxyPayer, Settlement } from "./userOperation"
 import { ContractGenerator } from "./generator"
 import { GeneralFactSign, NodeFactSign } from "./factsign"
@@ -8,7 +8,7 @@ import { Fact, OperationFact, NodeFact, ContractFact } from "./fact"
 
 export {
     Item,
-    Operation,
+    BaseOperation,
     Authentication, ProxyPayer, Settlement,
     Fact, OperationFact, ContractFact, NodeFact,
     GeneralFS, NodeFS, FactJson, OperationJson, SignOption, UserOperationJson,

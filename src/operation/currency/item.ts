@@ -1,9 +1,9 @@
 import { Item } from "../base"
 
 import { Config } from "../../node"
-import { Amount } from "../../common"
+import type { Amount } from "../../common"
 import { SortFunc } from "../../utils"
-import { HintedObject } from "../../types"
+import type { HintedObject } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export abstract class CurrencyItem extends Item {

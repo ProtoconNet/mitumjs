@@ -1,8 +1,8 @@
 import { Version, NetworkID, Config, RangeConfig } from "./config"
 
-import { block, node, operation } from "../api"
+import { blockApi, nodeApi, operationApi } from "../api"
 import { Generator, IP } from "../types"
-import { getAPIData } from "../api"
+import { getAPIData } from "../api/getAPIData"
 import { Assert, MitumError, ECODE } from "../error"
 export {
     Version, NetworkID,
@@ -28,7 +28,7 @@ export class Node extends Generator {
      */
     async getNodeInfo() {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
-        return await getAPIData(() => node.getNode(this.api, this.delegateIP))
+        return await getAPIData(() => nodeApi.getNode(this.api, this.delegateIP))
     }
 }
 
@@ -55,7 +55,7 @@ export class Block extends Generator {
      */
     async getAllBlocks(limit?: number, offset?: number, reverse?: true) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
-        return await getAPIData(() => block.getBlocks(this.api, this.delegateIP, limit, offset, reverse))
+        return await getAPIData(() => blockApi.getBlocks(this.api, this.delegateIP, limit, offset, reverse))
     }
 
 
@@ -81,7 +81,7 @@ export class Block extends Generator {
      */
     async getBlockByHash(hash: string) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
-        return await getAPIData(() => block.getBlockByHash(this.api, hash, this.delegateIP))
+        return await getAPIData(() => blockApi.getBlockByHash(this.api, hash, this.delegateIP))
     }
 
     /**
@@ -106,18 +106,9 @@ export class Block extends Generator {
      */
     async getBlockByHeight(height: number | string) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
-        return await getAPIData(() => block.getBlockByHeight(this.api, height, this.delegateIP))
+        return await getAPIData(() => blockApi.getBlockByHeight(this.api, height, this.delegateIP))
     }
 
-    // async getOperationsByHash(hash: string) {
-    //     Assert.check(
-    //         this.api !== undefined || this.api !== null,
-    //         MitumError.detail(ECODE.NO_API, "no api"),
-    //     )
-    //     return await getAPIData(() => operation.getBlockOperationsByHash(this.api, hash, this.delegateIP))
-    // }
-
-    
     /**
      * Get all operations contained in a block of given height.
      * @async
@@ -140,6 +131,6 @@ export class Block extends Generator {
      */
     async getOperationsByHeight(height: number | string,limit?: number, offset?: number, reverse?: true) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
-        return await getAPIData(() => operation.getBlockOperationsByHeight(this.api, height, this.delegateIP, limit, offset, reverse))
+        return await getAPIData(() => operationApi.getBlockOperationsByHeight(this.api, height, this.delegateIP, limit, offset, reverse))
     }
 }

@@ -1,10 +1,12 @@
 import { HINT } from "../../alias"
 import { Hint } from "../../common"
 import { Config } from "../../node"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { SortFunc } from "../../utils"
 import { Assert, ECODE, MitumError } from "../../error"
-import { Big, Bool, HintedObject, IBuffer, IHintedObject } from "../../types"
+import { Big, Bool } from "../../types"
+import type { HintedObject, IBuffer, IHintedObject } from "../../types"
+
 
 export class Signer implements IBuffer, IHintedObject {
     readonly hint: Hint

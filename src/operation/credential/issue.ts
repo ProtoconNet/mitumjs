@@ -3,7 +3,7 @@ import { CredentialItem } from "./item"
 
 import { HINT } from "../../alias"
 import { Config } from "../../node"
-import { Address } from "../../key"
+import type { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
 import { Big, HintedObject } from "../../types"

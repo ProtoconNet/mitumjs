@@ -3,7 +3,7 @@ import { ContractFact, FactJson } from "../base"
 
 import { HINT } from "../../alias"
 import { Config } from "../../node"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { Bool, ShortDate } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"

@@ -3,11 +3,12 @@ import { DepositFact } from "./deposit"
 import { TransferFact } from "./transfer"
 import { WithdrawFact } from "./withdraw"
 import { UpdateFact } from "./update-account-setting"
-import { ContractGenerator, Operation } from "../base"
+import { ContractGenerator, BaseOperation } from "../base"
 
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
-import { contractApi, getAPIData } from "../../api"
+import { contractApi } from "../../api"
+import { getAPIData } from "../../api/getAPIData"
 import { IP, TimeStamp as TS } from "../../types"
 import { Assert, MitumError, ECODE } from "../../error"
 
@@ -32,7 +33,7 @@ export class Payment extends ContractGenerator {
         sender: string | Address,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RegisterModelFact(
                 TS.new().UTC(),
@@ -79,7 +80,7 @@ export class Payment extends ContractGenerator {
             duration
         );
 
-        return new Operation(this.networkID, fact);
+        return new BaseOperation(this.networkID, fact);
     }
 
     /**
@@ -115,7 +116,7 @@ export class Payment extends ContractGenerator {
             duration
         );
 
-        return new Operation(this.networkID, fact);
+        return new BaseOperation(this.networkID, fact);
     }
 
 
@@ -135,7 +136,7 @@ export class Payment extends ContractGenerator {
         amount: string | number,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new TransferFact(
                 TS.new().UTC(),
@@ -160,7 +161,7 @@ export class Payment extends ContractGenerator {
         sender: string | Address,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new WithdrawFact(
                 TS.new().UTC(),

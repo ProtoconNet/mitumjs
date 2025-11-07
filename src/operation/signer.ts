@@ -1,7 +1,10 @@
 import base58 from "bs58"
-import { UserOperationJson, Authentication, ProxyPayer, Settlement, OperationJson, GeneralFactSign, NodeFactSign, SignOption, Operation as OP, Fact } from "./base"
+import { Authentication, ProxyPayer, Settlement, GeneralFactSign, NodeFactSign } from "./base"
+import type { BaseOperation, Fact, UserOperationJson, OperationJson, SignOption } from "./base"
 import { sha3 } from "../utils"
-import { Key, KeyPair, NodeAddress } from "../key"
+import { Key } from "../key/pub"
+import { KeyPair } from "../key/keypair"
+import { NodeAddress } from "../key/address"
 import { Generator, HintedObject, FullTimeStamp, TimeStamp, IP } from "../types"
 import { StringAssert, Assert, ECODE, MitumError } from "../error"
 import { isOpFact, isHintedObject, isHintedObjectFromUserOp} from "../utils/typeGuard"
@@ -24,7 +27,7 @@ export class Signer extends Generator {
      */
     sign(
         privatekey: string | Key,
-        operation: OP<Fact> | HintedObject,
+        operation: BaseOperation<Fact> | HintedObject,
         option?: SignOption
     ) {
         Assert.check(

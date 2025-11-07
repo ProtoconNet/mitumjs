@@ -1,5 +1,5 @@
 import axios from "axios"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { delegateUri, apiPathWithParams } from "../../utils"
 
 const url = (

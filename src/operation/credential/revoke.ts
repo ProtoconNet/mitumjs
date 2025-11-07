@@ -2,7 +2,7 @@ import { OperationFact } from "../base"
 import { CredentialItem } from "./item"
 
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
 

@@ -7,7 +7,8 @@ import { Amount } from "../../common"
 import { SortFunc } from "../../utils"
 import { HINT } from "../../alias"
 import { HintedObject } from "../../types"
-import { Keys, Address } from "../../key"
+import { Address } from "../../key/address"
+import { Keys } from "../../key/pub"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export class CreateContractAccountItem extends CurrencyItem {

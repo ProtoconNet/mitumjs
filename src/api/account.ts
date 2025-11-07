@@ -1,5 +1,6 @@
 import axios from "axios"
-import { Address, Key } from "../key";
+import { Address } from "../key/address";
+import { Key } from "../key/pub";
 import { delegateUri } from "../utils"
 
 async function getAccount(api: string | undefined, address: string | Address, delegateIP: string | undefined) {

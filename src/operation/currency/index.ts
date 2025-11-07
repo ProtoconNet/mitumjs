@@ -10,13 +10,18 @@ import { MintItem, MintFact } from "./mint"
 
 import { CurrencyDesign, CurrencyPolicy, NilFeeer, FixedFeeer, RatioFeeer } from "./currency-design"
 
-import { Operation } from "../base"
-import { Operation as OP } from "../"
-
-import api, { getAPIData } from "../../api"
+import { BaseOperation } from "../base"
+import { Operation } from "../api"
+import { operationApi, accountApi, currencyApi } from "../../api"
+import { getAPIData } from "../../api/getAPIData"
 import { Amount, CurrencyID } from "../../common"
 import { Big, Generator, IP, TimeStamp } from "../../types"
-import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG } from "../../key"
+import { KeyG } from "../../key"
+import { Address } from "../../key/address"
+import type { Account as AccountType } from "../../key/types"
+import { Keys, Key, PubKey } from "../../key/pub"
+import { KeyPair } from "../../key/keypair"
+
 import { StringAssert, Assert, ArrayAssert, ECODE, MitumError } from "../../error"
 import { isSuccessResponse } from "../../utils"
 import { Config } from "../../node"
@@ -85,7 +90,7 @@ export class Currency extends Generator {
             ),
         )
                 
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RegisterCurrencyFact(TimeStamp.new().UTC(), design),
         ) 
@@ -105,7 +110,7 @@ export class Currency extends Generator {
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the currencyPolicyData structure`))
         });
 
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new UpdateCurrencyFact(
                 TimeStamp.new().UTC(),
@@ -178,7 +183,7 @@ export class Currency extends Generator {
         currency: string | CurrencyID,
         amount: string | number | Big,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new TransferFact(
                 TimeStamp.new().UTC(),
@@ -206,7 +211,7 @@ export class Currency extends Generator {
         amounts: string[] | number[] | Big[],
     ) {
         ArrayAssert.check(receivers, "receivers").rangeLength(Config.ITEMS_IN_FACT).noDuplicates().sameLength(amounts, "amounts");
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new TransferFact(
                 TimeStamp.new().UTC(),
@@ -234,7 +239,7 @@ export class Currency extends Generator {
         currency: string | CurrencyID,
         amount: string | number | Big,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new WithdrawFact(
                 TimeStamp.new().UTC(),
@@ -263,7 +268,7 @@ export class Currency extends Generator {
     ) { 
         ArrayAssert.check(targets, "targets").rangeLength(Config.ITEMS_IN_FACT).sameLength(amounts, "amounts");
         const items = targets.map((el, idx) => { return new WithdrawItem(el, [new Amount(currency, amounts[idx])])});
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new WithdrawFact(
                 TimeStamp.new().UTC(),
@@ -286,7 +291,7 @@ export class Currency extends Generator {
         currency: string | CurrencyID,
         amount: number
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new MintFact(
                 TimeStamp.new().UTC(),
@@ -304,7 +309,7 @@ export class Currency extends Generator {
      */
     async getAllCurrencies(): Promise<any> {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
-        const response = await getAPIData(() => api.currency.getCurrencies(this.api, this.delegateIP), true);
+        const response = await getAPIData(() => currencyApi.getCurrencies(this.api, this.delegateIP), true);
 
         if (isSuccessResponse(response) && response.data) {
             response.data = response.data._links ?
@@ -329,7 +334,7 @@ export class Currency extends Generator {
      */
     async getCurrency(currencyID: string | CurrencyID) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
-        return await getAPIData(() => api.currency.getCurrency(this.api, currencyID, this.delegateIP))
+        return await getAPIData(() => currencyApi.getCurrency(this.api, currencyID, this.delegateIP))
     }
 }
 
@@ -357,7 +362,7 @@ export class Account extends KeyG {
         amount: string | number | Big,
         seed?: string,
         weight?: string | number | Big,
-    ): { wallet: AccountType, operation: Operation<TransferFact> } {
+    ): { wallet: AccountType, operation: BaseOperation<TransferFact> } {
         const kp = seed ? KeyPair.fromSeed(seed, "mitum") : KeyPair.random("mitum")
         const ks = new Keys([new PubKey(kp.publicKey, weight ?? 100)], weight ?? 100)
 
@@ -367,7 +372,7 @@ export class Account extends KeyG {
                 publickey: kp.publicKey.toString(),
                 address: ks.checksum.toString()
             },
-            operation: new Operation(
+            operation: new BaseOperation(
                 this.networkID,
                 new TransferFact(
                     TimeStamp.new().UTC(),
@@ -396,12 +401,12 @@ export class Account extends KeyG {
         n: number,
         currency: string | CurrencyID,
         amount: string | number | Big,
-    ): { wallet: AccountType[], operation: Operation<TransferFact> } {
+    ): { wallet: AccountType[], operation: BaseOperation<TransferFact> } {
         const keyArray = this.keys(n);
         const items = keyArray.map((ks) => new TransferItem(ks.address,[new Amount(currency, amount)]));
         return {
             wallet: keyArray,
-            operation: new Operation(
+            operation: new BaseOperation(
                 this.networkID,
                 new TransferFact(
                     TimeStamp.new().UTC(),
@@ -427,7 +432,7 @@ export class Account extends KeyG {
         amount: string | number | Big,
     ) {
         const ks = new Keys([new PubKey(key, 100)], 100);
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new TransferFact(
                 TimeStamp.new().UTC(),
@@ -469,7 +474,7 @@ export class Account extends KeyG {
         amount: string | number | Big,
         threshold: string | number | Big,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new CreateAccountFact(
                 TimeStamp.new().UTC(),
@@ -515,7 +520,7 @@ export class Account extends KeyG {
         currency: string | CurrencyID,
         threshold: string | number | Big,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new UpdateKeyFact(
                 TimeStamp.new().UTC(),
@@ -555,12 +560,12 @@ export class Account extends KeyG {
      */
     async touch(
         privatekey: string | Key,
-        wallet: { wallet: AccountType | AccountType[], operation: Operation<TransferFact> }
+        wallet: { wallet: AccountType | AccountType[], operation: BaseOperation<TransferFact> }
     ) {
         const op = wallet.operation;
         op.sign(privatekey);
 
-        return await new OP(this.networkID, this.api, this.delegateIP).send(op);
+        return await new Operation(this.networkID, this.api, this.delegateIP).send(op);
     }
 
     /**
@@ -581,7 +586,7 @@ export class Account extends KeyG {
     async getAccountInfo(address: string | Address) {
         Address.from(address);
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
-        const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
+        const response = await getAPIData(() => accountApi.getAccount(this.api, address, this.delegateIP));
         if (isSuccessResponse(response)) {
             response.data = response.data? response.data : null;
         }
@@ -616,7 +621,7 @@ export class Account extends KeyG {
     ) {
         Address.from(address);
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
-        const response = await getAPIData(() => api.operation.getAccountOperations(this.api, address, this.delegateIP, limit, offset, reverse));
+        const response = await getAPIData(() => operationApi.getAccountOperations(this.api, address, this.delegateIP, limit, offset, reverse));
         if (isSuccessResponse(response)) {
             response.data = response.data? response.data : null;
         }
@@ -648,7 +653,7 @@ export class Account extends KeyG {
                 /^[0-9a-f]+$/.test(s.substring(0, s.length - Config.SUFFIX.DEFAULT.value!)),
             )
             .excute()
-        return await getAPIData(() => api.account.getAccountByPublicKey(this.api, publickey, this.delegateIP))
+        return await getAPIData(() => accountApi.getAccountByPublicKey(this.api, publickey, this.delegateIP))
     }
 
     /**
@@ -665,7 +670,7 @@ export class Account extends KeyG {
     async balance(address: string | Address) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(address);
-        const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
+        const response = await getAPIData(() => accountApi.getAccount(this.api, address, this.delegateIP));
         if (isSuccessResponse(response) && response.data) {
             response.data = response.data.balance ? response.data.balance : null;
         }
@@ -695,7 +700,7 @@ export class Contract extends KeyG {
         currency: string | CurrencyID,
         amount: string | number | Big,
         seed?: string,
-    ): { wallet: AccountType, operation: Operation<CreateContractAccountFact> } {
+    ): { wallet: AccountType, operation: BaseOperation<CreateContractAccountFact> } {
         const kp = seed ? KeyPair.fromSeed(seed, "mitum") : KeyPair.random("mitum")
         const ks = new Keys([new PubKey(kp.publicKey, 100)], 100)
 
@@ -705,7 +710,7 @@ export class Contract extends KeyG {
                 publickey: kp.publicKey.toString(),
                 address: ks.checksum.toString()
             },
-            operation: new Operation(
+            operation: new BaseOperation(
                 this.networkID,
                 new CreateContractAccountFact(
                     TimeStamp.new().UTC(),
@@ -734,12 +739,12 @@ export class Contract extends KeyG {
         n: number,
         currency: string | CurrencyID,
         amount: string | number | Big,
-    ): { wallet: AccountType[], operation: Operation<CreateContractAccountFact> } {
+    ): { wallet: AccountType[], operation: BaseOperation<CreateContractAccountFact> } {
         const keyArray = this.keys(n);
         const items = keyArray.map((ks) => new CreateContractAccountItem(new Keys([new PubKey(ks.publickey,100)], 100),[new Amount(currency, amount)]));
         return {
             wallet: keyArray,
-            operation: new Operation(
+            operation: new BaseOperation(
                 this.networkID,
                 new CreateContractAccountFact(
                     TimeStamp.new().UTC(),
@@ -764,7 +769,7 @@ export class Contract extends KeyG {
         currency: string | CurrencyID,
         amount: string | number | Big,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new CreateContractAccountFact(
                 TimeStamp.new().UTC(),
@@ -797,7 +802,7 @@ export class Contract extends KeyG {
     async getContractInfo(address: string | Address) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(address);
-        const response = await getAPIData(() => api.account.getAccount(this.api, address, this.delegateIP));
+        const response = await getAPIData(() => accountApi.getAccount(this.api, address, this.delegateIP));
         if (isSuccessResponse(response)) {
             response.data = response.data? response.data : null;
         }
@@ -818,7 +823,7 @@ export class Contract extends KeyG {
         currency: string | CurrencyID,
         handlers: (string | Address)[],
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new UpdateHandlerFact(
                 TimeStamp.new().UTC(),
@@ -855,12 +860,12 @@ export class Contract extends KeyG {
      */
     async touch(
         privatekey: string | Key,
-        wallet: { wallet: AccountType | AccountType[], operation: Operation<CreateContractAccountFact> }
+        wallet: { wallet: AccountType | AccountType[], operation: BaseOperation<CreateContractAccountFact> }
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         const op = wallet.operation
         op.sign(privatekey)
 
-        return await new OP(this.networkID, this.api, this.delegateIP).send(op);
+        return await new Operation(this.networkID, this.api, this.delegateIP).send(op);
     }
 }

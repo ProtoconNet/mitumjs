@@ -1,5 +1,6 @@
-import { ContractFact, FactJson } from "../base"
-import { Address } from "../../key"
+import { ContractFact } from "../base"
+import type { FactJson } from "../base"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 
 export abstract class TokenFact extends ContractFact {

@@ -8,9 +8,9 @@ import {
     DAO, KYC, STO,
     TimeStamp, Credential,
     Token, Point, Storage, Payment,
-    Operation,
     Signer,
 } from "./operation"
+import { Operation } from "./operation/api"
 import { BrowserProvider } from "./providers"
 
 export class Mitum extends Generator {

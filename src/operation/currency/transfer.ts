@@ -5,7 +5,7 @@ import { Amount } from "../../common"
 import { SortFunc } from "../../utils"
 import { HintedObject } from "../../types"
 import { HINT, SUFFIX } from "../../alias"
-import { Address, ZeroAddress } from "../../key"
+import { Address, ZeroAddress } from "../../key/address"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export class TransferItem extends CurrencyItem {

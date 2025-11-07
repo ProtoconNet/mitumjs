@@ -2,10 +2,10 @@ import { Item, NodeFact, FactJson } from "../base"
 
 import { HINT } from "../../alias"
 import { Config } from "../../node"
-import { Address } from "../../key"
-import { Amount } from "../../common"
+import { Address } from "../../key/address"
+import type { Amount } from "../../common"
 import { SortFunc } from "../../utils"
-import { HintedObject } from "../../types"
+import type { HintedObject } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export class MintItem extends Item {

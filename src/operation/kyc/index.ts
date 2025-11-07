@@ -4,9 +4,9 @@ import { RemoveControllerItem, RemoveControllerFact } from "./remove-controller"
 import { AddCustomerItem, AddCustomerFact } from "./add-customer"
 import { UpdateCustomerItem, UpdateCustomerFact } from "./update-customer"
 
-import { ContractGenerator, Operation } from "../base"
+import { ContractGenerator, BaseOperation } from "../base"
 
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { Bool, IP, TimeStamp } from "../../types"
 
@@ -24,7 +24,7 @@ export class KYC extends ContractGenerator {
         sender: string | Address,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new CreateServiceFact(
                 TimeStamp.new().UTC(),
@@ -41,7 +41,7 @@ export class KYC extends ContractGenerator {
         controller: string | Address,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new AddControllerFact(
                 TimeStamp.new().UTC(),
@@ -63,7 +63,7 @@ export class KYC extends ContractGenerator {
         status: boolean | Bool,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new AddCustomerFact(
                 TimeStamp.new().UTC(),
@@ -85,7 +85,7 @@ export class KYC extends ContractGenerator {
         controller: string | Address,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RemoveControllerFact(
                 TimeStamp.new().UTC(),
@@ -107,7 +107,7 @@ export class KYC extends ContractGenerator {
         status: boolean | Bool,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new UpdateCustomerFact(
                 TimeStamp.new().UTC(), sender, [new UpdateCustomerItem(

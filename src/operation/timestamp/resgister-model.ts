@@ -1,7 +1,7 @@
 import { TimeStampFact } from "./fact"
 
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 
 

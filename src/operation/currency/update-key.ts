@@ -2,7 +2,8 @@ import { Fact, FactJson } from "../base"
 
 import { HINT } from "../../alias"
 import { CurrencyID } from "../../common"
-import { Address, Keys } from "../../key"
+import { Address } from "../../key/address"
+import { Keys } from "../../key/pub"
 
 export class UpdateKeyFact extends Fact {
     readonly sender: Address

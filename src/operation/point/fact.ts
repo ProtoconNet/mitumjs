@@ -1,5 +1,5 @@
 import { ContractFact, FactJson } from "../base"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 
 export abstract class PointFact extends ContractFact {

@@ -1,7 +1,7 @@
 import { Item } from "../base"
 
 import { Config } from "../../node"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { HintedObject } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"

@@ -3,7 +3,8 @@ import base58 from "bs58"
 import { FS, GeneralFS, NodeFS } from "./types"
 
 import { IBuffer, FullTimeStamp  } from "../../types"
-import { Key, Address, NodeAddress } from "../../key"
+import { Address, NodeAddress } from "../../key/address"
+import { Key } from "../../key/pub"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export abstract class FactSign implements IBuffer {
