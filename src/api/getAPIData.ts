@@ -2,51 +2,42 @@ import { AxiosResponse } from "axios"
 import { SuccessResponse, ErrorResponse } from "../types"
 import { assignCodeFromErrorMessage, ECODE, MitumError } from "../error"
 
-export async function getAPIData(
-  f: () => Promise<AxiosResponse>,
-  _links?: boolean
-): Promise<SuccessResponse | ErrorResponse> {
+export async function getAPIData(f: () => Promise<AxiosResponse>, _links? : boolean): Promise<SuccessResponse | ErrorResponse> {
   try {
-    const res = await f()
-    const parsedResponse: SuccessResponse = {
-      status: res.status,
-      method: res.config.method,
-      url: res.config.url,
-      request_body: res.config.data,
-      data: _links
-        ? { _embedded: res.data?._embedded, _links: res.data?._links }
-        : res.data?._embedded ?? res.data,
-    }
-    return parsedResponse
-  } catch (error: any) {
+      const res = await f();
+      const parsedResponse: SuccessResponse = {
+        status: res.status,
+        method: res.config.method,
+        url: res.config.url,
+        request_body: res.config.data,
+        data: _links ? { _embedded: res.data._embedded, _links: res.data._links } : res.data._embedded,
+    };
+    return parsedResponse;
+
+} catch (error: any) {
     if (error.response) {
-      const { response } = error
-      const parsedError: ErrorResponse = {
-        status: response.status,
-        method: response.config?.method,
-        url: response.config?.url,
-        error_code:
-          response.config?.method === "get"
-            ? ""
-            : response.data
-            ? assignCodeFromErrorMessage(response.data)
-            : "",
-        request_body: response.config?.data,
-        error_message: response.data,
-      }
-      return parsedError
+        const { response } = error;
+        const parsedError: ErrorResponse = {
+            status: response.status,
+            method: response.config.method,
+            url: response.config.url,
+            error_code: response.config.method === 'get' ? '' : response.data ? assignCodeFromErrorMessage(response.data) : '',
+            request_body: response.config.data,
+            error_message: response.data,
+        };
+        return parsedError;
     } else if (error.code) {
-      const parsedError: ErrorResponse = {
-        status: 500,
-        method: error.config?.method,
-        url: error.config?.url,
-        error_code: "",
-        request_body: error.config?.data,
-        error_message: error.code,
-      }
-      return parsedError
+        const parsedError: ErrorResponse = {
+            status: 500,
+            method: error.config.method,
+            url: error.config.url,
+            error_code: "",
+            request_body: error.config.data,
+            error_message: error.code,
+        };
+        return parsedError;
     } else {
-      throw MitumError.detail(ECODE.UNKNOWN, `Unknown error occurred!\n${error}`)
+        throw MitumError.detail(ECODE.UNKNOWN, `Unknown error orccur!\n${error}`);
     }
   }
 }
