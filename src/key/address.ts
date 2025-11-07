@@ -1,6 +1,6 @@
 import { AddressType } from "./types"
 import { SUFFIX } from "../alias"
-import { Config } from "../node"
+import { Config } from "../node/config"
 import { CurrencyID } from "../common"
 import { IBuffer, IString } from "../types"
 import { ECODE, MitumError, StringAssert, Assert } from "../error"

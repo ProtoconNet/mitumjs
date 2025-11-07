@@ -1,5 +1,5 @@
-import { Config } from "../node"
-import { IBuffer, IString } from "../types"
+import { Config } from "../node/config"
+import type { IBuffer, IString } from "../types"
 import { Assert, ECODE, MitumError } from "../error"
 
 abstract class ID implements IBuffer, IString {

@@ -1,4 +1,4 @@
-import { Version } from "../node"
+import { Version } from "../node/config"
 import { IString } from "../types"
 
 export class Hint implements IString {
