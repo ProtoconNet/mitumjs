@@ -1,7 +1,7 @@
 import { DAOPolicy } from "./policy"
 
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { Amount, Hint } from "../../common"
 import { Big, HintedObject, IBuffer, IHintedObject, LongString } from "../../types"
 import { Config } from "../../node"

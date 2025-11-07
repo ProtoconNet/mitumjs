@@ -1,10 +1,11 @@
 import { HINT } from "../../alias"
 import { Hint } from "../../common"
 import { Config } from "../../node"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { ArrayAssert } from "../../error"
 import { SortFunc } from "../../utils"
-import { Bool, HintedObject, IBuffer, IHintedObject } from "../../types"
+import { Bool } from "../../types"
+import type { HintedObject, IBuffer, IHintedObject } from "../../types"
 
 export class Whitelist implements IBuffer, IHintedObject {
     private hint: Hint

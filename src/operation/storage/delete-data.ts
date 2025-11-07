@@ -1,11 +1,10 @@
-import { FactJson } from "../base"
+import type { FactJson } from "../base"
 import { StorageFact } from "./fact"
-
-import { LongString } from "../../types"
+import type { LongString } from "../../types"
 import { HINT } from "../../alias"
 import { Config } from "../../node"
-import { Address } from "../../key"
-import { CurrencyID } from "../../common"
+import type { Address } from "../../key/address"
+import type { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export class DeleteDataFact extends StorageFact {

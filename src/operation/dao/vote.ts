@@ -3,7 +3,7 @@ import { FactJson } from "../base"
 
 import { Big } from "../../types"
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import type { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { Config } from "../../node"
 import { Assert, ECODE, MitumError } from "../../error"

@@ -8,13 +8,15 @@ import { GeneralFactSign, NodeFactSign } from "./factsign"
 import { Hint } from "../../common"
 import { SortFunc, sha3 } from "../../utils"
 import { Assert, ECODE, MitumError } from "../../error"
-import { Address, Key, KeyPair, NodeAddress } from "../../key"
+import { Address, NodeAddress } from "../../key/address"
+import { Key } from "../../key/pub"
+import { KeyPair } from "../../key/keypair"
 import { HintedObject, IBuffer, IHintedObject, TimeStamp } from "../../types"
 
 type FactSign = GeneralFactSign | NodeFactSign
 type SigType = "FactSign" | "NodeFactSign" | null
 
-export class Operation<T extends Fact> implements IBuffer, IHintedObject {
+export class BaseOperation<T extends Fact> implements IBuffer, IHintedObject {
     readonly id: string
     readonly hint: Hint
     readonly fact: T

@@ -1,4 +1,5 @@
 import { IP } from "./string"
+import { MitumError, ECODE } from "../error"
 
 export abstract class Generator {
     protected _networkID: string
@@ -17,7 +18,18 @@ export abstract class Generator {
 
     protected setAPI(api?: string | IP) {
         if (typeof api === "string") {
-            this._api = IP.from(api.endsWith('/') ? api.slice(0, -1) : api);
+            const cleanApi = api.endsWith('/') ? api.slice(0, -1) : api;
+
+            try {
+                new URL(cleanApi);
+            } catch {
+                throw MitumError.detail(
+                    ECODE.INVALID_IP,
+                    `Invalid API URL provided: ${cleanApi}`
+                );
+            }
+    
+            this._api = IP.from(cleanApi);
         } else if (api instanceof IP) {
             this._api = api;
         } else {
@@ -27,7 +39,18 @@ export abstract class Generator {
 
     protected setDelegate(delegateIP?: string | IP) { 
         if (typeof delegateIP === "string") {
-            this._delegateIP = IP.from(delegateIP.endsWith('/') ? delegateIP.slice(0, -1) : delegateIP);
+            const cleanDelegate = delegateIP.endsWith('/') ? delegateIP.slice(0, -1) : delegateIP;
+
+            try {
+                new URL(cleanDelegate);
+            } catch {
+                throw MitumError.detail(
+                    ECODE.INVALID_IP,
+                    `Invalid delegate URL provided: ${cleanDelegate}`
+                );
+            }
+    
+            this._delegateIP = IP.from(cleanDelegate);
         } else if (delegateIP instanceof IP) {
             this._delegateIP = delegateIP;
         } else {

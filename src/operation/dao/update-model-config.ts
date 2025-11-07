@@ -1,6 +1,6 @@
 import { ContractFact, FactJson } from "../base"
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID, Hint } from "../../common"
 import { DAOPolicy } from "./policy"
 import { Assert, ECODE, MitumError } from "../../error"

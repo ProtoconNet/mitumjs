@@ -1,5 +1,5 @@
 import { Config } from "../../node"
-import { IBuffer, IString } from "../../types"
+import type { IBuffer, IString } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export class Partition implements IBuffer, IString {

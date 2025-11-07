@@ -2,7 +2,7 @@ import { ContractFact, FactJson } from "../base"
 
 import { HINT } from "../../alias"
 import { Config } from "../../node"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { SortFunc } from "../../utils"
 import { CurrencyID } from "../../common"
 import { Big, LongString } from "../../types"

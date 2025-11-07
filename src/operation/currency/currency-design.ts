@@ -1,5 +1,5 @@
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { Hint, CurrencyID } from "../../common"
 import { Big, Float, HintedObject, IBuffer, IHintedObject } from "../../types"
 

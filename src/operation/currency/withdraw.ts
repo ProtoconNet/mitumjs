@@ -2,7 +2,7 @@ import { CurrencyItem } from "./item"
 import { OperationFact } from "../base"
 
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { Amount } from "../../common"
 import { SortFunc } from "../../utils"
 import { HintedObject } from "../../types"

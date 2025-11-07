@@ -5,15 +5,14 @@ import { ApproveItem, ApproveFact } from "./approve"
 import { ApproveAllItem, ApproveAllFact } from "./approve-all"
 import { TransferItem, TransferFact } from "./transfer"
 import { AddSignatureItem, AddSignatureFact } from "./add-signature"
-
 import { Signer, Signers } from "./signer"
-
-import { ContractGenerator, Operation } from "../base"
-
-import { Address } from "../../key"
-import { CurrencyID } from "../../common"
-import { contractApi, getAPIData } from "../../api"
-import { Big, IP, LongString, TimeStamp } from "../../types"
+import { ContractGenerator, BaseOperation } from "../base"
+import { Address } from "../../key/address"
+import type { CurrencyID } from "../../common"
+import { contractApi } from "../../api"
+import { getAPIData } from "../../api/getAPIData"
+import type { Big, IP, LongString } from "../../types"
+import { TimeStamp } from "../../types"
 import { ArrayAssert, Assert, ECODE, MitumError } from "../../error"
 import { isSuccessResponse, convertToArray } from "../../utils"
 import { Config } from "../../node"
@@ -63,7 +62,7 @@ export class NFT extends ContractGenerator {
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the collectionData structure`))
         });
 
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RegisterModelFact(
                 TimeStamp.new().UTC(),
@@ -101,7 +100,7 @@ export class NFT extends ContractGenerator {
             Assert.check(data[key] !== undefined, 
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the collectionData structure`))
         });
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new UpdateModelConfigFact(
                 TimeStamp.new().UTC(),
@@ -135,7 +134,7 @@ export class NFT extends ContractGenerator {
         currency: string | CurrencyID,
         creator: string | Address,
     ) {
-        return new Operation(this.networkID, new MintFact(TimeStamp.new().UTC(), sender, [new MintItem(
+        return new BaseOperation(this.networkID, new MintFact(TimeStamp.new().UTC(), sender, [new MintItem(
             contract,
             receiver,
             hash,
@@ -176,7 +175,7 @@ export class NFT extends ContractGenerator {
             new Signers([new Signer(creator, 100, false)]),
             currency,
         ));
-        return new Operation(this.networkID, new MintFact(TimeStamp.new().UTC(), sender, items))
+        return new BaseOperation(this.networkID, new MintFact(TimeStamp.new().UTC(), sender, items))
     }
     
     /**
@@ -208,7 +207,7 @@ export class NFT extends ContractGenerator {
                     MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the Creator structure`))
             })
         });
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new MintFact(
                 TimeStamp.new().UTC(),
@@ -258,7 +257,7 @@ export class NFT extends ContractGenerator {
             ]
         )
 
-        return new Operation(this.networkID, fact)
+        return new BaseOperation(this.networkID, fact)
     }
 
     /**
@@ -288,7 +287,7 @@ export class NFT extends ContractGenerator {
             currency,
         ));
 
-        return new Operation(this.networkID, new TransferFact(
+        return new BaseOperation(this.networkID, new TransferFact(
             TimeStamp.new().UTC(),
             sender,
             items
@@ -312,7 +311,7 @@ export class NFT extends ContractGenerator {
         nftIdx: string | number | Big,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new ApproveFact(
                 TimeStamp.new().UTC(),
@@ -355,7 +354,7 @@ export class NFT extends ContractGenerator {
             currency,
         ));
 
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new ApproveFact(
                 TimeStamp.new().UTC(),
@@ -381,7 +380,7 @@ export class NFT extends ContractGenerator {
         mode: "allow" | "cancel",
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new ApproveAllFact(
                 TimeStamp.new().UTC(),
@@ -424,7 +423,7 @@ export class NFT extends ContractGenerator {
             currency,
         ));
 
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new ApproveAllFact(
                 TimeStamp.new().UTC(),
@@ -448,7 +447,7 @@ export class NFT extends ContractGenerator {
         nftIdx: string | number | Big,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new AddSignatureFact(
                 TimeStamp.new().UTC(),

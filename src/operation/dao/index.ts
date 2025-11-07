@@ -12,11 +12,12 @@ import { Whitelist } from "./whitelist"
 import { CryptoProposal, BizProposal } from "./proposal"
 import { TransferCalldata, GovernanceCalldata } from "./proposal"
 
-import { ContractGenerator, Operation } from "../base"
+import { ContractGenerator, BaseOperation } from "../base"
 
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { Amount, Fee, CurrencyID } from "../../common"
-import { contractApi, getAPIData } from "../../api"
+import { contractApi } from "../../api"
+import { getAPIData } from "../../api/getAPIData"
 import { Big, IP, LongString, TimeStamp, URIString } from "../../types"
 import { UpdateModelConfigFact } from "./update-model-config"
 import { Assert, ECODE, MitumError } from "../../error"
@@ -81,7 +82,7 @@ export class DAO extends ContractGenerator {
             Assert.check(data[key] !== undefined, 
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the daoData structure`))
         });
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RegisterModelFact(
                 TimeStamp.new().UTC(),
@@ -139,7 +140,7 @@ export class DAO extends ContractGenerator {
             Assert.check(data[key] !== undefined, 
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the daoData structure`))
         });
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new UpdateModelConfigFact(
                 TimeStamp.new().UTC(),
@@ -273,7 +274,7 @@ export class DAO extends ContractGenerator {
         proposal: CryptoProposal | BizProposal,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new ProposeFact(
                 TimeStamp.new().UTC(),
@@ -302,7 +303,7 @@ export class DAO extends ContractGenerator {
         currency: string | CurrencyID,
         approved?: string | Address,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RegisterFact(
                 TimeStamp.new().UTC(),
@@ -329,7 +330,7 @@ export class DAO extends ContractGenerator {
         proposalID: string,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new CancelProposalFact(
                 TimeStamp.new().UTC(),
@@ -355,7 +356,7 @@ export class DAO extends ContractGenerator {
         proposalID: string,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new PreSnapFact(
                 TimeStamp.new().UTC(),
@@ -383,7 +384,7 @@ export class DAO extends ContractGenerator {
         voteOption: number,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new VoteFact(
                 TimeStamp.new().UTC(),
@@ -410,7 +411,7 @@ export class DAO extends ContractGenerator {
         proposalID: string,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new PostSnapFact(
                 TimeStamp.new().UTC(),
@@ -436,7 +437,7 @@ export class DAO extends ContractGenerator {
         proposalID: string,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new ExecuteFact(
                 TimeStamp.new().UTC(),

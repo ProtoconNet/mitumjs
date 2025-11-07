@@ -1,7 +1,7 @@
 import { DAOFact } from "./fact"
 
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 
 export class PostSnapFact extends DAOFact {

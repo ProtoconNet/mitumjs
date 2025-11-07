@@ -1,6 +1,6 @@
 import { ContractFact, FactJson } from "../base"
 
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
 import { URIString } from "../../types"

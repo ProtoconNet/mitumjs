@@ -3,7 +3,7 @@ import { OperationFact } from "../base"
 
 import { Big, HintedObject } from "../../types"
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
 

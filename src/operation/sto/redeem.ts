@@ -3,7 +3,7 @@ import { Partition } from "./partition"
 import { OperationFact } from "../base"
 
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { Big, HintedObject } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"

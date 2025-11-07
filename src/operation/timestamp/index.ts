@@ -1,11 +1,12 @@
 import { RegisterModelFact } from "./resgister-model"
 import { IssueFact } from "./issue"
 
-import { ContractGenerator, Operation } from "../base"
+import { ContractGenerator, BaseOperation } from "../base"
 
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
-import { contractApi, getAPIData } from "../../api"
+import { contractApi } from "../../api"
+import { getAPIData } from "../../api/getAPIData"
 import { Big, IP, TimeStamp as TS, URIString } from "../../types"
 import { Assert, MitumError, ECODE } from "../../error"
 
@@ -30,7 +31,7 @@ export class TimeStamp extends ContractGenerator {
         sender: string | Address,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RegisterModelFact(
                 TS.new().UTC(),
@@ -70,7 +71,7 @@ export class TimeStamp extends ContractGenerator {
             currency,
         )
 
-        return new Operation(this.networkID, fact)
+        return new BaseOperation(this.networkID, fact)
     }
     
     /**

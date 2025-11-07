@@ -3,11 +3,12 @@ import { AddTemplateFact } from "./add-template"
 import { IssueItem, IssueFact } from "./issue"
 import { RevokeItem, RevokeFact } from "./revoke"
 
-import { ContractGenerator, Operation } from "../base"
+import { ContractGenerator, BaseOperation } from "../base"
 
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
-import { contractApi, getAPIData } from "../../api"
+import { contractApi } from "../../api"
+import { getAPIData } from "../../api/getAPIData"
 import { Big, Bool, IP, ShortDate, TimeStamp, URIString } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
@@ -55,7 +56,7 @@ export class Credential extends ContractGenerator {
         sender: string | Address,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RegisterModelFact(
                 TimeStamp.new().UTC(),
@@ -100,7 +101,7 @@ export class Credential extends ContractGenerator {
         });
         new URIString(data['templateID'], 'templateID');
 
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new AddTemplateFact(
                 TimeStamp.new().UTC(),
@@ -153,7 +154,7 @@ export class Credential extends ContractGenerator {
         new URIString(data['templateID'], 'templateID');
         new URIString(data['credentialID'], 'credentialID');
 
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new IssueFact(
                 TimeStamp.new().UTC(),
@@ -196,7 +197,7 @@ export class Credential extends ContractGenerator {
         new URIString(templateID, 'templateID');
         new URIString(credentialID, 'credentialID');
 
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RevokeFact(
                 TimeStamp.new().UTC(),

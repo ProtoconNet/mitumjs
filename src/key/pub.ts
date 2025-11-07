@@ -6,7 +6,7 @@ import { KeyPairType } from "./types"
 import { Hint } from "../common"
 import { Config } from "../node"
 import { HINT, SUFFIX } from "../alias"
-import { keccak256 } from "../utils"
+import { keccak256 } from "../utils/hash"
 import { Assert, ECODE, MitumError, StringAssert } from "../error"
 import { Big, HintedObject, IBuffer, IHintedObject, IString } from "../types"
 

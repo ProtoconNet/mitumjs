@@ -2,7 +2,7 @@ import { DAOFact } from "./fact"
 import { FactJson } from "../base"
 
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { BizProposal, CryptoProposal } from "./proposal"
 import { Assert, ECODE, MitumError } from "../../error"

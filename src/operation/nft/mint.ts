@@ -3,9 +3,10 @@ import { Signers } from "./signer"
 import { OperationFact } from "../base"
 
 import { HINT } from "../../alias"
-import { Address } from "../../key"
-import { CurrencyID } from "../../common"
-import { HintedObject, LongString } from "../../types"
+import { Address } from "../../key/address"
+import type { CurrencyID } from "../../common"
+import type { HintedObject } from "../../types"
+import { LongString } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 import { Config } from "../../node"
 

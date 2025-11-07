@@ -1,9 +1,9 @@
 import { TokenFact } from "./fact"
-import { FactJson } from "../base"
+import type { FactJson } from "../base"
 
 import { Big } from "../../types"
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
 

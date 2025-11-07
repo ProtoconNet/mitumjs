@@ -5,12 +5,13 @@ import { RevokeOperatorItem, RevokeOperatorFact } from "./revoke-operator"
 import { RedeemItem, RedeemFact } from "./redeem"
 import { SetDocumentFact } from "./set-document"
 import { TransferByPartitionItem, TransferByPartitionFact } from "./transfer-by-partition"
-import { contractApi, getAPIData } from "../../api"
+import { contractApi } from "../../api"
+import { getAPIData } from "../../api/getAPIData"
 import { Partition } from "./partition"
 
-import { ContractGenerator, Operation } from "../base"
+import { ContractGenerator, BaseOperation } from "../base"
 
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { Big, IP, TimeStamp } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
@@ -45,7 +46,7 @@ export class STO extends ContractGenerator {
         partition: string | Partition,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new AuthorizeOperatorFact(
                 TimeStamp.new().UTC(),
@@ -83,7 +84,7 @@ export class STO extends ContractGenerator {
             Assert.check(data[key] !== undefined, 
             MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the createServiceData structure`))
         });
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new CreateSecurityTokenFact(
                 TimeStamp.new().UTC(),
@@ -118,7 +119,7 @@ export class STO extends ContractGenerator {
         amount: string | number | Big,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new IssueFact(
                 TimeStamp.new().UTC(),
@@ -154,7 +155,7 @@ export class STO extends ContractGenerator {
         amount: string | number | Big,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RedeemFact(
                 TimeStamp.new().UTC(),
@@ -188,7 +189,7 @@ export class STO extends ContractGenerator {
         partition: string | Partition,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RevokeOperatorFact(
                 TimeStamp.new().UTC(),
@@ -223,7 +224,7 @@ export class STO extends ContractGenerator {
         documentHash: string,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new SetDocumentFact(
                 TimeStamp.new().UTC(),
@@ -257,7 +258,7 @@ export class STO extends ContractGenerator {
         amount: string | number | Big,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new TransferByPartitionFact(
                 TimeStamp.new().UTC(),

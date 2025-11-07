@@ -1,7 +1,7 @@
 import { Fact, FactJson } from "../base"
 
 import { HINT } from "../../alias"
-import { Address } from "../../key"
+import { Address } from "../../key/address"
 import { SortFunc } from "../../utils"
 import { CurrencyID } from "../../common"
 import { ArrayAssert } from "../../error"

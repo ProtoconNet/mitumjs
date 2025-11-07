@@ -7,12 +7,11 @@ import { ApproveFact } from "./approve"
 import { ApprovesFact, ApprovesItem } from "./approves"
 import { TransferFromFact } from "./transfer-from"
 import { TransfersFromFact, TransfersFromItem } from "./transfers-from"
-
-import { ContractGenerator, Operation } from "../base"
-
-import { Address } from "../../key"
-import { CurrencyID } from "../../common"
-import { contractApi, getAPIData } from "../../api"
+import { ContractGenerator, BaseOperation } from "../base"
+import { Address } from "../../key/address"
+import type { CurrencyID } from "../../common"
+import { contractApi } from "../../api"
+import { getAPIData } from "../../api/getAPIData"
 import { Big, IP, LongString, TimeStamp } from "../../types"
 import { calculateAllowance } from "../../utils/contractUtils"
 import { isSuccessResponse, convertToArray } from "../../utils"
@@ -48,7 +47,7 @@ export class Token extends ContractGenerator {
         decimal?: string | number | Big,
         initialSupply?: string | number | Big,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RegisterModelFact(
                 TimeStamp.new().UTC(),
@@ -79,7 +78,7 @@ export class Token extends ContractGenerator {
         receiver: string | Address,
         amount: string | number | Big,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new MintFact(
                 TimeStamp.new().UTC(),
@@ -106,7 +105,7 @@ export class Token extends ContractGenerator {
         currency: string | CurrencyID,
         amount: string | number | Big,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new BurnFact(
                 TimeStamp.new().UTC(),
@@ -134,7 +133,7 @@ export class Token extends ContractGenerator {
         receiver: string | Address,
         amount: string | number | Big,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new TransferFact(
                 TimeStamp.new().UTC(),
@@ -173,7 +172,7 @@ export class Token extends ContractGenerator {
             currency,
         ));
 
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new TransfersFact(
                 TimeStamp.new().UTC(),
@@ -201,7 +200,7 @@ export class Token extends ContractGenerator {
         target: string | Address,
         amount: string | number | Big,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new TransferFromFact(
                 TimeStamp.new().UTC(),
@@ -247,7 +246,7 @@ export class Token extends ContractGenerator {
             currency,
         ));
     
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new TransfersFromFact(
                 TimeStamp.new().UTC(),
@@ -273,7 +272,7 @@ export class Token extends ContractGenerator {
         approved: string | Address,
         amount: string | number | Big,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new ApproveFact(
                 TimeStamp.new().UTC(),
@@ -312,7 +311,7 @@ export class Token extends ContractGenerator {
             currency,
         ));
 
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new ApprovesFact(
                 TimeStamp.new().UTC(),

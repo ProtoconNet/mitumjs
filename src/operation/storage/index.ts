@@ -4,11 +4,13 @@ import { CreateDatasItem, CreateDatasFact } from "./create-datas"
 import { UpdateDataFact } from "./update-data"
 import { UpdateDatasItem, UpdateDatasFact } from "./update-datas"
 import { DeleteDataFact } from "./delete-data"
-import { ContractGenerator, Operation } from "../base"
-import { Address } from "../../key"
-import { CurrencyID } from "../../common"
-import { contractApi, getAPIData } from "../../api"
-import { IP, TimeStamp as TS, URIString, LongString } from "../../types"
+import { ContractGenerator, BaseOperation } from "../base"
+import { Address } from "../../key/address"
+import type { CurrencyID } from "../../common"
+import { contractApi } from "../../api"
+import { getAPIData } from "../../api/getAPIData"
+import type { IP, LongString } from "../../types"
+import { TimeStamp as TS, URIString } from "../../types"
 import { Assert, MitumError, ECODE, ArrayAssert } from "../../error"
 import { Config } from "../../node"
 import { convertToArray } from "../../utils"
@@ -36,7 +38,7 @@ export class Storage extends ContractGenerator {
         project: string | LongString,
         currency: string | CurrencyID,
     ) {
-        return new Operation(
+        return new BaseOperation(
             this.networkID,
             new RegisterModelFact(
                 TS.new().UTC(),
@@ -74,7 +76,7 @@ export class Storage extends ContractGenerator {
             currency,
         )
 
-        return new Operation(this.networkID, fact)
+        return new BaseOperation(this.networkID, fact)
     }
 
     /**
@@ -104,7 +106,7 @@ export class Storage extends ContractGenerator {
             dataKeys[idx],
             dataValues[idx]
         ));
-        return new Operation(this.networkID, new CreateDatasFact(TS.new().UTC(), sender, items))
+        return new BaseOperation(this.networkID, new CreateDatasFact(TS.new().UTC(), sender, items))
     }
 
     /**
@@ -133,7 +135,7 @@ export class Storage extends ContractGenerator {
             currency,
         )
 
-        return new Operation(this.networkID, fact)
+        return new BaseOperation(this.networkID, fact)
     }
 
     /**
@@ -163,7 +165,7 @@ export class Storage extends ContractGenerator {
             dataKeys[idx],
             dataValues[idx]
         ));
-        return new Operation(this.networkID, new UpdateDatasFact(TS.new().UTC(), sender, items))
+        return new BaseOperation(this.networkID, new UpdateDatasFact(TS.new().UTC(), sender, items))
     }
     
     /**
@@ -189,7 +191,7 @@ export class Storage extends ContractGenerator {
             currency,
         )
 
-        return new Operation(this.networkID, fact)
+        return new BaseOperation(this.networkID, fact)
     }
     
     /**

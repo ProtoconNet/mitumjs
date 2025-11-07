@@ -4,7 +4,7 @@ import { Config } from "../node"
 import { CurrencyID } from "../common"
 import { IBuffer, IString } from "../types"
 import { ECODE, MitumError, StringAssert, Assert } from "../error"
-import { getChecksum } from "../utils";
+import { getChecksum } from "../utils/hash";
 
 abstract class BaseAddress implements IBuffer, IString {
     private s: string
