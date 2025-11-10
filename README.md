@@ -98,7 +98,7 @@ sendOperation();
 
 <br>
 
-### 3. Important Functions Note
+## 3. Important Functions Note
 
 The operation objects created by the Mitum SDK (e.g., `mitum.currency.transfer(...)`) are **raw transaction messages**.
 
@@ -108,7 +108,7 @@ The operation objects created by the Mitum SDK (e.g., `mitum.currency.transfer(.
 
 <br>
 
-### 4. Mitum JS SDK User Guide
+## 4. Mitum JS SDK User Guide
 For detailed information on all functions, models, and advanced usage, please refer to our official GitBook documentation.
 
 Be sure to check it out before using the SDK.
@@ -117,7 +117,7 @@ Be sure to check it out before using the SDK.
 
 <br>
 
-### 5. Exports Overview
+## 5. Exports Overview
 
 #### Classes
 * `Mitum` — Main SDK class for core logic and node communication.
