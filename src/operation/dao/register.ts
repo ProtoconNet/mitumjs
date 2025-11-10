@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { DAOFact } from "./fact"
 import { FactJson } from "../base"
 

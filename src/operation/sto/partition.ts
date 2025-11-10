@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { Config } from "../../node"
 import type { IBuffer, IString } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"

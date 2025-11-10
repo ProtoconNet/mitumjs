@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { PaymentFact } from "./fact"
 import { FactJson } from "../base"
 import { HINT } from "../../alias"

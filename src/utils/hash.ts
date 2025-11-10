@@ -1,5 +1,6 @@
 import { sha3_256, keccak256 as keccak_256 } from "js-sha3"
 import { sha256 as nobleSha256 } from "@noble/hashes/sha256"
+import { Buffer } from "buffer";
 
 type HashFunction = (msg: string | Buffer) => Buffer
 

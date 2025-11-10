@@ -1,5 +1,5 @@
 import base58 from "bs58"
-// import { writeFile } from "fs"
+import { Buffer } from "buffer";
 
 import { Fact } from "./fact"
 import { SignOption } from "./types"

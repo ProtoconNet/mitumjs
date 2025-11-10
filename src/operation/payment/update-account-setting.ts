@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { FactJson } from "../base"
 import { PaymentFact } from "./fact"
 import { Big } from "../../types"

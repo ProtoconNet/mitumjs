@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { DAOPolicy } from "./policy"
 
 import { HINT } from "../../alias"

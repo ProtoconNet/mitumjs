@@ -1,4 +1,4 @@
-
+import { Buffer } from "buffer";
 import { ContractFact, FactJson } from "../base"
 
 import { HINT } from "../../alias"

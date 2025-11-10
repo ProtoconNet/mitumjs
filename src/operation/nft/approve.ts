@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { NFTItem } from "./item"
 import { OperationFact } from "../base"
 

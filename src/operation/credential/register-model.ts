@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { HINT } from "../../alias"
 import { Address } from "../../key/address"
 import { ContractFact } from "../base"

@@ -1,3 +1,4 @@
+import type { Buffer } from "buffer";
 import { Item } from "../base"
 
 import { Address } from "../../key/address"

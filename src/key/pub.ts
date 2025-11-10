@@ -1,4 +1,5 @@
 import { keccak256 as keccak256js } from "js-sha3";
+import { Buffer } from "buffer";
 
 import { Address } from "./address"
 import { KeyPairType } from "./types"

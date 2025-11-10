@@ -7,7 +7,7 @@ import { hmac } from "@noble/hashes/hmac"
 import { sha256 as nobleSha256 } from "@noble/hashes/sha256"
 import { utf8ToBytes } from "@noble/hashes/utils";
 import * as secp256k1 from "@noble/secp256k1"
-import { ec as EC } from "elliptic";
+import * as elliptic from "elliptic";
 
 import { Key } from "./pub"
 import { HDAccount, KeyPairType, defaultPath } from "./types"
@@ -18,6 +18,7 @@ import { SUFFIX } from "../alias"
 import { sha3, sha256 } from "../utils"
 import { Assert, ECODE, MitumError, StringAssert } from "../error"
 import { privateKeyToPublicKey, compress } from "../utils/converter";
+import { Buffer } from "buffer";
 
 interface IKeyGenerator {
     random(option?: KeyPairType): BaseKeyPair
@@ -74,7 +75,7 @@ export abstract class BaseKeyPair {
     }
 
     protected ethSign(msg: string | Buffer): Buffer {
-        const ec = new EC("secp256k1");
+        const ec = new elliptic.ec("secp256k1");
         const key = ec.keyFromPrivate(this.privateKey.noSuffix, "hex");
 
         const msgHash = nobleSha256(typeof msg === "string" ? utf8ToBytes(msg) : msg);

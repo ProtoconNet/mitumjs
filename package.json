@@ -20,7 +20,6 @@
   },
   "keywords": [
     "mitum",
-    "protocon",
     "mitum-currency",
     "mitum-token",
     "mitum-point",
@@ -29,7 +28,9 @@
     "mitum-dao",
     "mitum-credential",
     "mitum-kyc",
-    "mitum-timestamp"
+    "mitum-timestamp",
+    "mitum-account-abstraction",
+    "mitum-authdid"
   ],
   "author": "socialinfratech",
   "license": "GPL-3.0-or-later",
@@ -45,6 +46,8 @@
     "@babel/preset-env": "^7.22.20",
     "@babel/preset-typescript": "^7.22.15",
     "@jest/globals": "^29.7.0",
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@tsconfig/recommended": "^1.0.3",
     "@types/elliptic": "^6.4.16",
@@ -67,6 +70,7 @@
     "big-integer": "^1.6.51",
     "bs58": "^5.0.0",
     "bs58check": "^3.0.1",
+    "buffer": "^6.0.3",
     "elliptic": "^6.5.4",
     "ethers": "^6.7.0",
     "int64-buffer": "1.0.1",

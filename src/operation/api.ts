@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { SignOption, Fact } from "./base"
 import type { BaseOperation } from "./base/operation"
 import { getAPIData } from "../api/getAPIData"
@@ -7,10 +8,8 @@ import type { Key } from "../key/pub"
 import { KeyPair } from "../key/keypair"
 import { Generator, HintedObject, IP, SuccessResponse, ErrorResponse } from "../types"
 import { Assert, ECODE, MitumError, ArrayAssert } from "../error"
-import { isOpFact, isHintedObject } from "../utils/typeGuard"
+import { isOpFact, isHintedObject, isBase58Encoded } from "../utils/typeGuard"
 import { isSuccessResponse } from "../utils"
-import { isBase58Encoded } from "../utils/typeGuard"
-
 
 export class Operation extends Generator {
 	constructor(

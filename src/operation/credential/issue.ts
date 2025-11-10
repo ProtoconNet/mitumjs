@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { OperationFact } from "../base"
 import { CredentialItem } from "./item"
 

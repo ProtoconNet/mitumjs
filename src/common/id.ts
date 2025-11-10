@@ -1,6 +1,7 @@
 import { Config } from "../node/config"
 import type { IBuffer, IString } from "../types"
 import { Assert, ECODE, MitumError } from "../error"
+import { Buffer } from "buffer";
 
 abstract class ID implements IBuffer, IString {
     private s: string

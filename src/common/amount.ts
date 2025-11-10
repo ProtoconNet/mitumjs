@@ -1,6 +1,6 @@
 import { Hint } from "./hint"
 import { CurrencyID } from "./id"
-
+import { Buffer } from "buffer";
 import { HINT } from "../alias"
 import { Assert, ECODE, MitumError } from "../error"
 import { Big, HintedObject, IBuffer, IHintedObject } from "../types"

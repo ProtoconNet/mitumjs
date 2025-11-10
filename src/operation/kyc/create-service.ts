@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { ContractFact } from "../base"
 
 import { HINT } from "../../alias"

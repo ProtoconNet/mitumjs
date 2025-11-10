@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { ContractFact } from "../base"
 import type { FactJson } from "../base"
 import { Address } from "../../key/address"

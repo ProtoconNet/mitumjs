@@ -1,5 +1,6 @@
 import { IBuffer, IString } from "../types"
 import { Assert, ECODE, MitumError } from "../error"
+import { Buffer } from "buffer";
 
 export class Token implements IBuffer, IString {
     private s: string

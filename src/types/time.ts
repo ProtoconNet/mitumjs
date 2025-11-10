@@ -1,5 +1,6 @@
 import { IBuffer, IString } from "./interface"
 import { Assert, MitumError } from "../error"
+import { Buffer } from "buffer";
 
 export class TimeStamp implements IBuffer, IString {
 	private t: Date

@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import type { FactJson } from "../base"
 import { StorageFact } from "./fact"
 import type { LongString } from "../../types"

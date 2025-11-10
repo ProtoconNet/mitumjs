@@ -1,5 +1,6 @@
 import { getPublicKey } from "@noble/secp256k1"
 import { ECODE, MitumError } from "../error"
+import { Buffer } from "buffer";
 
 export const privateKeyToPublicKey = (
   privateKey: string | Buffer

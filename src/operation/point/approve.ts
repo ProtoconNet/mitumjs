@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { PointFact } from "./fact"
 
 import { Big } from "../../types"

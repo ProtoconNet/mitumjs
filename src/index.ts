@@ -1,4 +1,5 @@
-import { Generator, IP } from "./types"
+import { Generator} from "./types"
+import type { IP} from "./types"
 import { ECODE, DCODE, PCODE } from "./error"
 import { Block, Node, NetworkID } from "./node"
 import { Utils } from "./utils/transformUnit"
@@ -8,7 +9,7 @@ import {
     DAO, KYC, STO,
     TimeStamp, Credential,
     Token, Point, Storage, Payment,
-    Signer,
+    Signer
 } from "./operation"
 import { Operation } from "./operation/api"
 import { BrowserProvider } from "./providers"
@@ -214,5 +215,7 @@ export class Mitum extends Generator {
     }
 }
 
-export default Mitum
 export { BrowserProvider }
+export type { Item, Fact, BaseOperation, Authentication, ProxyPayer, Settlement  } from "./operation/base";
+export type { Account, HDAccount, defaultPath } from "./key/types";
+export { isOpFact, isHintedObject, isHintedObjectFromUserOp } from "./utils/typeGuard"

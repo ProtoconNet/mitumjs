@@ -1,4 +1,5 @@
 import base58 from "bs58"
+import { Buffer } from "buffer";
 import { Authentication, ProxyPayer, Settlement, GeneralFactSign, NodeFactSign } from "./base"
 import type { BaseOperation, Fact, UserOperationJson, OperationJson, SignOption } from "./base"
 import { sha3 } from "../utils"
@@ -27,9 +28,17 @@ export class Signer extends Generator {
      */
     sign(
         privatekey: string | Key,
-        operation: BaseOperation<Fact> | HintedObject,
+        operation: BaseOperation<Fact> | HintedObject | string,
         option?: SignOption
     ) {
+        if (typeof operation === "string") {
+            try {
+                operation = JSON.parse(operation);
+            } catch {
+                MitumError.detail(ECODE.INVALID_OPERATION, `input can not be recontructed into HintedObject format`)
+            }
+        }
+
         Assert.check(
 			isOpFact(operation) || isHintedObject(operation), 
 			MitumError.detail(ECODE.INVALID_OPERATION, `input is neither in OP<Fact> nor HintedObject format`)

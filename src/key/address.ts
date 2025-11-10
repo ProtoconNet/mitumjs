@@ -5,6 +5,7 @@ import { CurrencyID } from "../common"
 import { IBuffer, IString } from "../types"
 import { ECODE, MitumError, StringAssert, Assert } from "../error"
 import { getChecksum } from "../utils/hash";
+import { Buffer } from "buffer";
 
 abstract class BaseAddress implements IBuffer, IString {
     private s: string

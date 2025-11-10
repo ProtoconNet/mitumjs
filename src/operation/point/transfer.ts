@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { PointFact } from "./fact"
 import { FactJson } from "../base"
 

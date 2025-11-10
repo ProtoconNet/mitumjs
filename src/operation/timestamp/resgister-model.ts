@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { TimeStampFact } from "./fact"
 
 import { HINT } from "../../alias"

@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { CurrencyDesign } from "./currency-design"
 import { NodeFact, FactJson } from "../base"
 

@@ -1,5 +1,5 @@
 import { Item } from "../base"
-
+import { Buffer } from "buffer";
 import { Config } from "../../node"
 import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"

@@ -1,4 +1,5 @@
 import base58 from "bs58"
+import { Buffer } from "buffer";
 
 import { Item } from "./item"
 import { FactJson } from "./types"

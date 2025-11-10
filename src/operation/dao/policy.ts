@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { Whitelist } from "./whitelist"
 
 import { HINT } from "../../alias"

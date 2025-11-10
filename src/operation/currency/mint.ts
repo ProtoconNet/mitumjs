@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { Item, NodeFact, FactJson } from "../base"
 
 import { HINT } from "../../alias"

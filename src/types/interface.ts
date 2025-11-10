@@ -1,3 +1,4 @@
+import type { Buffer } from "buffer";
 import { HintedObject } from "./hinted"
 
 export interface IBuffer {

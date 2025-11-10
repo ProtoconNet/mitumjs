@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { HINT } from "../../alias"
 import { Hint } from "../../common"
 import { Config } from "../../node"

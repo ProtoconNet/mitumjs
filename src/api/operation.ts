@@ -2,6 +2,7 @@ import axios from "axios"
 import { Address } from "../key/address"
 import { Big, HintedObject } from "../types"
 import { delegateUri, apiPathWithParams, apiPathWithParamsExt } from "../utils"
+import type { BaseOperation, Fact } from "../operation/base"
 
 async function getOperations(
     api: string | undefined,
@@ -32,11 +33,6 @@ async function getBlockOperationsByHeight(
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
-// async function getBlockOperationsByHash(api: string | undefined, hash: string, delegateIP: string | undefined) {
-//     const apiPath = `${api}/block/${hash}/operations`;
-//     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
-// }
-
 async function getAccountOperations(
     api: string | undefined,
     address: string | Address,
@@ -47,7 +43,7 @@ async function getAccountOperations(
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
 
-async function send(api: string | undefined, operation: HintedObject | string, delegateIP: string | undefined, config?: { [i: string]: any }) {
+async function send(api: string | undefined, operation: HintedObject | BaseOperation<Fact> | string, delegateIP: string | undefined, config?: { [i: string]: any }) {
     const apiPath = `${api}/builder/send`;
     return !delegateIP 
     ? await axios.post(apiPath, JSON.stringify(operation), config) 
