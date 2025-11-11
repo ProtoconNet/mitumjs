@@ -1,6 +1,6 @@
 {
   "name": "@mitumjs/mitumjs",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "framework for imfact network",
   "main": "dist/bundle.cjs.cjs",
   "module": "dist/bundle.esm.mjs",
@@ -29,7 +29,6 @@
     "mitum-credential",
     "mitum-kyc",
     "mitum-timestamp",
-    "mitum-account-abstraction",
     "mitum-authdid"
   ],
   "author": "socialinfratech",
