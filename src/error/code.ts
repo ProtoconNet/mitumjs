@@ -256,7 +256,7 @@ export const DCODE = {
     IV_AUTH_TYPE: {
         code: "D303",
         keyword: ["Invalid Auth Type"],
-        description: "Occurs when there is a problem with authentication_id in the account abstraction operation.(If verificationMethod of social_login authentication is another social_login)",
+        description: "Occurs when there is a problem with authentication_id in the account abstraction operation.(If verificationMethod of linked authentication is another linked authentication)",
         subject: ""
     },
     CA_RESTRICTED: {
