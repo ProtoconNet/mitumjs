@@ -64,3 +64,7 @@ export type UserOperationJson = {
 export type SignOption = {
     node?: string
 }
+
+export type Allowed =
+  | { operation: string }
+  | { operation: string; contract: string };

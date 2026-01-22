@@ -5,6 +5,7 @@ import { ContractGenerator } from "./generator"
 import { GeneralFactSign, NodeFactSign } from "./factsign"
 import { GeneralFS, NodeFS, FactJson, OperationJson, SignOption, UserOperationJson } from "./types"
 import { Fact, OperationFact, NodeFact, ContractFact } from "./fact"
+import { AllowedOperation } from "./allowedOperation"
 
 export {
     Item,
@@ -14,4 +15,5 @@ export {
     GeneralFS, NodeFS, FactJson, OperationJson, SignOption, UserOperationJson,
     GeneralFactSign, NodeFactSign,
     ContractGenerator,
+    AllowedOperation
 }
