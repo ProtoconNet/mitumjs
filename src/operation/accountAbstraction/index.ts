@@ -20,7 +20,7 @@ export class AccountAbstraction extends Generator {
      * @param {Fact | FactJson} fact - The operation fact or fact property (json) of HintedObject of operation.
      * @param {string | Address} contract - The did contract address.
      * @param {string} authentication_id - The authentication ID for the did contract.
-     * @returns {UserOperation<Fact>} - The created `UserOperation` instance.
+     * @returns {UserOperation<Fact>} The created `UserOperation` instance.
      */
     createUserOperation(
         fact: Fact | FactJson,

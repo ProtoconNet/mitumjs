@@ -4,9 +4,6 @@ import { LongString } from "../../types"
 import { CurrencyID } from "../../common"
 import { ContractFact, FactJson } from "../base"
 import { Document } from "./document"
-// import { Config } from "../../node"
-// import { Assert, ECODE, MitumError } from "../../error"
-
 
 export class UpdateDocumentFact extends ContractFact {
     readonly did: LongString;

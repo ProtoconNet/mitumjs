@@ -1,8 +1,8 @@
 import { RegisterModelFact } from "./register-model"
 import { CreateFact } from "./create-did"
-import { UpdateDocumentFact } from "./update_did_document"
-import { AsymKeyAuth, SocialLoginAuth, Document } from "./document"
-import { ContractGenerator, Operation } from "../base"
+import { UpdateDocumentFact } from "./update-did-document"
+import { AsymKeyAuth, LinkedAuth, Document, Service } from "./document"
+import { ContractGenerator, Operation, AllowedOperation } from "../base"
 import { Address, Key } from "../../key"
 import { CurrencyID } from "../../common"
 import { contractApi, getAPIData } from "../../api"
@@ -10,33 +10,46 @@ import { isSuccessResponse  } from "../../utils"
 import { validateDID } from "../../utils/typeGuard"
 import { IP, TimeStamp as TS, LongString } from "../../types"
 import { Assert, MitumError, ECODE } from "../../error"
+import { HINT } from "../../alias"
+
+type verificationKeyType =
+    | "Ed25519VerificationKey2020"
+    | "EcdsaSecp256k1VerificationKey2019"
+    | "EcdsaSecp256k1VerificationKeyImFact2025";
+
+type asymKeyAuthOpt =
+    | "SECP256K1_2019"
+    | "SECP256K1_IMFACT_2025";
+
+const ASYMKEY_TYPE_MAP: Record<asymKeyAuthOpt, verificationKeyType> = {
+    SECP256K1_2019: "EcdsaSecp256k1VerificationKey2019",
+    SECP256K1_IMFACT_2025: "EcdsaSecp256k1VerificationKeyImFact2025",
+};
 
 type asymkeyAuth = {
     _hint: string,
     id: string | LongString,
-    authType: "Ed25519VerificationKey2018" | "EcdsaSecp256k1VerificationKey2019",
+    type: verificationKeyType,
     controller: string | LongString,
-    publicKey: string | Key,
+    publicKeyImFact: string | Key,
 }
 
-type socialLoginAuth = {
+type linkedAuth = {
     _hint: string,
     id: string | LongString,
-    authType: "VerifiableCredential",
+    type: "LinkedVerificationMethod",
     controller: string | LongString,
-    serviceEndpoint: string | LongString,
-    proof: {
-        verificationMethod: string | LongString
-    }
+    targetId: string | LongString,
+    allowed: AllowedOperation[]
 }
 
 type document = {
     _hint: string,
-    "@context": string | LongString,
+    "@context": string[] | LongString[],
     id: string | LongString, 
-    authentication: (asymkeyAuth | socialLoginAuth)[],
+    authentication: (asymkeyAuth | linkedAuth)[],
     verificationMethod: [],
-    service: {
+    service?: {
         id: string | LongString,
         type: string | LongString,
         service_end_point: string | LongString
@@ -47,34 +60,45 @@ const isOfType = <T>(obj: unknown, keys: (keyof T)[]): obj is T =>
     typeof obj === "object" && obj !== null && keys.every((key) => key in obj);
 
 const validateAuthentication = (auth: unknown, index: number): void => {
-    const baseKeys = ["_hint", "id", "authType", "controller"] as (keyof (asymkeyAuth | socialLoginAuth))[];
+    const baseKeys = ["_hint", "id", "type", "controller"] as (keyof (asymkeyAuth | linkedAuth))[];
     
-    if (!isOfType<asymkeyAuth | socialLoginAuth>(auth, baseKeys)) {
+    if (!isOfType<asymkeyAuth | linkedAuth>(auth, baseKeys)) {
         throw MitumError.detail(ECODE.AUTH_DID.INVALID_AUTHENTICATION, "Invalid authentication type");
     }
-    if ((auth as asymkeyAuth).authType === "Ed25519VerificationKey2018" || (auth as asymkeyAuth).authType === "EcdsaSecp256k1VerificationKey2019") {
-        const asymkeyAuthKeys = [...baseKeys, "publicKey"] as (keyof asymkeyAuth)[];
+    if ((auth as asymkeyAuth).type === "Ed25519VerificationKey2020" || (auth as asymkeyAuth).type === "EcdsaSecp256k1VerificationKeyImFact2025" ||  (auth as asymkeyAuth).type === "EcdsaSecp256k1VerificationKey2019") {
+        const asymkeyAuthKeys = [...baseKeys, "publicKeyImFact"] as (keyof asymkeyAuth)[];
         if (!isOfType<asymkeyAuth>(auth, asymkeyAuthKeys)) {
             throw MitumError.detail(ECODE.AUTH_DID.INVALID_AUTHENTICATION, `Asymkey authentication at index ${index} is missing required fields.`);
         }
     }
 
-    else if ((auth as socialLoginAuth).authType === "VerifiableCredential") {
-        const socialLoginAuthKeys = [...baseKeys, "serviceEndpoint", "proof"] as (keyof socialLoginAuth)[];
-        if (!isOfType<socialLoginAuth>(auth, socialLoginAuthKeys)) {
-            throw MitumError.detail(ECODE.AUTH_DID.INVALID_AUTHENTICATION, `Social login authentication at index ${index} is missing required fields.`);
+    else if ((auth as linkedAuth).type === "LinkedVerificationMethod") {
+        const linkedAuthKeys = [...baseKeys, "targetId", "allowed"] as (keyof linkedAuth)[];
+    
+        if (!isOfType<linkedAuth>(auth, linkedAuthKeys)) {
+            throw MitumError.detail(
+                ECODE.AUTH_DID.INVALID_AUTHENTICATION,
+                `Linked authentication at index ${index} is missing required fields.`
+            );
         }
-
-        if (!auth.proof || typeof auth.proof !== "object") {
-            throw MitumError.detail(ECODE.AUTH_DID.INVALID_AUTHENTICATION, `Proof in social login authentication at index ${index} is invalid or missing.`);
+    
+        if (!Array.isArray(auth.allowed)) {
+            throw MitumError.detail(
+                ECODE.AUTH_DID.INVALID_AUTHENTICATION,
+                `The 'allowed' field in linked authentication at index ${index} must be an array.`
+            );
         }
-
-        const proofKeys = ["verificationMethod"] as (keyof socialLoginAuth["proof"])[];
-        if (!isOfType<socialLoginAuth["proof"]>(auth.proof, proofKeys)) {
-            throw MitumError.detail(ECODE.AUTH_DID.INVALID_AUTHENTICATION, `Proof in social login authentication at index ${index} is missing required fields.`);
+    
+        if (
+            typeof auth.targetId !== "string" &&
+            !(auth.targetId instanceof LongString)
+        ) {
+            throw MitumError.detail(
+                ECODE.AUTH_DID.INVALID_AUTHENTICATION,
+                `Invalid 'targetId' in linked authentication at index ${index}.`
+            );
         }
     }
-
     else {
         throw MitumError.detail(ECODE.AUTH_DID.INVALID_AUTHENTICATION, `Unknown authentication type at index ${index}.`);
     }
@@ -89,25 +113,86 @@ export class AuthDID extends ContractGenerator {
         super(networkID, api, delegateIP)
     }
 
+    private normalizeDocument(
+        doc: document | Document,
+        sender: string | Address
+    ): Document {
+        if (doc instanceof Document) {
+            return doc;
+        }
+    
+        this.validateDocument(doc);
+        this.isSenderDidOwner(sender, doc.id);
+    
+        if (doc.service) {
+            this.isSenderDidOwner(sender, doc.service.id);
+        }
+    
+        return new Document(
+            doc["@context"],
+            doc.id,
+            doc.authentication.map(el =>
+                this.mapAuthToClass(el, sender)
+            ),
+            doc.verificationMethod.map(el =>
+                this.mapAuthToClass(el, sender)
+            ),
+            doc.service
+                ? new Service(
+                      doc.service.id,
+                      doc.service.type,
+                      doc.service.service_end_point
+                  )
+                : undefined
+        );
+    }
+    
     private validateDocument(doc: unknown): void {
-        if (typeof doc !== "object" || doc === null) {
-            throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, "invalid document type")
+        if (!doc || typeof doc !== "object") {
+            throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, "document must be an object");
         }
     
-        const requiredKeys = ["_hint", "@context", "id", "authentication", "verificationMethod", "service"] as (keyof document)[];
-        if (!isOfType<document>(doc, requiredKeys)) {
-            throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, "The document structure is invalid or missing required fields.");
+        const d = doc as any;
+    
+        if (
+            typeof d._hint !== "string" ||
+            !Array.isArray(d["@context"]) ||
+            !d.id ||
+            !Array.isArray(d.authentication) ||
+            !Array.isArray(d.verificationMethod)
+        ) {
+            throw MitumError.detail(
+                ECODE.AUTH_DID.INVALID_DOCUMENT,
+                "invalid DID document structure"
+            );
         }
     
-        if (!Array.isArray(doc.authentication)) {
-            throw MitumError.detail(ECODE.AUTH_DID.INVALID_AUTHENTICATION, "The 'authentication' field must be an array.");
+        for (const ctx of d["@context"]) {
+            if (typeof ctx !== "string" && !(ctx instanceof LongString)) {
+                throw MitumError.detail(
+                    ECODE.AUTH_DID.INVALID_DOCUMENT,
+                    "each @context must be string or LongString"
+                );
+            }
         }
     
-        doc.authentication.forEach((auth, index) => validateAuthentication(auth, index));
+        d.authentication.forEach((auth: unknown, i: number) =>
+            validateAuthentication(auth, i)
+        );
     
-        const serviceKeys = ["id", "type", "service_end_point"] as (keyof document["service"])[];
-        if (!isOfType<document["service"]>(doc.service, serviceKeys)) {
-            throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, "The 'service' structure is invalid or missing required fields.");
+        d.verificationMethod.forEach((vm: unknown, i: number) =>
+            validateAuthentication(vm, i)
+        );
+    
+        if (d.service != null) {
+            if (
+                typeof d.service !== "object" ||
+                !d.service.id ||
+                !d.service.type ||
+                !d.service.service_end_point
+            ) {
+                throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT,"invalid service definition");
+            }
         }
     }
 
@@ -118,79 +203,167 @@ export class AuthDID extends ContractGenerator {
         );
     }
 
+    private mapAuth(auth: asymkeyAuth | linkedAuth): AsymKeyAuth | LinkedAuth 
+    {
+        if (auth.type === "LinkedVerificationMethod") {
+            return new LinkedAuth(
+                auth.id,
+                auth.controller,
+                auth.targetId,
+                auth.allowed
+            );
+        }
+
+        if (
+            auth.type === "Ed25519VerificationKey2020" ||
+            auth.type === "EcdsaSecp256k1VerificationKey2019" ||
+            auth.type === "EcdsaSecp256k1VerificationKeyImFact2025"
+        ) {
+            return new AsymKeyAuth(
+                auth.id,
+                auth.type,
+                auth.controller,
+                auth.publicKeyImFact
+            );
+        }
+    
+        throw MitumError.detail(
+            ECODE.AUTH_DID.INVALID_AUTHENTICATION,
+            `Unknown authentication type: ${String((auth as any).type)}`
+        );
+    }
+
+    private mapAuthToClass(
+        el: asymkeyAuth | linkedAuth,
+        sender: string | Address
+    ): AsymKeyAuth | LinkedAuth {
+        this.isSenderDidOwner(sender, el.id, true);
+        this.isSenderDidOwner(sender, el.controller);
+    
+        return this.mapAuth(el);
+    }
+
     /**
      * Creates an AsymKeyAuth object with the provided authentication details.
      * @param {string} id - The unique identifier for the authentication.
-     * @param {"EcdsaSecp256k1VerificationKey2019"} authType - The type of the asymmetric key used for verification.
+     * @param {"SECP256K1_2019" | "SECP256K1_IMFACT_2025"} option - Short identifier for verification key type.
+     *  - SECP256K1_2019 → EcdsaSecp256k1VerificationKey2019
+     *  - SECP256K1_IMFACT_2025 → EcdsaSecp256k1VerificationKeyImFact2025
      * @param {string} controller - The controller responsible for the authentication.
-     * @param {string} publicKey - The public key associated with the authentication.
-     * @returns {object} An asymkeyAuth object.
+     * @param {string} publicKeyImFact - The public key associated with the authentication.
+     * @returns {AsymKeyAuth} An AsymKeyAuth Instance.
      */
     writeAsymkeyAuth(
         id: string,
-        authType: "EcdsaSecp256k1VerificationKey2019",
+        option: asymKeyAuthOpt,
         controller: string,
-        publicKey: string,
-    ) {
-        const auth = new AsymKeyAuth(id, authType, controller, publicKey);
-        return auth.toHintedObject() as asymkeyAuth;
-    };
+        publicKeyImFact: string,
+    ): AsymKeyAuth {
+        const verificationType = ASYMKEY_TYPE_MAP[option];
+    
+        if (!verificationType) {
+            throw MitumError.detail(
+                ECODE.INVALID_TYPE,
+                `Unsupported asym key option: ${option}`
+            );
+        }
+    
+        return new AsymKeyAuth(
+            id,
+            verificationType,
+            controller,
+            publicKeyImFact
+        );
+    }
 
     /**
-     * Creates a SocialLoginAuth object with the provided authentication details.
-     * @param {string} id - The unique identifier for the authentication.
-     * @param {string} controller - The controller responsible for the authentication.
-     * @param {string} serviceEndpoint - The endpoint URL for the social login service.
-     * @param {string} verificationMethod - The verification method used for authentication.
-     * @returns {object} A socialLoginAuth object.
+     * Creates a LinkedAuth object that allows another authentication method
+     * (e.g. OAuth provider, biometric service, custody service)
+     * to act on behalf of the DID subject with restricted operation capabilities.
+     * @param {string} id - The unique identifier of this linked authentication method.
+     * @param {string} controller - The DID controller that authorizes this linked authentication.
+     * @param {string} targetId - The identifier of the authentication method that performs verification on behalf of the DID subject.
+     * @param {AllowedOperation[]} allowedOperations - A list of operation capabilities that this linked authentication is permitted to execute on behalf of the DID subject.
+     *   Each allowedOperation must be created using {@link Mitum.allowedOperation}, which provides a safe, typed registry of core-supported operations.
+     *   Example:
+     *   ```ts
+     *   const allowed = [
+     *     Mitum.allowedOperation.currency.transfer(),
+     *     Mitum.allowedOperation.authdid.create(contract),
+     *   ];
+     *   ```
+     * @returns {LinkedAuth} LinkedAuth instance.
      */
-    writeSocialLoginAuth(
+    writeLinkedAuth(
         id: string,
         controller: string,
-        serviceEndpoint: string,
-        verificationMethod: string,
-    ) {
-        const auth = new SocialLoginAuth(id, controller, serviceEndpoint, verificationMethod);
-        return auth.toHintedObject() as socialLoginAuth;
-    };
+        targetId: string,
+        allowedOperations: AllowedOperation[],
+    ): LinkedAuth {
+        return new LinkedAuth(
+            id,
+            controller,
+            targetId,
+            allowedOperations
+        );
+    }
 
     /**
-     * Creates a DID Document with the provided context, DID ID, authentications, and service details.
-     * Use return value of this method for updateDocument()
-     * @param {string} didContext - The context for the DID document.
-     * @param {string} didID - The unique identifier for the DID.
-     * @param {(asymkeyAuth | socialLoginAuth)[]} authentications - An array of authentication objects. 
-     *        Each object must be either an instance of `asymkeyAuth` or `socialLoginAuth`.
-     * @param {string} serviceID - The identifier for the associated service.
-     * @param {string} serviceType - The type of the service (e.g., `LinkedDataProof`, `BlockchainService`).
-     * @param {string} serviceEndPoint - The endpoint URL of the service.
-     * @returns {object} A hinted object representation of the created DID Document. Use it for updateDocument().
+     * The returned Document can be passed directly to `updateDocument()`.
+     * @param {Array<string | LongString>} didContext - DID document contexts (e.g. DID Core context, service-specific context).
+     * @param {string} didID - DID identifier.
+     * @param {Array<AsymKeyAuth | LinkedAuth>} authentications Authentication methods for the DID.
+     * @param {Array<AsymKeyAuth | LinkedAuth>} [verificationMethods] - Verification methods for the DID.
+     * @param {Object} [service] - Optional service definition.
+     * @param {string} service.id
+     * @param {string} service.type
+     * @param {string} service.serviceEndpoint
+     * @returns {Document} DID Document instance.
      */
     writeDocument(
-        didContext: string,
+        didContext: string[],
         didID: string,
-        authentications: (asymkeyAuth | socialLoginAuth)[],
-        serviceID: string,
-        serviceType: string,
-        serviceEndPoint: string
-    ) {
-        const document = new Document(
+        authentications: (AsymKeyAuth | LinkedAuth)[],
+        verificationMethods: (AsymKeyAuth | LinkedAuth)[] = [],
+        service?: {
+            id: string;
+            type: string;
+            serviceEndpoint: string;
+        }
+    ): Document {
+        return new Document(
             didContext,
             didID,
-            authentications.map((auth) =>
-                "proof" in auth
-                    ? (validateDID(auth.proof.verificationMethod.toString(), true),
-                       new SocialLoginAuth(auth.id, auth.controller, auth.serviceEndpoint, auth.proof.verificationMethod))
-                    : new AsymKeyAuth(auth.id, auth.authType, auth.controller, auth.publicKey)
-            ),
-            [],
-            serviceID,
-            serviceType,
-            serviceEndPoint
+            authentications.map((auth, idx) => {
+                if (auth instanceof AsymKeyAuth || auth instanceof LinkedAuth) {
+                    return auth;
+                }
+            
+                throw MitumError.detail(
+                    ECODE.AUTH_DID.INVALID_AUTHENTICATION,
+                    `authentication[${idx}] must be AsymKeyAuth or LinkedAuth instance`
+                );
+            }),
+            verificationMethods.map((auth, idx) => {
+                if (auth instanceof AsymKeyAuth || auth instanceof LinkedAuth) {
+                    return auth;
+                }
+            
+                throw MitumError.detail(
+                    ECODE.AUTH_DID.INVALID_AUTHENTICATION,
+                    `verificationMethods[${idx}] must be AsymKeyAuth or LinkedAuth instance`
+                );
+            }),
+            service
+                ? new Service(
+                    service.id,
+                    service.type,
+                    service.serviceEndpoint
+                )
+                : undefined
         );
-        return document.toHintedObject() as document;
-    };
-    
+    }
+
     /**
      * Generate a `register-model` operation to register new did registry model on the contract.
      * @param {string | Address} [contract] - The contract's address.
@@ -204,7 +377,7 @@ export class AuthDID extends ContractGenerator {
         sender: string | Address,
         didMethod: string,
         currency: string | CurrencyID,
-    ) {
+    ): Operation<RegisterModelFact> {
         return new Operation(
             this.networkID,
             new RegisterModelFact(
@@ -221,80 +394,93 @@ export class AuthDID extends ContractGenerator {
      * Generate `create-did` operation to create new did and did document.
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | Address} [sender] - The sender's address.
-     * @param {"ECDSA"} [authType] - The encryption method to use for authentication.
-     * @param {publicKey} [publicKey] - The public key to use for authentication.
-     * @param {serviceType} [serviceType] - The serivce type.
-     * @param {serviceEndpoints} [serviceEndpoints] - The service end point.
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @returns `create-did` operation
      */
     create(
         contract: string | Address,
         sender: string | Address,
-        authType: "ECDSA", //"ECDSA" | "EdDSA"
-        publicKey: string,
-        serviceType: string,
-        serviceEndpoints: string,
         currency: string | CurrencyID,
-    ) {
+    ): Operation<CreateFact> {
         const fact = new CreateFact(
             TS.new().UTC(),
             sender,
             contract,
-            authType,
-            publicKey,
-            serviceType,
-            serviceEndpoints,
             currency
         )
         return new Operation(this.networkID, fact)
     }
 
     /**
-     * Generate `update-did-document` operation to update the did document.
-     * `document` must comply with document type
-     * @param {string | Address} [contract] - The contract's address.
-     * @param {string | Address} [sender] - The sender's address.
-     * @param {document} [document] - The did document to be updated.
-     * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `update-did-document` operation
+     * Update an Auth DID document using a strongly-typed document object.
+     *
+     * This method expects the `document` parameter to conform to the SDK's
+     * internal `document` type. All authentication entries must already be
+     * validated and structurally correct, and will be converted into
+     * corresponding class instances (`AsymKeyAuth`, `LinkedAuth`, etc.).
+     *
+     * Ownership checks are enforced:
+     * - The sender must be the owner of the document DID.
+     * - The sender must also own any controller or service DID referenced
+     *   in the document
+     * @param contract - The Auth DID contract address.
+     * @param sender - The transaction sender; must be the owner of the document DID.
+     * @param document - A validated document object matching the SDK `document` type.
+     * @param currency - Currency ID used for the operation fee.
+     * @returns An `Operation` instance that can be signed and submitted to the network.
      */
     updateDocument(
         contract: string | Address,
         sender: string | Address,
-        document: document,
+        document: Document,
         currency: string | CurrencyID,
-    ) {
-        this.validateDocument(document);
-        this.isSenderDidOwner(sender, document.id);
-        this.isSenderDidOwner(sender, document.service.id);
-
+    ): Operation<UpdateDocumentFact> {
+        const normalized = this.normalizeDocument(document, sender);
+    
         const fact = new UpdateDocumentFact(
             TS.new().UTC(),
             sender,
             contract,
-            document.id.toString(),
-            new Document(
-                document["@context"],
-                document.id,
-                document.authentication.map((el) => {
-                    this.isSenderDidOwner(sender, el.id, true);
-                    this.isSenderDidOwner(sender, el.controller);
-                    if ("proof" in el) {
-                        validateDID(el.proof.verificationMethod.toString(), true);
-                        return new SocialLoginAuth(el.id, el.controller, el.serviceEndpoint, el.proof.verificationMethod)
-                    } else {
-                        return new AsymKeyAuth(el.id, el.authType, el.controller, el.publicKey)
-                    }
-                }),
-                document.verificationMethod,
-                document.service.id,
-                document.service.type,
-                document.service.service_end_point
-            ),
+            normalized.id.toString(),
+            normalized,
             currency
-        )
-        return new Operation(this.networkID, fact)
+        );
+    
+        return new Operation(this.networkID, fact);
+    }
+
+    /**
+     * Update an Auth DID document from a raw JSON object.
+     *
+     * This method accepts an untyped document (e.g. parsed JSON), validates
+     * its structure and authentication entries, and converts it into internal
+     * SDK classes before creating the operation.
+     *
+     * Use this method when the document comes from external or untrusted sources.
+     * @param contract - The Auth DID contract address.
+     * @param sender - The transaction sender; must own the document DID.
+     * @param documentJson - A raw JSON object representing an Auth DID document.
+     * @param currency - Currency ID used for the operation fee.
+     * @returns An `Operation` instance ready to be signed and submitted.
+     */
+    updateDocumentByDocumentJson(
+        contract: string | Address,
+        sender: string | Address,
+        documentJson: document,
+        currency: string | CurrencyID,
+    ): Operation<UpdateDocumentFact> {
+        const normalized = this.normalizeDocument(documentJson, sender);
+    
+        const fact = new UpdateDocumentFact(
+            TS.new().UTC(),
+            sender,
+            contract,
+            normalized.id.toString(),
+            normalized,
+            currency
+        );
+    
+        return new Operation(this.networkID, fact);
     }
 
     /**
@@ -368,3 +554,23 @@ export class AuthDID extends ContractGenerator {
         return response
     }
 }
+
+export const currency = {
+    transfer(): AllowedOperation {
+        return new AllowedOperation(HINT.CURRENCY.TRANSFER.OPERATION);
+    },
+};
+
+export const authdid = {
+    registerModel(contract: string | Address): AllowedOperation {
+        return new AllowedOperation(HINT.AUTH_DID.REGISTER_MODEL.OPERATION, contract);
+    },
+
+    create(contract: string | Address): AllowedOperation {
+        return new AllowedOperation(HINT.AUTH_DID.CREATE_DID.OPERATION, contract);
+    },
+
+    updateDocument(contract: string | Address): AllowedOperation {
+        return new AllowedOperation(HINT.AUTH_DID.UPDATE_DID_DOCUMENT.OPERATION, contract);
+    },
+};
