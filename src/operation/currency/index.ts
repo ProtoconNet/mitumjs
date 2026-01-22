@@ -11,7 +11,7 @@ import { MintItem, MintFact } from "./mint"
 
 import { CurrencyDesign, CurrencyPolicy, NilFeeer, FixedFeeer, RatioFeeer } from "./currency-design"
 
-import { Operation } from "../base"
+import { Operation, AllowedOperation } from "../base"
 import { Operation as OP } from "../"
 
 import api, { getAPIData } from "../../api"
@@ -21,7 +21,7 @@ import { Address, Key, KeyPair, Keys, PubKey, Account as AccountType, KeyG } fro
 import { StringAssert, Assert, ArrayAssert, ECODE, MitumError } from "../../error"
 import { isSuccessResponse } from "../../utils"
 import { Config } from "../../node"
-import { SUFFIX } from "../../alias"
+import { SUFFIX, HINT } from "../../alias"
 
 type currencyPolicyData = {
     minBalance: string | number | Big
@@ -891,3 +891,25 @@ export class Contract extends KeyG {
         return await new OP(this.networkID, this.api, this.delegateIP).send(op);
     }
 }
+
+export const currency = {
+    transfer(): AllowedOperation {
+        return new AllowedOperation(HINT.CURRENCY.TRANSFER.OPERATION);
+    },
+};
+
+export const account = {
+    create(): AllowedOperation {
+        return new AllowedOperation(HINT.CURRENCY.CREATE_ACCOUNT.OPERATION);
+    },
+};
+
+export const contract = {
+    create(): AllowedOperation {
+        return new AllowedOperation(HINT.CURRENCY.CREATE_CONTRACT_ACCOUNT.OPERATION);
+    },
+
+    withdraw(contract: string | Address): AllowedOperation {
+        return new AllowedOperation(HINT.CURRENCY.WITHDRAW.OPERATION, contract);
+    },
+};
