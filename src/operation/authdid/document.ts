@@ -53,7 +53,6 @@ export class AsymKeyAuth extends Authentication {
 
     private setPublicKeyMultibase(pubKey: string): string {
         const hex = Key.from(pubKey).noSuffix;
-        console.log(hex)
     
         let compressed: Uint8Array;
         try {
@@ -98,8 +97,8 @@ export class AsymKeyAuth extends Authentication {
         return {
             ...super.toHintedObject(),
             id: this.id.toString(),
-            type: this.type.toString(),
             controller: this.controller.toString(),
+            type: this.type.toString(),
             ...(this.publicKeyMultibase
                 ? { publicKeyMultibase: this.publicKeyMultibase }
                 : {}),
@@ -166,8 +165,8 @@ export class LinkedAuth extends Authentication {
         return {
             ...super.toHintedObject(),
             id: this.id.toString(),
-            type: this.type,
             controller: this.controller.toString(),
+            type: this.type,
             targetId: this.targetId.toString(),
             allowed: this.allowed.map((a) => a.toHintedObject()),
         };
