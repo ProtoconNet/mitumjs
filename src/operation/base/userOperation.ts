@@ -228,8 +228,11 @@ export class UserOperation<T extends Fact> extends Operation<T> {
     }
 
     /**
-     * Updates the settlement details of a userOperation.
-     * @param {string | Address} opSender - The opseration sender's address (Bundler's address).
+     * Sets settlement information for the userOperation.
+     * `op_sender` is the account address that will **sign this UserOperation**.
+     * When signatures are added later, the operation **must be signed using the private key of `op_sender`**.
+     * If no `proxyPayer` is specified, `op_sender` will also act as the **fee payer** for this UserOperation.
+     * @param {string | Address} opSender - The account address that acts as the signer .
      * @returns void.
      **/
     setSettlement(opSender: string | Address): void {
@@ -238,8 +241,16 @@ export class UserOperation<T extends Fact> extends Operation<T> {
     }
 
     /**
-     * Updates the proxy payer details of a userOperation.
-     * @param {string | Address} proxyPayer - The proxy payer's address. (address of CA)
+     * Sets a proxy payer for the UserOperation.
+     *
+     * `proxyPayer` is an address of a **CA (Contract Account)** that pays the transaction fee
+     * from its own balance when this userOperation is executed.
+     * The proxy payer **must be preconfigured** to allow this operation:
+     * the `sender` of the UserOperation's Fact must be registered as a
+     * permitted recipient in the proxy payer contract.
+     *
+     * This setting is optional. If not set, the fee will be paid by `settlement.op_sender`.
+     * @param {string | Address} proxyPayer - The CA address that will pay the transaction fee.
      * @returns void.
      **/
     setProxyPayer(proxyPayer: string | Address): void {
