@@ -1,7 +1,6 @@
 import { Generator, IP } from "./types"
 import { ECODE, DCODE, PCODE } from "./error"
 import { Block, Node, NetworkID } from "./node"
-import { Utils } from "./utils/transformUnit"
 import { 
     Account, Currency, Contract,
     Operation,
@@ -9,8 +8,24 @@ import {
     AuthDID,
     AccountAbstraction,
 } from "./operation"
+import { currency, account, contract } from "./operation/currency/index"
+import { authdid } from "./operation/authdid/index";
+
+const AllowedOperation = {
+    currency,
+    account,
+    contract,
+    authdid,
+} as const;
+  
+export { Utils } from "./utils/transformUnit";
 
 export class Mitum extends Generator {
+    static allowedOperation = AllowedOperation;
+    static ECODE = ECODE;
+    static PCODE = PCODE;
+    static DCODE = DCODE;
+
     private _node: Node
 
     private _account: Account
@@ -21,12 +36,6 @@ export class Mitum extends Generator {
     private _signer: Signer
     private _authdid: AuthDID
     private _accountAbstraction: AccountAbstraction
-
-    public ECODE: Object
-    public PCODE: Object
-    public DCODE: Object
-
-    private _utils: Utils
 
     public constructor(api?: string, delegateIP?: string) {
         super(NetworkID.get(), api, delegateIP)
@@ -41,12 +50,6 @@ export class Mitum extends Generator {
         this._contract = new Contract(this.networkID, this.api, this.delegateIP)
         this._authdid = new AuthDID(this.networkID, this.api, this.delegateIP)
         this._accountAbstraction = new AccountAbstraction(this.networkID, this.api, this.delegateIP)
-
-        this.ECODE = ECODE;
-        this.PCODE = PCODE;
-        this.DCODE = DCODE;
-
-        this._utils = new Utils();
     }
 
     private refresh() {
@@ -60,8 +63,6 @@ export class Mitum extends Generator {
         this._contract = new Contract(this.networkID, this.api, this.delegateIP)
         this._authdid = new AuthDID(this.networkID, this.api, this.delegateIP)
         this._accountAbstraction = new AccountAbstraction(this.networkID, this.api, this.delegateIP)
-
-        this._utils = new Utils();
     }
 
     get node(): Node {
@@ -98,10 +99,6 @@ export class Mitum extends Generator {
 
     get aa(): AccountAbstraction {
         return this._accountAbstraction
-    }
-
-    get utils(): Utils {
-        return this._utils
     }
 
     /**
