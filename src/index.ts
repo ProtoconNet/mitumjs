@@ -1,6 +1,7 @@
 import { Generator, IP } from "./types"
 import { ECODE, DCODE, PCODE } from "./error"
 import { Block, Node, NetworkID } from "./node"
+import { Utils } from "./utils/transformUnit"
 import { 
     Account, Currency, Contract,
     Operation,
@@ -17,8 +18,6 @@ const AllowedOperation = {
     contract,
     authdid,
 } as const;
-  
-export { Utils } from "./utils/transformUnit";
 
 export class Mitum extends Generator {
     static allowedOperation = AllowedOperation;
@@ -27,7 +26,7 @@ export class Mitum extends Generator {
     static DCODE = DCODE;
 
     private _node: Node
-
+    private _utils: Utils
     private _account: Account
     private _currency: Currency
     private _contract: Contract
@@ -50,6 +49,8 @@ export class Mitum extends Generator {
         this._contract = new Contract(this.networkID, this.api, this.delegateIP)
         this._authdid = new AuthDID(this.networkID, this.api, this.delegateIP)
         this._accountAbstraction = new AccountAbstraction(this.networkID, this.api, this.delegateIP)
+
+        this._utils = new Utils();
     }
 
     private refresh() {
@@ -63,6 +64,8 @@ export class Mitum extends Generator {
         this._contract = new Contract(this.networkID, this.api, this.delegateIP)
         this._authdid = new AuthDID(this.networkID, this.api, this.delegateIP)
         this._accountAbstraction = new AccountAbstraction(this.networkID, this.api, this.delegateIP)
+
+        this._utils = new Utils();
     }
 
     get node(): Node {
@@ -99,6 +102,10 @@ export class Mitum extends Generator {
 
     get aa(): AccountAbstraction {
         return this._accountAbstraction
+    }
+
+    get utils(): Utils {
+        return this._utils
     }
 
     /**
