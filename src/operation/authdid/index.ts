@@ -567,22 +567,16 @@ export class AuthDID extends ContractGenerator {
     }
 }
 
-export const currency = {
-    transfer(): AllowedOperation {
-        return new AllowedOperation(HINT.CURRENCY.TRANSFER.OPERATION);
-    },
-};
-
 export const authdid = {
     registerModel(contract: string | Address): AllowedOperation {
-        return new AllowedOperation(HINT.AUTH_DID.REGISTER_MODEL.OPERATION, contract);
+        return new AllowedOperation(HINT.AUTH_DID.REGISTER_MODEL.OPERATION, contract, true);
     },
 
     create(contract: string | Address): AllowedOperation {
-        return new AllowedOperation(HINT.AUTH_DID.CREATE_DID.OPERATION, contract);
+        return new AllowedOperation(HINT.AUTH_DID.CREATE_DID.OPERATION, contract, true);
     },
 
     updateDocument(contract: string | Address): AllowedOperation {
-        return new AllowedOperation(HINT.AUTH_DID.UPDATE_DID_DOCUMENT.OPERATION, contract);
+        return new AllowedOperation(HINT.AUTH_DID.UPDATE_DID_DOCUMENT.OPERATION, contract, true);
     },
 };
