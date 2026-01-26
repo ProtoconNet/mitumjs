@@ -215,14 +215,14 @@ export class Document implements IBuffer, IHintedObject {
     readonly id: LongString;
     readonly authentication: (AsymKeyAuth | LinkedAuth)[];
     readonly verificationMethod: (AsymKeyAuth | LinkedAuth)[];
-    readonly service?: Service;
+    readonly service?: Service[];
 
     constructor(
         context: string | LongString | (string | LongString)[],
         id: string | LongString,
         authentication: (AsymKeyAuth | LinkedAuth)[],
         verificationMethod: (AsymKeyAuth | LinkedAuth)[],
-        service?: Service
+        service?: Service[]
     ) {
         this.hint = new Hint(HINT.AUTH_DID.DOCUMENT);
         const contexts = Array.isArray(context) ? context : [context];
@@ -249,10 +249,10 @@ export class Document implements IBuffer, IHintedObject {
 
         if (service !== undefined) {
             Assert.check(
-                service instanceof Service,
+                Array.isArray(service) && service.every(s => s instanceof Service),
                 MitumError.detail(
                     ECODE.AUTH_DID.INVALID_DOCUMENT,
-                    "service must be instance of Service"
+                    "service must be an array of Service"
                 )
             );
             this.service = service;
@@ -265,7 +265,9 @@ export class Document implements IBuffer, IHintedObject {
             this.id.toBuffer(),
             Buffer.concat(this.authentication.map(el => Buffer.concat([el.toBuffer(), Buffer.from([1])]))),
             Buffer.concat(this.verificationMethod.map(el => el.toBuffer())),
-            ...(this.service ? [this.service.toBuffer()] : []),
+            ...(this.service
+                ? [Buffer.concat(this.service.map(s => s.toBuffer()))]
+                : []),
         ]);
     }
 
@@ -279,7 +281,9 @@ export class Document implements IBuffer, IHintedObject {
         };
 
         if (this.service) {
-            obj.service = this.service.toHintedObject();
+            obj.service = this.service.map(s => s.toHintedObject());
+        } else {
+            obj.service = null;
         }
 
         return obj;

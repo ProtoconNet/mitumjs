@@ -53,7 +53,7 @@ type document = {
         id: string | LongString,
         type: string | LongString,
         service_end_point: string | LongString
-    }
+    }[]
 }
 
 const isOfType = <T>(obj: unknown, keys: (keyof T)[]): obj is T =>
@@ -120,14 +120,15 @@ export class AuthDID extends ContractGenerator {
         if (doc instanceof Document) {
             return doc;
         }
-    
+
         this.validateDocument(doc);
         this.isSenderDidOwner(sender, doc.id);
-    
         if (doc.service) {
-            this.isSenderDidOwner(sender, doc.service.id);
+            doc.service.forEach(service => {
+                this.isSenderDidOwner(sender, service.id, true);
+            });
         }
-    
+
         return new Document(
             doc["@context"],
             doc.id,
@@ -138,10 +139,13 @@ export class AuthDID extends ContractGenerator {
                 this.mapAuthToClass(el, sender)
             ),
             doc.service
-                ? new Service(
-                      doc.service.id,
-                      doc.service.type,
-                      doc.service.service_end_point
+                ? doc.service.map(
+                      service =>
+                          new Service(
+                              service.id,
+                              service.type,
+                              service.service_end_point
+                          )
                   )
                 : undefined
         );
@@ -149,7 +153,10 @@ export class AuthDID extends ContractGenerator {
     
     private validateDocument(doc: unknown): void {
         if (!doc || typeof doc !== "object") {
-            throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, "document must be an object");
+            throw MitumError.detail(
+                ECODE.AUTH_DID.INVALID_DOCUMENT,
+                "document must be an object"
+            );
         }
     
         const d = doc as any;
@@ -184,17 +191,31 @@ export class AuthDID extends ContractGenerator {
             validateAuthentication(vm, i)
         );
     
-        if (d.service != null) {
-            if (
-                typeof d.service !== "object" ||
-                !d.service.id ||
-                !d.service.type ||
-                !d.service.service_end_point
-            ) {
-                throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT,"invalid service definition");
+        if (d.service !== undefined && d.service !== null) {
+            if (!Array.isArray(d.service)) {
+                throw MitumError.detail(
+                    ECODE.AUTH_DID.INVALID_DOCUMENT,
+                    "service must be an array"
+                );
             }
+    
+            d.service.forEach((el: any, i: number) => {
+                if (
+                    !el ||
+                    typeof el !== "object" ||
+                    !el.id ||
+                    !el.type ||
+                    !el.service_end_point
+                ) {
+                    throw MitumError.detail(
+                        ECODE.AUTH_DID.INVALID_DOCUMENT,
+                        `invalid service definition at services[${i}]`
+                    );
+                }
+            });
         }
     }
+    
 
     private isSenderDidOwner(sender: string | Address, did: string | LongString, id?: true) {
         Assert.check(
@@ -245,7 +266,7 @@ export class AuthDID extends ContractGenerator {
 
     /**
      * Creates an AsymKeyAuth object with the provided authentication details.
-     * @param {string} id - The unique identifier for the authentication.
+     * @param {string} id - The unique identifier for the authentication. <did>#<key-id> format.
      * @param {"SECP256K1_2019" | "SECP256K1_IMFACT_2025"} option - Short identifier for verification key type.
      *  - SECP256K1_2019 → EcdsaSecp256k1VerificationKey2019
      *  - SECP256K1_IMFACT_2025 → EcdsaSecp256k1VerificationKeyImFact2025
@@ -280,7 +301,7 @@ export class AuthDID extends ContractGenerator {
      * Creates a LinkedAuth object that allows another authentication method
      * (e.g. OAuth provider, biometric service, custody service)
      * to act on behalf of the DID subject with restricted operation capabilities.
-     * @param {string} id - The unique identifier of this linked authentication method.
+     * @param {string} id - The unique identifier of this linked authentication method. <did>#<key-id> format.
      * @param {string} controller - The DID controller that authorizes this linked authentication.
      * @param {string} targetId - The identifier of the authentication method that performs verification on behalf of the DID subject.
      * @param {AllowedOperation[]} allowedOperations - A list of operation capabilities that this linked authentication is permitted to execute on behalf of the DID subject.
@@ -312,12 +333,12 @@ export class AuthDID extends ContractGenerator {
      * The returned Document can be passed directly to `updateDocument()`.
      * @param {Array<string | LongString>} didContext - DID document contexts (e.g. DID Core context, service-specific context).
      * @param {string} didID - DID identifier.
-     * @param {Array<AsymKeyAuth | LinkedAuth>} authentications Authentication methods for the DID.
+     * @param {Array<AsymKeyAuth | LinkedAuth>} authentications - Authentication methods for the DID.
      * @param {Array<AsymKeyAuth | LinkedAuth>} [verificationMethods] - Verification methods for the DID.
-     * @param {Object} [service] - Optional service definition.
-     * @param {string} service.id
-     * @param {string} service.type
-     * @param {string} service.serviceEndpoint
+     * @param {Array<Object>} [services] - Optional service definitions.
+     * @param {string} services[].id - Service identifier. <did>#<key-id> format.
+     * @param {string} services[].type - Service type.
+     * @param {string} services[].service_end_point - Service endpoint URL.
      * @returns {Document} DID Document instance.
      */
     writeDocument(
@@ -328,8 +349,8 @@ export class AuthDID extends ContractGenerator {
         service?: {
             id: string;
             type: string;
-            serviceEndpoint: string;
-        }
+            service_end_point: string;
+        }[]
     ): Document {
         return new Document(
             didContext,
@@ -355,11 +376,14 @@ export class AuthDID extends ContractGenerator {
                 );
             }),
             service
-                ? new Service(
-                    service.id,
-                    service.type,
-                    service.serviceEndpoint
-                )
+                ? service.map(
+                      el =>
+                          new Service(
+                            el.id,
+                            el.type,
+                            el.service_end_point
+                          )
+                  )
                 : undefined
         );
     }
@@ -524,19 +548,7 @@ export class AuthDID extends ContractGenerator {
      * @async
      * @param {string | Address} [contract] - The contract's address.
      * @param {string | LongString} [did] - The did value.
-     * @returns `data` of `SuccessResponse` is did document:
-     * - `did_document`: object
-     * - - `'@context'`: The context of did,
-     * - - `id`: The did value,
-     * - - `authentication`: object,
-     * - - - `id`: The did value,
-     * - - - `type`: The type of authentication
-     * - - - `controller`: The did value
-     * - - - `publicKey`: The publickey used when did create,
-     * - - `service`: object
-     * - - - `id`: The did value
-     * - - - `type`: The type of did service,
-     * - - - `service_end_point`: The end point of did service,
+     * @returns `data` of `SuccessResponse` is did document.
      */
     async getDocument(
         contract: string | Address,
