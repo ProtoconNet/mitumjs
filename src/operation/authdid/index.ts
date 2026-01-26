@@ -153,64 +153,70 @@ export class AuthDID extends ContractGenerator {
     
     private validateDocument(doc: unknown): void {
         if (!doc || typeof doc !== "object") {
-            throw MitumError.detail(
-                ECODE.AUTH_DID.INVALID_DOCUMENT,
-                "document must be an object"
-            );
+            throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, `document must be an object, got ${doc === null ? "null" : typeof doc}`);
         }
     
         const d = doc as any;
     
-        if (
-            typeof d._hint !== "string" ||
-            !Array.isArray(d["@context"]) ||
-            !d.id ||
-            !Array.isArray(d.authentication) ||
-            !Array.isArray(d.verificationMethod)
-        ) {
-            throw MitumError.detail(
-                ECODE.AUTH_DID.INVALID_DOCUMENT,
-                "invalid DID document structure"
+        if (typeof d._hint !== "string") {
+            throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, "_hint must be a string");
+        }
+    
+        if (!Array.isArray(d["@context"])) {
+            throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, "@context must be an array"
             );
         }
     
-        for (const ctx of d["@context"]) {
+        if (!d.id) {
+            throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, "id is required");
+        }
+    
+        if (!Array.isArray(d.authentication)) {
+            throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, "authentication must be an array");
+        }
+    
+        if (!Array.isArray(d.verificationMethod)) {
+            throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, "verificationMethod must be an array");
+        }
+    
+        for (const [i, ctx] of d["@context"].entries()) {
             if (typeof ctx !== "string" && !(ctx instanceof LongString)) {
                 throw MitumError.detail(
                     ECODE.AUTH_DID.INVALID_DOCUMENT,
-                    "each @context must be string or LongString"
+                    `@context[${i}] must be string or LongString`
                 );
             }
         }
     
-        d.authentication.forEach((auth: unknown, i: number) =>
-            validateAuthentication(auth, i)
-        );
+        d.authentication.forEach((auth: unknown, i: number) => {
+            try {
+                validateAuthentication(auth, i);
+            } catch (e) {
+                throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, `invalid authentication[${i}]: ${(e as Error).message}`);
+            }
+        });
     
-        d.verificationMethod.forEach((vm: unknown, i: number) =>
-            validateAuthentication(vm, i)
-        );
+        d.verificationMethod.forEach((vm: unknown, i: number) => {
+            try {
+                validateAuthentication(vm, i);
+            } catch (e) {
+                throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT,`invalid verificationMethod[${i}]: ${(e as Error).message}`);
+            }
+        });
     
         if (d.service !== undefined && d.service !== null) {
             if (!Array.isArray(d.service)) {
-                throw MitumError.detail(
-                    ECODE.AUTH_DID.INVALID_DOCUMENT,
-                    "service must be an array"
-                );
+                throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, "service must be an array if provided");
             }
     
             d.service.forEach((el: any, i: number) => {
-                if (
-                    !el ||
-                    typeof el !== "object" ||
-                    !el.id ||
-                    !el.type ||
-                    !el.service_end_point
-                ) {
-                    throw MitumError.detail(
-                        ECODE.AUTH_DID.INVALID_DOCUMENT,
-                        `invalid service definition at services[${i}]`
+                if (!el || typeof el !== "object") {
+                    throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, `service[${i}] must be an object`
                     );
+                }
+    
+                if (!el.id || !el.type || !el.service_end_point) {
+                    throw MitumError.detail(ECODE.AUTH_DID.INVALID_DOCUMENT, `service[${i}] requires id, type, service_end_point`);
                 }
             });
         }
