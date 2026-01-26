@@ -153,7 +153,7 @@ export class KeyPair extends BaseKeyPair {
             return new KeyPair(Wallet.createRandom().privateKey.substring(2) + SUFFIX.KEY.MITUM.PRIVATE)
         },
         fromSeed(seed: string): KeyPair {
-            StringAssert.with(seed, MitumError.detail(ECODE.INVALID_SEED, "seed length out of range"))
+            StringAssert.with(seed, MitumError.detail(ECODE.INVALID_SEED, `Seed must be at least 36 characters long (got ${seed.length})`))
                 .satisfyConfig(Config.SEED)
                 .excute()
             return new KeyPair(BaseKeyPair.K(seed).toString(16) + SUFFIX.KEY.MITUM.PRIVATE)
