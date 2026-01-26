@@ -902,6 +902,10 @@ export const account = {
     create(): AllowedOperation {
         return new AllowedOperation(HINT.CURRENCY.CREATE_ACCOUNT.OPERATION);
     },
+
+    updateKey(): AllowedOperation {
+        return new AllowedOperation(HINT.CURRENCY.UPDATE_HANDLER.OPERATION);
+    },
 };
 
 export const contract = {
@@ -909,7 +913,15 @@ export const contract = {
         return new AllowedOperation(HINT.CURRENCY.CREATE_CONTRACT_ACCOUNT.OPERATION);
     },
 
-    withdraw(contract: string | Address): AllowedOperation {
-        return new AllowedOperation(HINT.CURRENCY.WITHDRAW.OPERATION, contract);
+    withdraw(): AllowedOperation {
+        return new AllowedOperation(HINT.CURRENCY.WITHDRAW.OPERATION);
+    },
+
+    updateRecipient(): AllowedOperation {
+        return new AllowedOperation(HINT.CURRENCY.UPDATE_RECIPIENT.OPERATION);
+    },
+
+    updateHandler(): AllowedOperation {
+        return new AllowedOperation(HINT.CURRENCY.UPDATE_HANDLER.OPERATION);
     },
 };
