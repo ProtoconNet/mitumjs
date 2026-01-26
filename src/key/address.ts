@@ -10,7 +10,11 @@ abstract class BaseAddress implements IBuffer, IString {
     private s: string
     readonly type: AddressType
 
-    constructor(s: string, type?: AddressType) {
+    constructor(s: unknown, type?: AddressType) {
+        if (typeof s !== "string") {
+            throw MitumError.detail(ECODE.INVALID_ADDRESS, `address must be a string, got ${typeof s}`);
+        }
+        
         this.s = s
 
         if (type) {
