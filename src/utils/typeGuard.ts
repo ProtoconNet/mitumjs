@@ -79,7 +79,7 @@ export const validateDID = (did: string, id?: boolean): Address => {
         if (hashCount !== 1) {
             invalidDid(
                 did,
-                `authentication id must contain exactly one "#" (did#key)`
+                `authentication id (or service id) must contain exactly one "#" (did#key)`
             );
         }
 
@@ -87,7 +87,7 @@ export const validateDID = (did: string, id?: boolean): Address => {
         if (subparts.length !== 2 || !subparts[0] || !subparts[1]) {
             invalidDid(
                 did,
-                `invalid authentication id format, expected "<did>#<key-id>"`
+                `invalid authentication (or service id) id format, expected "<did>#<key-id>"`
             );
         }
 
