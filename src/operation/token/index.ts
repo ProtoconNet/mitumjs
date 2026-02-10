@@ -1,12 +1,9 @@
 import { RegisterModelFact } from "./register-model"
 import { MintFact } from "./mint"
 import { BurnFact } from "./burn"
-import { TransferFact } from "./transfer"
-import { TransfersFact, TransfersItem } from "./transfers"
-import { ApproveFact } from "./approve"
-import { ApprovesFact, ApprovesItem } from "./approves"
-import { TransferFromFact } from "./transfer-from"
-import { TransfersFromFact, TransfersFromItem } from "./transfers-from"
+import { TransferFact, TransferItem } from "./transfer"
+import { ApproveFact, ApproveItem } from "./approve"
+import { TransferFromFact, TransferFromItem } from "./transfer-from"
 import { ContractGenerator, BaseOperation } from "../base"
 import { Address } from "../../key/address"
 import type { CurrencyID } from "../../common"
@@ -133,27 +130,31 @@ export class Token extends ContractGenerator {
         receiver: string | Address,
         amount: string | number | Big,
     ) {
+        const item = new TransferItem(
+            contract,
+            receiver,
+            amount,
+            currency,
+        );
+
         return new BaseOperation(
             this.networkID,
             new TransferFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contract,
-                currency,
-                receiver,
-                amount,
+                [item]
             )
         )
     }
 
     /**
-     * Generate an `transfers` operation with multi items to transfer tokens from the sender to a receiver.
+     * Generate an `transfer` operation with multi items to transfer tokens from the sender to a receiver.
      * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @param {string[] | Address[]} [receiver] - The array of receiver's address.
      * @param {string[] | number[] | Big[]} [amount] - The array of amounts to transfer.
-     * @returns `transfers` operation with multi items.
+     * @returns `transfer` operation with multi items.
      */
     multiTransfer(
         contract: string | Address | string[] | Address[],
@@ -165,7 +166,7 @@ export class Token extends ContractGenerator {
         ArrayAssert.check(receiver, "receiver").rangeLength(Config.ITEMS_IN_FACT).sameLength(amount, "amount");
 
         const contractsArray = convertToArray(contract, receiver.length);
-        const items = Array.from({ length: receiver.length }).map((_, idx) => new TransfersItem(
+        const items = Array.from({ length: receiver.length }).map((_, idx) => new TransferItem(
             contractsArray[idx],
             receiver[idx],
             amount[idx],
@@ -174,7 +175,7 @@ export class Token extends ContractGenerator {
 
         return new BaseOperation(
             this.networkID,
-            new TransfersFact(
+            new TransferFact(
                 TimeStamp.new().UTC(),
                 sender,
                 items
@@ -200,22 +201,26 @@ export class Token extends ContractGenerator {
         target: string | Address,
         amount: string | number | Big,
     ) {
+        const item = new TransferFromItem(
+            contract,
+            receiver,
+            target,
+            amount,
+            currency,
+        );
+        
         return new BaseOperation(
             this.networkID,
             new TransferFromFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contract,
-                currency,
-                receiver,
-                target,
-                amount,
+                [item]
             )
         )
     }
 
     /**
-     * Generate a `transfers-from` operation with multi item to transfer tokens from targets account to receivers.
+     * Generate a `transfer-from` operation with multi item to transfer tokens from targets account to receivers.
      * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | CurrencyID} [currency] - The currency ID.
@@ -238,7 +243,7 @@ export class Token extends ContractGenerator {
             .sameLength(target, "target");
         
         const contractsArray = convertToArray(contract, receiver.length);
-        const items = Array.from({ length: receiver.length }).map((_, idx) => new TransfersFromItem(
+        const items = Array.from({ length: receiver.length }).map((_, idx) => new TransferFromItem(
             contractsArray[idx],
             receiver[idx],
             target[idx],
@@ -248,7 +253,7 @@ export class Token extends ContractGenerator {
     
         return new BaseOperation(
             this.networkID,
-            new TransfersFromFact(
+            new TransferFromFact(
                 TimeStamp.new().UTC(),
                 sender,
                 items
@@ -272,27 +277,31 @@ export class Token extends ContractGenerator {
         approved: string | Address,
         amount: string | number | Big,
     ) {
+        const item = new ApproveItem(
+            contract,
+            approved,
+            amount,
+            currency,
+        );
+
         return new BaseOperation(
             this.networkID,
             new ApproveFact(
                 TimeStamp.new().UTC(),
                 sender,
-                contract,
-                currency,
-                approved,
-                amount,
+                [item]
             )
         )
     }
 
     /**
-     * Generate an `approves` operation with multi items to approve certain amount tokens to approved account.
+     * Generate an `approve` operation with multi items to approve certain amount tokens to approved account.
      * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string | CurrencyID} [currency] - The currency ID.
      * @param {string[] | Address[]} [approved] - The array of addresses to approve.
      * @param {string[] | number[] | Big[]} [amount] - The array amounts to approve.
-     * @returns `approves` operation with multi item
+     * @returns `approve` operation with multi item
      */
     multiApprove(
         contract: string | Address | string[] | Address[],
@@ -304,7 +313,7 @@ export class Token extends ContractGenerator {
         ArrayAssert.check(approved, "approved").rangeLength(Config.ITEMS_IN_FACT).sameLength(amount, "amount");
 
         const contractsArray = convertToArray(contract, approved.length);
-        const items = Array.from({ length: approved.length }).map((_, idx) => new ApprovesItem(
+        const items = Array.from({ length: approved.length }).map((_, idx) => new ApproveItem(
             contractsArray[idx],
             approved[idx],
             amount[idx],
@@ -313,7 +322,7 @@ export class Token extends ContractGenerator {
 
         return new BaseOperation(
             this.networkID,
-            new ApprovesFact(
+            new ApproveFact(
                 TimeStamp.new().UTC(),
                 sender,
                 items

@@ -1,40 +1,25 @@
 import { Buffer } from "buffer";
-import { TokenFact } from "./fact"
+import { TokenItem } from "./item"
+import { OperationFact } from "../base"
 
-import { Big } from "../../types"
+import { Big, HintedObject } from "../../types"
 import { HINT } from "../../alias"
 import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
-import { FactJson } from "../base"
 
-export class ApproveFact extends TokenFact {
+export class ApproveItem extends TokenItem {
     readonly approved: Address
-    readonly amount: Big
 
     constructor(
-        token: string,
-        sender: string | Address,
         contract: string | Address,
-        currency: string | CurrencyID,
         approved: string | Address,
-        amount: string | number | Big,
+        amount: string | number | Big, 
+        currency: string | CurrencyID,
     ) {
-        super(HINT.TOKEN.APPROVE.FACT, token, sender, contract, currency)
+        super(HINT.TOKEN.APPROVE.ITEM, contract, amount, currency);
 
-        this.approved = Address.from(approved)
-        this.amount = Big.from(amount)
-
-        Assert.check(
-            this.contract.toString() !== this.approved.toString(),
-            MitumError.detail(ECODE.INVALID_FACT, "approved is same with contract address")
-        )
-
-        Assert.check(
-            this.amount.compare(0) >= 0,
-            MitumError.detail(ECODE.INVALID_FACT, "amount must not be under zero"),
-        )
-        this._hash = this.hashing()
+        this.approved = Address.from(approved);
     }
 
     toBuffer(): Buffer {
@@ -42,15 +27,49 @@ export class ApproveFact extends TokenFact {
             super.toBuffer(),
             this.approved.toBuffer(),
             this.amount.toBuffer(),
+            this.currency.toBuffer(),
         ])
     }
 
-    toHintedObject(): FactJson {
+    toHintedObject(): HintedObject {
         return {
             ...super.toHintedObject(),
-            approved:  this.approved.toString(),
+            approved: this.approved.toString(),
             amount: this.amount.toString(),
+            currency: this.currency.toString(),
         }
+    }
+
+    toString(): string {
+        return `${super.toString()}-${this.approved.toString()}`
+    }
+}
+
+export class ApproveFact extends OperationFact<ApproveItem> {
+    constructor(token: string, sender: string | Address, items: ApproveItem[]) {
+        super(HINT.TOKEN.APPROVE.FACT, token, sender, items)
+
+        Assert.check(
+            new Set(items.map(it => it.toString())).size === items.length,
+            MitumError.detail(ECODE.INVALID_ITEMS, "duplicated approve found in items")
+        )
+
+        this.items.forEach(
+            it => {
+                Assert.check(
+                    this.sender.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address"),
+                )
+                Assert.check(
+                    it.approved.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "approved is same with contract address"),
+                )
+                Assert.check(
+                    it.amount.compare(0) >= 0,
+                    MitumError.detail(ECODE.INVALID_FACT, "amount must not be under zero"),
+                )
+            }
+        )
     }
 
     get operationHint() {

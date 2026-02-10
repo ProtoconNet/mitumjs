@@ -1,59 +1,28 @@
 import { Buffer } from "buffer";
-import { TokenFact } from "./fact"
-import type { FactJson } from "../base"
+import { TokenItem } from "./item"
+import { OperationFact } from "../base"
 
-import { Big } from "../../types"
+import { Big, HintedObject } from "../../types"
 import { HINT } from "../../alias"
 import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
 
-export class TransferFromFact extends TokenFact {
+export class TransferFromItem extends TokenItem {
     readonly receiver: Address
     readonly target: Address
-    readonly amount: Big
 
     constructor(
-        token: string,
-        sender: string | Address,
         contract: string | Address,
-        currency: string | CurrencyID,
         receiver: string | Address,
         target: string | Address,
         amount: string | number | Big,
+        currency: string | CurrencyID,
     ) {
-        super(HINT.TOKEN.TRANSFER_FROM.FACT, token, sender, contract, currency)
+        super(HINT.TOKEN.TRANSFER_FROM.ITEM, contract, amount, currency);
 
-        this.receiver = Address.from(receiver)
-        this.target = Address.from(target)
-        this.amount = Big.from(amount)
-
-        Assert.check(
-            this.contract.toString() !== this.receiver.toString(),
-            MitumError.detail(ECODE.INVALID_FACT, "receiver is same with contract address")
-        )
-
-        Assert.check(
-            this.contract.toString() !== this.target.toString(),
-            MitumError.detail(ECODE.INVALID_FACT, "target is same with contract address")
-        )
-
-        Assert.check(
-            this.target.toString() !== this.receiver.toString(),
-            MitumError.detail(ECODE.INVALID_FACT, "receiver is same with target address")
-        )
-
-        Assert.check(
-            this.target.toString() !== this.sender.toString(),
-            MitumError.detail(ECODE.INVALID_FACT, "target is same with sender address, use 'transfer' instead")
-        )
-
-        Assert.check(
-            this.amount.overZero(),
-            MitumError.detail(ECODE.INVALID_FACT, "amount must be over zero"),
-        )
-        
-        this._hash = this.hashing()
+        this.receiver = Address.from(receiver);
+        this.target = Address.from(target);
     }
 
     toBuffer(): Buffer {
@@ -62,16 +31,62 @@ export class TransferFromFact extends TokenFact {
             this.receiver.toBuffer(),
             this.target.toBuffer(),
             this.amount.toBuffer(),
+            this.currency.toBuffer(),
         ])
     }
 
-    toHintedObject(): FactJson {
+    toHintedObject(): HintedObject {
         return {
             ...super.toHintedObject(),
-            receiver:  this.receiver.toString(),
+            receiver: this.receiver.toString(),
             target: this.target.toString(),
             amount: this.amount.toString(),
+            currency: this.currency.toString(),
         }
+    }
+
+    toString(): string {
+        return `${super.toString()}-${this.receiver.toString()}-${this.target.toString()}`
+    }
+}
+
+export class TransferFromFact extends OperationFact<TransferFromItem> {
+    constructor(token: string, sender: string | Address, items: TransferFromItem[]) {
+        super(HINT.TOKEN.TRANSFER_FROM.FACT, token, sender, items)
+
+        Assert.check(
+            new Set(items.map(it => it.toString())).size === items.length,
+            MitumError.detail(ECODE.INVALID_ITEMS, "duplicated target-receiver pair found in items")
+        )
+
+        this.items.forEach(
+            it => {
+                Assert.check(
+                    this.sender.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address"),
+                )
+                Assert.check(
+                    it.receiver.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "receiver is same with contract address"),
+                )
+                Assert.check(
+                    it.target.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "target is same with contract address"),
+                )
+                Assert.check(
+                    it.receiver.toString() != it.target.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "target is same with receiver address"),
+                )
+                Assert.check(
+                    this.sender.toString() != it.target.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "target is same with sender address, use 'transfer' instead")
+                )
+                Assert.check(
+                    it.amount.compare(0) >= 0,
+                    MitumError.detail(ECODE.INVALID_ITEMS, "amount must not be under zero"),
+                )
+            }
+        )
     }
 
     get operationHint() {
