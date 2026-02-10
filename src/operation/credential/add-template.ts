@@ -5,11 +5,11 @@ import { HINT } from "../../alias"
 import { Config } from "../../node"
 import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
-import { Bool, ShortDate } from "../../types"
+import { Bool, ShortDate, URIString } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export class AddTemplateFact extends ContractFact {
-    readonly templateID: string
+    readonly templateID: URIString
     readonly templateName: string
     readonly serviceDate: ShortDate
     readonly expirationDate: ShortDate
@@ -37,7 +37,7 @@ export class AddTemplateFact extends ContractFact {
         currency: string | CurrencyID,
     ) {
         super(HINT.CREDENTIAL.ADD_TEMPLATE.FACT, token, sender, contract, currency)
-        this.templateID = templateID
+        this.templateID = new URIString(templateID, 'templateID');
         this.templateName = templateName
         this.serviceDate = ShortDate.from(serviceDate)
         this.expirationDate = ShortDate.from(expirationDate)
@@ -47,6 +47,8 @@ export class AddTemplateFact extends ContractFact {
         this.subjectKey = subjectKey
         this.description = description
         this.creator = Address.from(creator)
+
+        
 
         Assert.check(
             contract.toString() !== sender.toString(),
@@ -94,7 +96,7 @@ export class AddTemplateFact extends ContractFact {
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
-            Buffer.from(this.templateID),
+            this.templateID.toBuffer(),
             Buffer.from(this.templateName),
             this.serviceDate.toBuffer(),
             this.expirationDate.toBuffer(),
@@ -111,7 +113,7 @@ export class AddTemplateFact extends ContractFact {
     toHintedObject(): FactJson {
         return {
             ...super.toHintedObject(),
-            template_id: this.templateID,
+            template_id: this.templateID.toString(),
             template_name: this.templateName,
             service_date: this.serviceDate.toString(),
             expiration_date: this.expirationDate.toString(),

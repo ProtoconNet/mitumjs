@@ -3,11 +3,10 @@ import { ContractFact, FactJson } from "../base"
 
 import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
-import { Assert, ECODE, MitumError } from "../../error"
 import { URIString } from "../../types"
 
 export abstract class DAOFact extends ContractFact {
-    readonly proposalID: string
+    readonly proposalID: URIString
 
     protected constructor(
         hint: string,
@@ -18,29 +17,20 @@ export abstract class DAOFact extends ContractFact {
         currency: string | CurrencyID,
     ) {
         super(hint, token, sender, contract, currency)
-        
-        new URIString(proposalID, 'proposalID');
-        this.proposalID = proposalID
-
-        Assert.check(
-            this.proposalID !== "",
-            MitumError.detail(ECODE.INVALID_FACT, "empty proposal id"),
-        )
-
-        // this._hash = this.hashing()
+        this.proposalID = new URIString(proposalID, 'proposalID');
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
             super.toBuffer(),
-            Buffer.from(this.proposalID),
+            this.proposalID.toBuffer(),
         ])
     }
 
     toHintedObject(): FactJson {
         return {
             ...super.toHintedObject(),
-            proposal_id: this.proposalID,
+            proposal_id: this.proposalID.toString(),
         }
     }
 }

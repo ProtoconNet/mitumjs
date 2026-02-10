@@ -3,14 +3,14 @@ import { Buffer } from "buffer";
 import { Config } from "../../node"
 import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
-import { HintedObject } from "../../types"
+import { HintedObject, URIString } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
 export abstract class CredentialItem extends Item {
     readonly contract: Address
     readonly holder: Address
-    readonly templateID: string
-    readonly credentialID: string
+    readonly templateID: URIString
+    readonly credentialID: URIString
     readonly currency: CurrencyID
 
     protected constructor(
@@ -23,11 +23,11 @@ export abstract class CredentialItem extends Item {
     ) {
         super(hint)
 
-        this.contract = Address.from(contract)
-        this.holder = Address.from(holder)
-        this.templateID = templateID
-        this.credentialID = credentialID
-        this.currency = CurrencyID.from(currency)
+        this.contract = Address.from(contract);
+        this.holder = Address.from(holder);
+        this.templateID = new URIString(templateID, "templateID");
+        this.credentialID = new URIString(credentialID, "credentialID");
+        this.currency = CurrencyID.from(currency);
 
         Assert.check(
             Config.CREDENTIAL.TEMPLATE_ID.satisfy(templateID.length),
@@ -49,8 +49,8 @@ export abstract class CredentialItem extends Item {
         return Buffer.concat([
             this.contract.toBuffer(),
             this.holder.toBuffer(),
-            Buffer.from(this.templateID),
-            Buffer.from(this.credentialID),
+            this.templateID.toBuffer(),
+            this.credentialID.toBuffer(),
         ])
     }
 
@@ -59,8 +59,8 @@ export abstract class CredentialItem extends Item {
             ...super.toHintedObject(),
             contract: this.contract.toString(),
             holder: this.holder.toString(),
-            template_id: this.templateID,
-            credential_id: this.credentialID,
+            template_id: this.templateID.toString(),
+            credential_id: this.credentialID.toString(),
             currency: this.currency.toString(),
         }
     }

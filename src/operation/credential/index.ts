@@ -9,7 +9,7 @@ import { Address } from "../../key/address"
 import { CurrencyID } from "../../common"
 import { contractApi } from "../../api"
 import { getAPIData } from "../../api/getAPIData"
-import { Big, Bool, IP, ShortDate, TimeStamp, URIString } from "../../types"
+import { Big, Bool, IP, ShortDate, TimeStamp } from "../../types"
 import { Assert, ECODE, MitumError } from "../../error"
 
 type templateData = {
@@ -99,7 +99,6 @@ export class Credential extends ContractGenerator {
                 MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the templateData structure`)
             )
         });
-        new URIString(data['templateID'], 'templateID');
 
         return new BaseOperation(
             this.networkID,
@@ -151,8 +150,6 @@ export class Credential extends ContractGenerator {
                 MitumError.detail(ECODE.INVALID_DATA_STRUCTURE, `${key} is undefined, check the templateData structure`)
             )
         });
-        new URIString(data['templateID'], 'templateID');
-        new URIString(data['credentialID'], 'credentialID');
 
         return new BaseOperation(
             this.networkID,
@@ -194,9 +191,6 @@ export class Credential extends ContractGenerator {
         credentialID: string,
         currency: string | CurrencyID,
     ) {
-        new URIString(templateID, 'templateID');
-        new URIString(credentialID, 'credentialID');
-
         return new BaseOperation(
             this.networkID,
             new RevokeFact(
@@ -261,8 +255,6 @@ export class Credential extends ContractGenerator {
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
-        new URIString(templateID, 'templateID');
-        new URIString(credentialID, 'credentialID');
         return await getAPIData(() => contractApi.credential.getCredential(this.api, contract, templateID, credentialID, this.delegateIP))
     }
     
@@ -289,7 +281,6 @@ export class Credential extends ContractGenerator {
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
-        new URIString(templateID, 'templateID');
         return await getAPIData(() => contractApi.credential.getTemplate(this.api, contract, templateID, this.delegateIP))
     }
     
@@ -319,7 +310,6 @@ export class Credential extends ContractGenerator {
     ) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
-        new URIString(templateID, 'templateID');
         return await getAPIData(() => contractApi.credential.getCredentials(this.api, contract, templateID, this.delegateIP))
     }
     

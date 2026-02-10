@@ -41,6 +41,8 @@ export class ShortDate extends LongString {
 export class IP extends LongString {
     constructor(s: string) {
         super(s)
+        Assert.check(typeof(s) === "string", MitumError.detail(ECODE.INVALID_TYPE, `${s} is not in string type`))
+        Assert.check(s !== "", MitumError.detail(ECODE.EMPTY_STRING, "empty string"))
         Assert.check(
             /^(http|https):\/\/(?:[\w-]+\.)*[\w-]+(?::\d+)?(?:\/[\w-./?%&=]*)?$/.test(s),
             MitumError.detail(ECODE.INVALID_IP, "invalid ip address, ip"),
@@ -52,11 +54,22 @@ export class IP extends LongString {
     }
 }
 
-export class URIString {
+export class URIString implements IBuffer, IString {
+    private s: string
+
     constructor(s: string, name: string) {
         Assert.check(
             (/^[^\s:/?#\[\]@]*$/.test(s)), 
             MitumError.detail(ECODE.INVALID_CHARACTER, `${name} must not contain: space / : ? # [ ] @`)
         )
+        this.s = s
+    }
+
+    toBuffer(): Buffer {
+        return Buffer.from(this.s)
+    }
+
+    toString(): string {
+        return this.s
     }
 }

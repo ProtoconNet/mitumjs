@@ -1,6 +1,7 @@
 import axios from "axios"
 import { Address } from "../../key/address"
 import { delegateUri } from "../../utils"
+import { URIString } from "../../types"
 
 const url = (
     api: string | undefined, 
@@ -19,7 +20,9 @@ async function getCredential(
     credentialID: string,
     delegateIP: string | undefined
 ) {
-    const apiPath = `${url(api, contract)}/template/${templateID}/credential/${credentialID}`;
+    new URIString(templateID, 'templateID');
+    new URIString(credentialID, 'credentialID');
+    const apiPath = `${url(api, contract)}/template/${templateID.toString()}/credential/${credentialID}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath))  
 }
 
@@ -29,6 +32,7 @@ async function getTemplate(
     templateID: string,
     delegateIP: string | undefined
 ) {
+    new URIString(templateID, 'templateID');
     const apiPath = `${url(api, contract)}/template/${templateID}`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
@@ -39,6 +43,7 @@ async function getCredentials(
     templateID: string,
     delegateIP: string | undefined
 ) {
+    new URIString(templateID, 'templateID');
     const apiPath = `${url(api, contract)}/template/${templateID}/credentials`;
     return !delegateIP ? await axios.get(apiPath) : await axios.get(delegateUri(delegateIP) + encodeURIComponent(apiPath)) 
 }
