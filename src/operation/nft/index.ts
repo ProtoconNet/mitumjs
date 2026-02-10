@@ -540,14 +540,14 @@ export class NFT extends ContractGenerator {
     async getTotalSupply(contract: string | Address) {
         Assert.check( this.api !== undefined && this.api !== null, MitumError.detail(ECODE.NO_API, "API is not provided"));
         Address.from(contract);
-        const response = await getAPIData(() => contractApi.nft.getNFTCount(
+        const response = await getAPIData(() => contractApi.nft.getModel(
             this.api,
             contract,
             this.delegateIP,
         ));
 
         if (isSuccessResponse(response) && response.data) {
-            response.data = response.data.nft_total_supply? Number(response.data.nft_total_supply) : 0;
+            response.data = response.data.collection_count? Number(response.data.collection_count) : 0;
         }
         return response
     }
