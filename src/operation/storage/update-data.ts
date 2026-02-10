@@ -1,51 +1,73 @@
 import { Buffer } from "buffer";
-import type { FactJson } from "../base"
-import { StorageFact } from "./fact"
-import { LongString } from "../../types"
 import { HINT } from "../../alias"
 import { Config } from "../../node"
-import type { Address } from "../../key/address"
-import type { CurrencyID } from "../../common"
+import { Address } from "../../key/address"
+import type { HintedObject } from "../../types"
+import { LongString, URIString } from "../../types"
+import { CurrencyID } from "../../common"
 import { Assert, ECODE, MitumError } from "../../error"
+import { Item, OperationFact } from "../base"
 
-export class UpdateDataFact extends StorageFact {
+export class UpdateDataItem extends Item {
+    readonly contract: Address
+    readonly currency: CurrencyID
+    readonly dataKey: URIString
     readonly dataValue: LongString
-    constructor(
-        token: string,
-        sender: string | Address,
-        contract: string | Address,
-        dataKey: string | LongString,
-        dataValue: string | LongString,
-        currency: string | CurrencyID,
-    ) {
-        super(HINT.STORAGE.UPDATE_DATA.FACT, token, sender, contract, dataKey, currency)
-        this.dataValue = LongString.from(dataValue)
+
+    constructor(contract: string | Address, currency: string | CurrencyID, dataKey: string, dataValue: string | LongString) {
+        super(HINT.STORAGE.UPDATE_DATA.ITEM)
+
+        this.contract = Address.from(contract);
+        this.currency = CurrencyID.from(currency);
+        this.dataKey = new URIString(dataKey, "dataKey");
+        this.dataValue = LongString.from(dataValue);
 
         Assert.check(
             Config.STORAGE.DATA_KEY.satisfy(dataKey.toString().length),
-            MitumError.detail(ECODE.INVALID_FACT, `dataKey length out of range, should be between ${Config.STORAGE.DATA_KEY.min} to ${Config.STORAGE.DATA_KEY.max}`),
+            MitumError.detail(ECODE.INVALID_ITEM, `dataKey length out of range, should be between ${Config.STORAGE.DATA_KEY.min} to ${Config.STORAGE.DATA_KEY.max}`),
         )
         Assert.check(
             Config.STORAGE.DATA_VALUE.satisfy(dataValue.toString().length),
-            MitumError.detail(ECODE.INVALID_FACT, `dataValue out of range, should be between ${Config.STORAGE.DATA_VALUE.min} to ${Config.STORAGE.DATA_VALUE.max}`),
+            MitumError.detail(ECODE.INVALID_ITEM, `dataValue out of range, should be between ${Config.STORAGE.DATA_VALUE.min} to ${Config.STORAGE.DATA_VALUE.max}`),
         )
-        
-        this._hash = this.hashing()
     }
 
     toBuffer(): Buffer {
         return Buffer.concat([
-            super.toBuffer(),
+            this.contract.toBuffer(),
+            this.dataKey.toBuffer(),
             this.dataValue.toBuffer(),
             this.currency.toBuffer(),
         ])
     }
 
-    toHintedObject(): FactJson {
+    toHintedObject(): HintedObject {
         return {
             ...super.toHintedObject(),
+            contract: this.contract.toString(),
+            dataKey: this.dataKey.toString(),
             dataValue: this.dataValue.toString(),
+            currency: this.currency.toString(),
         }
+    }
+
+    toString(): string {
+        return this.dataKey.toString() + this.contract.toString()
+    }
+}
+
+export class UpdateDataFact extends OperationFact<UpdateDataItem> {
+    constructor(token: string, sender: string | Address, items: UpdateDataItem[]) {
+        super(HINT.STORAGE.UPDATE_DATA.FACT, token, sender, items)
+
+        this.items.forEach(
+            it => {
+                Assert.check(
+                    this.sender.toString() != it.contract.toString(),
+                    MitumError.detail(ECODE.INVALID_ITEMS, "sender is same with contract address"),
+                )
+            }
+        )
     }
 
     get operationHint() {

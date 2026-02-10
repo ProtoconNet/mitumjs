@@ -1,8 +1,6 @@
 import { RegisterModelFact } from "./resgister-model"
-import { CreateDataFact } from "./create-data"
-import { CreateDatasItem, CreateDatasFact } from "./create-datas"
-import { UpdateDataFact } from "./update-data"
-import { UpdateDatasItem, UpdateDatasFact } from "./update-datas"
+import { CreateDataItem, CreateDataFact } from "./create-data"
+import { UpdateDataItem, UpdateDataFact } from "./update-data"
 import { DeleteDataFact } from "./delete-data"
 import { ContractGenerator, BaseOperation } from "../base"
 import { Address } from "../../key/address"
@@ -66,27 +64,30 @@ export class Storage extends ContractGenerator {
         dataValue: string | LongString,
         currency: string | CurrencyID,
     ) {
-        new URIString(dataKey, 'dataKey');
+        const item = new CreateDataItem(
+            contract,
+            currency,
+            dataKey,
+            dataValue
+        );
+
         const fact = new CreateDataFact(
             TS.new().UTC(),
             sender,
-            contract,
-            dataKey,
-            dataValue,
-            currency,
+            [item]
         )
 
         return new BaseOperation(this.networkID, fact)
     }
 
     /**
-     * Generate `create-datas` operation to create multiple data on the storage model.
+     * Generate `create-data` operation to create multiple data on the storage model.
      * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string[]} [dataKeys] - The array with key of multiple data to create.
      * @param {string[] | LongString[]} [dataValues] - The array with value of the multiple data to record.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `create-datas` operation
+     * @returns `create-data` operation
      */
     createMultiData(
         contract: string | Address | string[] | Address[],
@@ -100,13 +101,13 @@ export class Storage extends ContractGenerator {
             .sameLength(dataValues, "dataValues");
 
         const contractsArray = convertToArray(contract, dataKeys.length);
-        const items = dataKeys.map((_, idx) => new CreateDatasItem(
+        const items = dataKeys.map((_, idx) => new CreateDataItem(
             contractsArray[idx],
             currency,
             dataKeys[idx],
             dataValues[idx]
         ));
-        return new BaseOperation(this.networkID, new CreateDatasFact(TS.new().UTC(), sender, items))
+        return new BaseOperation(this.networkID, new CreateDataFact(TS.new().UTC(), sender, items))
     }
 
     /**
@@ -125,27 +126,30 @@ export class Storage extends ContractGenerator {
         dataValue: string | LongString,
         currency: string | CurrencyID,
     ) {
-        new URIString(dataKey, 'dataKey');
+        const item = new UpdateDataItem(
+            contract,
+            currency,
+            dataKey,
+            dataValue
+        );
+
         const fact = new UpdateDataFact(
             TS.new().UTC(),
             sender,
-            contract,
-            dataKey,
-            dataValue,
-            currency,
+            [item]
         )
 
         return new BaseOperation(this.networkID, fact)
     }
 
     /**
-     * Generate `update-datas` operation to update multiple data on the storage model.
+     * Generate `update-data` operation to update multiple data on the storage model.
      * @param {string | Address | string[] | Address[]} [contract] - A single contract address (converted to an array) or an array of multiple contract addresses.
      * @param {string | Address} [sender] - The sender's address.
      * @param {string[]} [dataKeys] - The array with key of multiple data to update.
      * @param {string[] | LongString[]} [dataValues] - The array with value of the multiple data to update.
      * @param {string | CurrencyID} [currency] - The currency ID.
-     * @returns `update-datas` operation
+     * @returns `update-data` operation
      */
     updateMultiData(
         contract: string | Address | string[] | Address[],
@@ -159,13 +163,13 @@ export class Storage extends ContractGenerator {
             .sameLength(dataValues, "dataValues");
             
         const contractsArray = convertToArray(contract, dataKeys.length);
-        const items = dataKeys.map((_, idx) => new UpdateDatasItem(
+        const items = dataKeys.map((_, idx) => new UpdateDataItem(
             contractsArray[idx],
             currency,
             dataKeys[idx],
             dataValues[idx]
         ));
-        return new BaseOperation(this.networkID, new UpdateDatasFact(TS.new().UTC(), sender, items))
+        return new BaseOperation(this.networkID, new UpdateDataFact(TS.new().UTC(), sender, items))
     }
     
     /**
